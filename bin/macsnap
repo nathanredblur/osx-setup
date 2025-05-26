@@ -1,0 +1,134 @@
+#!/bin/zsh
+
+# MacSnap - Initial Setup Script
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# --- Gum Colors (using environment variables for gum) ---
+export GUM_INPUT_PROMPT_FOREGROUND="#00FFFF"
+export GUM_CHOOSE_ITEM_FOREGROUND="#FF00FF"
+export GUM_CHOOSE_SELECTED_FOREGROUND="#00FF00"
+# Add more gum styling variables as needed
+
+# --- Helper Functions ---
+print_header() {
+  gum style --border normal --margin "1" --padding "1 2" --border-foreground "#00FFFF" "MacSnap Setup"
+}
+
+print_info() {
+  echo "$(gum style --foreground \"#00FFFF\" \"INFO:\") $1"
+}
+
+print_success() {
+  echo "$(gum style --foreground \"#00FF00\" \"SUCCESS:\") $1"
+}
+
+print_warning() {
+  echo "$(gum style --foreground \"#FFFF00\" \"WARNING:\") $1"
+}
+
+# --- Installation Functions ---
+
+# 1. Install Homebrew
+install_homebrew() {
+  echo "INFO: Checking for Homebrew..."
+  if ! command -v brew &> /dev/null; then
+    echo "INFO: Homebrew not found. Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Add brew to PATH for the current script session
+    if [[ "$(uname -m)" == "arm64" ]]; then # Apple Silicon
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else # Intel
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    echo "SUCCESS: Homebrew installed."
+  else
+    echo "SUCCESS: Homebrew is already installed."
+  fi
+  # Ensure brew is in PATH for subsequent commands in this script
+  if [[ "$(uname -m)" == "arm64" ]] && [[ -x /opt/homebrew/bin/brew ]]; then # Apple Silicon
+      export PATH="/opt/homebrew/bin:$PATH"
+  elif [[ -x /usr/local/bin/brew ]]; then # Intel
+      export PATH="/usr/local/bin:$PATH"
+  fi
+}
+
+# 2. Install gum
+install_gum() {
+  echo "INFO: Checking for gum..."
+  if ! command -v gum &> /dev/null; then
+    echo "INFO: gum not found. Installing gum via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        echo "ERROR: Homebrew is required to install gum, but brew command was not found."
+        echo "Please ensure Homebrew is installed and in your PATH."
+        exit 1
+    fi
+    brew install gum
+    echo "SUCCESS: gum installed."
+  else
+    echo "SUCCESS: gum is already installed."
+  fi
+}
+
+# 3. Install mas-cli (Mac App Store CLI)
+install_mas() {
+  print_info "Checking for mas-cli..."
+  if ! command -v mas &> /dev/null; then
+    print_info "mas-cli not found. Installing mas-cli via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        # This case should ideally not be hit if install_homebrew succeeded
+        echo "ERROR: Homebrew is required to install mas-cli, but brew command was not found."
+        exit 1
+    fi
+    brew install mas
+    print_success "mas-cli installed."
+  else
+    print_success "mas-cli is already installed."
+  fi
+}
+
+# --- Main Script ---
+main() {
+  echo "--- MacSnap Initial Setup ---"
+  echo "INFO: Starting MacSnap setup process..."
+
+  install_homebrew # Uses basic echo for output
+  install_gum    # Uses basic echo for output
+
+  # Now that gum is confirmed to be installed, we can use gum-styled helper functions
+  print_header
+  gum spin --spinner dot --title "Finalizing essential tools setup..." -- sleep 1
+
+  install_mas # Can now safely use print_info, print_success
+
+  print_info "Initial essential tools (Homebrew, Gum, Mas) have been checked/installed."
+  gum style --foreground "#00FF00" "Setup phase 1 complete!"
+
+  # --- Placeholder for user software selection ---
+  # Here we will use gum to ask the user what categories and specific apps they want to install.
+  # For example:
+  #
+  # categories_to_install=$(gum choose --no-limit "Development Tools" "Browsers" "Productivity" "Media" "System Tweaks")
+  #
+  # For each category:
+  #   apps_in_category=$(get_apps_for_category "$category_from_yaml") # Function to read YAML
+  #   selected_apps_for_category=$(gum choose --no-limit $apps_in_category)
+  #
+  # This will be driven by the YAML configuration files.
+  print_info "Next steps (TODO): Ask user for software selection using YAML configurations."
+  gum confirm "Proceed to placeholder for custom software installation?" && {
+    print_info "User chose to proceed."
+    # --- Placeholder for installing selected software ---
+    # Here, iterate through the user's selections and run the 'install' scripts from the YAMLs.
+    print_info "TODO: Install software selected by the user."
+  } || {
+    print_warning "User chose not to proceed with custom software installation at this time."
+  }
+
+
+  print_success "MacSnap initial script finished."
+}
+
+# Run main function
+main 

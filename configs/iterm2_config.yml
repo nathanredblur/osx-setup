@@ -1,0 +1,23 @@
+id: "iterm2"
+name: "iTerm2"
+description: "A replacement for Terminal and the successor to iTerm."
+type: "brew_cask"
+category: "Terminal"
+dependencies:
+  - "brew"
+install:
+  script: |
+    echo "Installing iTerm2..."
+    brew install --cask iterm2
+validate:
+  script: |
+    brew list --cask | grep -q "^iterm2$"
+configure:
+  script: |
+    echo "Configuring iTerm2 preferences..."
+    # ITEM_CONFIG_DIR will point to ./configs/
+    cp "${ITEM_CONFIG_DIR}/com.googlecode.iterm2.plist" "${HOME}/Library/Preferences/com.googlecode.iterm2.plist"
+uninstall:
+  script: |
+    echo "Uninstalling iTerm2..."
+    brew uninstall --cask iterm2

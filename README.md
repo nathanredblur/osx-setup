@@ -40,46 +40,25 @@
 
 ### 2.2 Directory Structure
 
-The project follows a modular structure to organize configurations and source code:
+The project files (`macsnap.sh`, `utils/`, `configs/`) are located at the root of the workspace:
 
 ```
-macsnap/
-├── bin/
-│   └── macsnap              # Main executable shell script
-├── src/
-│   ├── cli/                  # CLI components (Gum scripts)
-│   │   ├── components/       # Reusable UI script functions (Header, Footer, ProgressBar, SelectionList etc.)
-│   │   ├── screens/          # Scripts for full-screen views (MainMenu, CategoryView, InstallProgress, SummaryScreen etc.)
-│   │   └── styles/           # UI styling (Gum environment variables for colors, fonts)
-│   ├── core/                 # Core functionality (Shell functions/scripts)
-│   │   ├── engine.sh         # Installation and configuration engine
-│   │   ├── validator.sh      # Configuration validation logic
-│   │   ├── config-loader.sh  # Loads and processes YAML configurations
-│   │   └── system-config.sh  # System settings specific logic
-│   └── utils/                # Utility functions
-│       ├── shell.sh          # Zsh script execution utility (may be integrated into engine.sh)
-│       ├── permissions.sh    # Permission handling assistance
-│       └── logger.sh         # Logging functionality
-├── configs/                  # Configuration files, organized by purpose
-│   ├── init/                 # Essential, ordered installations (e.g., Homebrew)
-│   │   └── brew/             # Homebrew item
-│   │       └── brew.yaml     # YAML configuration for Homebrew
-│   ├── apps/                 # Optional user applications
-│   │   └── iterm2/           # iTerm2 item
-│   │       ├── iterm2.yaml   # YAML configuration for iTerm2
-│   │       └── com.googlecode.iterm2.plist # Auxiliary file for iTerm2 (e.g., preferences)
-│   ├── system/               # System-level configurations
-│   │   └── keyboard-fix/
-│   │       ├── keyboard-fix.yaml
-│   │       └── custom-keyboard-map.plist # Example: plist for launch agent
-│   └── ...                   # Other items within init, apps, or system
-└── package.json              # Node.js package definition
+./
+├── macsnap.sh              # Main executable shell script
+├── utils/                  # Directory for utility shell scripts used by macsnap.sh
+└── configs/                # Root directory for all configuration and script files
+    ├── homebrew_setup.yml  # Example: Homebrew setup YAML configuration
+    ├── iterm2_config.yml   # Example: iTerm2 configuration YAML
+    ├── com.googlecode.iterm2.plist # Auxiliary file for iTerm2
+    ├── keyboard_fix.sh     # Example: A shell script for keyboard fixes
+    ├── custom-keyboard-map.plist # Auxiliary file for keyboard_fix.sh
+    └── ...                 # Other .yml, .sh, or auxiliary files
 ```
 
 ### 2.3 Scripting Environment
 
-- All scripts defined within YAML configurations (`install`, `validate`, `configure`, `uninstall`) will be executed as **Zsh scripts**.
-- An environment variable `ITEM_CONFIG_DIR` will be injected into each script's execution context. This variable will contain the absolute path to the directory of the currently processing item's configuration (e.g., for `configs/apps/iterm2/iterm2.yaml`, `ITEM_CONFIG_DIR` would point to the `macsnap/configs/apps/iterm2/` directory), allowing scripts to reliably access auxiliary files.
+- All scripts defined within YAML configurations (`install`, `validate`, `configure`, `uninstall`) or standalone `.sh` files in the `configs/` directory will be executed as **Zsh scripts**.
+- An environment variable `ITEM_CONFIG_DIR` will be injected into each script's execution context. This variable will contain the absolute path to the `configs/` directory (e.g., if the workspace root is `/Users/name/projects/osx-setup`, then `ITEM_CONFIG_DIR` would be `/Users/name/projects/osx-setup/configs/`). Scripts can use this variable to access any YAML, SH, or auxiliary files located directly within the `configs/` directory (e.g., `cp "${ITEM_CONFIG_DIR}/some_aux_file.plist" /path/to/destination`).
 
 ## 3. Configuration File Format (YAML)
 
@@ -320,8 +299,11 @@ Here is the phased plan for developing MacSnap Setup:
 
 ### Phase 0: Project Initialization & Core Setup
 
-- [ ] **Establish Directory Structure:** Create the refined directory layout with `configs/init/`, `configs/apps/`, and `configs/system/` as specified in section 2.2.
-- [ ] **Create Main Executable:** Develop the `bin/macsnap` main shell script entry point.
+- [x] **Set up Project Files:** Ensure `macsnap.sh`, `utils/`, and `configs/` are at the workspace root.
+- [x] **Initialize Shell Script Project:** (No equivalent to `pnpm init`, main script `macsnap.sh` will be created)
+- [x] **Install Core Dependencies:** Install `gum`, `yq` (for YAML parsing).
+- [x] **Establish Directory Structure:** Create the `utils/` and `configs/` directories at the workspace root as specified in section 2.2.
+- [/] **Create Main Executable:** Develop the `macsnap.sh` main shell script entry point at the workspace root.
 
 ### Phase 1: Configuration System Development
 

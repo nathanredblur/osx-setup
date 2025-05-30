@@ -1,0 +1,246 @@
+#!/bin/zsh
+
+# MacSnap - Initial Setup Script
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Determine the script's absolute directory to reliably find utils/ and configs/
+SCRIPT_DIR="$(cd "$(dirname "${0%/*}")" && pwd)"
+UTILS_DIR="${SCRIPT_DIR}/utils"
+CONFIGS_DIR="${SCRIPT_DIR}/configs"
+MENU_GENERATOR_SCRIPT="${UTILS_DIR}/menu_generator.sh"
+
+# --- Gum Colors (using environment variables for gum) ---
+export GUM_INPUT_PROMPT_FOREGROUND="#00FFFF"
+export GUM_CHOOSE_ITEM_FOREGROUND="#FF00FF"
+export GUM_CHOOSE_SELECTED_FOREGROUND="#00FF00"
+# Add more gum styling variables as needed
+
+# --- Helper Functions ---
+print_header() {
+  gum style --border normal --margin "1" --padding "1 2" --border-foreground "#00FFFF" "MacSnap Setup"
+}
+
+print_info() {
+  echo "$(gum style --foreground \"#00FFFF\" \"INFO:\") $1"
+}
+
+print_success() {
+  echo "$(gum style --foreground \"#00FF00\" \"SUCCESS:\") $1"
+}
+
+print_warning() {
+  echo "$(gum style --foreground \"#FFFF00\" \"WARNING:\") $1"
+}
+
+# --- Installation Functions ---
+
+# 1. Install Homebrew
+install_homebrew() {
+  echo "INFO: Checking for Homebrew..."
+  if ! command -v brew &> /dev/null; then
+    echo "INFO: Homebrew not found. Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Add brew to PATH for the current script session
+    if [[ "$(uname -m)" == "arm64" ]]; then # Apple Silicon
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else # Intel
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    echo "SUCCESS: Homebrew installed."
+  else
+    echo "SUCCESS: Homebrew is already installed."
+  fi
+  # Ensure brew is in PATH for subsequent commands in this script
+  if [[ "$(uname -m)" == "arm64" ]] && [[ -x /opt/homebrew/bin/brew ]]; then # Apple Silicon
+      export PATH="/opt/homebrew/bin:$PATH"
+  elif [[ -x /usr/local/bin/brew ]]; then # Intel
+      export PATH="/usr/local/bin:$PATH"
+  fi
+}
+
+# 2. Install yq (YAML processor)
+install_yq() {
+  echo "INFO: Checking for yq (YAML processor)..."
+  if ! command -v yq &> /dev/null; then
+    echo "INFO: yq not found. Installing yq via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        echo "ERROR: Homebrew is required to install yq, but brew command was not found."
+        echo "Please ensure Homebrew is installed and in your PATH."
+        exit 1
+    fi
+    brew install yq
+    echo "SUCCESS: yq installed."
+  else
+    echo "SUCCESS: yq is already installed."
+  fi
+}
+
+# 3. Install gum
+install_gum() {
+  echo "INFO: Checking for gum..."
+  if ! command -v gum &> /dev/null; then
+    echo "INFO: gum not found. Installing gum via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        echo "ERROR: Homebrew is required to install gum, but brew command was not found."
+        echo "Please ensure Homebrew is installed and in your PATH."
+        exit 1
+    fi
+    brew install gum
+    echo "SUCCESS: gum installed."
+  else
+    echo "SUCCESS: gum is already installed."
+  fi
+}
+
+# 4. Install mas-cli (Mac App Store CLI)
+install_mas() {
+  print_info "Checking for mas-cli..." # Uses gum-styled output as gum should be installed by now
+  if ! command -v mas &> /dev/null; then
+    print_info "mas-cli not found. Installing mas-cli via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        # This case should ideally not be hit if install_homebrew succeeded
+        echo "ERROR: Homebrew is required to install mas-cli, but brew command was not found." >&2
+        exit 1
+    fi
+    brew install mas
+    print_success "mas-cli installed."
+  else
+    print_success "mas-cli is already installed."
+  fi
+}
+
+# --- Main Script ---
+main() {
+  echo "--- MacSnap Initial Setup ---"
+  echo "INFO: Starting MacSnap setup process..."
+
+  install_homebrew # Uses basic echo for output
+  install_yq       # Uses basic echo for output
+  install_gum      # Uses basic echo for output
+
+  # Now that gum is confirmed to be installed, we can use gum-styled helper functions
+  print_header
+  gum spin --spinner dot --title "Finalizing essential tools setup..." -- sleep 1
+
+  install_mas # Can now safely use print_info, print_success
+
+  print_info "Initial essential tools (Homebrew, yq, Gum, Mas) have been checked/installed."
+  gum style --foreground "#00FF00" "Setup phase 1 complete!"
+
+  # --- User software selection via menu_generator.sh ---
+  print_info "Loading configuration menu..."
+
+  if [ ! -f "$MENU_GENERATOR_SCRIPT" ]; then
+    print_warning "Menu generator script not found at $MENU_GENERATOR_SCRIPT"
+    exit 1
+  fi
+
+  if [ ! -x "$MENU_GENERATOR_SCRIPT" ]; then
+    print_warning "Menu generator script ($MENU_GENERATOR_SCRIPT) is not executable. Please run: chmod +x $MENU_GENERATOR_SCRIPT"
+    exit 1
+  fi
+
+  selected_item_ids_output=$("$MENU_GENERATOR_SCRIPT")
+
+  if echo "$selected_item_ids_output" | grep -q "No items selected."; then
+    print_warning "No items were selected from the menu."
+    print_success "MacSnap script finished."
+    exit 0
+  fi
+
+  if ! echo "$selected_item_ids_output" | grep -q "^Selected item IDs:"; then
+    print_warning "Menu generator returned unexpected output:"
+    echo "$selected_item_ids_output"
+    exit 1
+  fi
+
+  clean_selected_item_ids=$(echo "$selected_item_ids_output" | tail -n +2 | awk 'NF') # Get all lines after header, and remove any fully blank lines
+
+  if [ -z "$clean_selected_item_ids" ]; then
+    print_warning "No item IDs were retrieved after processing menu output (or only blank lines found)."
+    print_success "MacSnap script finished."
+    exit 0
+  fi
+
+  print_info "Will attempt to process the following selected item IDs:"
+  echo "$clean_selected_item_ids"
+  gum spin --spinner dot --title "Preparing to process selections..." -- sleep 1
+
+  for selected_id in $(echo "$clean_selected_item_ids"); do
+    print_info "Attempting to process selected ID: $selected_id"
+    processed_this_id=false
+    
+    # Find the YAML file corresponding to this ID
+    # We iterate through .yml files in CONFIGS_DIR and check their 'id' field.
+    # Using find with -print0 and while read -d '' is safer for filenames with spaces, etc.
+    while IFS= read -r -d '' yaml_file_path; do
+      # Ensure yq can read the id, provide a default or handle error if id is missing
+      current_file_id=$(yq e '.id // "__MISSING_ID__"' "$yaml_file_path")
+      
+      if [[ "$current_file_id" == "$selected_id" ]]; then
+        print_success "Found configuration file for '$selected_id': $yaml_file_path"
+        
+        # Extract and run install script
+        # Using '// ""' ensures that if .install or .install.script is null, yq returns an empty string not an error or null literal.
+        install_script_content=$(yq e '.install.script // ""' "$yaml_file_path")
+        
+        if [[ -n "$install_script_content" ]]; then
+          print_info "Executing install script for $selected_id..."
+          TEMP_SCRIPT_FILE=$(mktemp)
+          # Ensure mktemp succeeded
+          if [[ -z "$TEMP_SCRIPT_FILE" || ! -f "$TEMP_SCRIPT_FILE" ]]; then 
+              print_warning "Failed to create temporary script file for $selected_id. Skipping."
+              processed_this_id=true # Avoid "Could not find" warning later
+              break # Break from inner while loop (file finding loop)
+          fi
+
+          echo "#!/bin/zsh" > "$TEMP_SCRIPT_FILE"
+          echo "set -e" >> "$TEMP_SCRIPT_FILE"
+          echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_SCRIPT_FILE" # Ensure quotes for path
+          echo "# Original file: $yaml_file_path" >> "$TEMP_SCRIPT_FILE"
+          echo "# Item ID: $selected_id" >> "$TEMP_SCRIPT_FILE"
+          echo "# Script content from YAML:" >> "$TEMP_SCRIPT_FILE"
+          echo "$install_script_content" >> "$TEMP_SCRIPT_FILE"
+          chmod +x "$TEMP_SCRIPT_FILE"
+          
+          # Execute the temporary script
+          # Capture output for better logging if needed in the future
+          if "$TEMP_SCRIPT_FILE"; then
+            print_success "Install script for '$selected_id' completed successfully."
+          else
+            script_exit_code=$?
+            print_warning "Install script for '$selected_id' failed with exit code: $script_exit_code."
+            # Decide if we should stop or continue with other items (set -e is in the sub-script)
+            # For now, macsnap.sh continues with other selected items unless set -e stops it here.
+          fi
+          rm "$TEMP_SCRIPT_FILE"
+        else
+          print_info "No '.install.script' found in $yaml_file_path for '$selected_id'. Nothing to execute for installation step."
+        fi
+        processed_this_id=true
+        break # Found and processed the file for this selected_id, move to next selected_id
+      fi
+    done < <(find "$CONFIGS_DIR" -maxdepth 1 -type f \( -name "*.yml" -o -name "*.yaml" \) -print0)
+
+    if ! $processed_this_id; then
+      print_warning "Could not find a configuration YAML file with id '$selected_id' in $CONFIGS_DIR"
+    fi
+  done
+
+  # Remove or comment out the old placeholder section
+  # print_info "Next steps (TODO): Ask user for software selection using YAML configurations."
+  # gum confirm "Proceed to placeholder for custom software installation?" && {
+  #   print_info "User chose to proceed."
+  #   # --- Placeholder for installing selected software ---
+  #   print_info "TODO: Install software selected by the user."
+  # } || {
+  #   print_warning "User chose not to proceed with custom software installation at this time."
+  # }
+
+  print_success "MacSnap script finished processing selected items."
+}
+
+# Run main function
+main 

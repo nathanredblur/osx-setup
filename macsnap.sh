@@ -182,73 +182,101 @@ main() {
       if [[ "$current_file_id" == "$selected_id" ]]; then
         print_success "Found configuration file for '$selected_id': $yaml_file_path"
         
-        # Extract and run install script
-        # Using '// ""' ensures that if .install or .install.script is null, yq returns an empty string not an error or null literal.
-        install_script_content=$(yq e '.install.script // ""' "$yaml_file_path")
-        
-        if [[ -n "$install_script_content" ]]; then
-          print_info "Executing install script for $selected_id..."
-          TEMP_SCRIPT_FILE=$(mktemp)
-          # Ensure mktemp succeeded
-          if [[ -z "$TEMP_SCRIPT_FILE" || ! -f "$TEMP_SCRIPT_FILE" ]]; then 
-              print_warning "Failed to create temporary script file for $selected_id. Skipping."
-              processed_this_id=true # Avoid "Could not find" warning later
-              break # Break from inner while loop (file finding loop)
-          fi
+        # --- BEGIN VALIDATE SCRIPT EXECUTION ---
+        should_skip_install_and_configure=false
+        validate_script_content=$(yq e '.validate.script // ""' "$yaml_file_path")
 
-          echo "#!/bin/zsh" > "$TEMP_SCRIPT_FILE"
-          echo "set -e" >> "$TEMP_SCRIPT_FILE"
-          echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_SCRIPT_FILE" # Ensure quotes for path
-          echo "# Original file: $yaml_file_path" >> "$TEMP_SCRIPT_FILE"
-          echo "# Item ID: $selected_id" >> "$TEMP_SCRIPT_FILE"
-          echo "# Script content from YAML:" >> "$TEMP_SCRIPT_FILE"
-          echo "$install_script_content" >> "$TEMP_SCRIPT_FILE"
-          chmod +x "$TEMP_SCRIPT_FILE"
-          
-          # Execute the temporary script
-          # Capture output for better logging if needed in the future
-          if "$TEMP_SCRIPT_FILE"; then
-            print_success "Install script for '$selected_id' completed successfully."
-            
-            # --- BEGIN CONFIGURE SCRIPT EXECUTION ---
-            configure_script_content=$(yq e '.configure.script // ""' "$yaml_file_path")
-            if [[ -n "$configure_script_content" ]]; then
-              print_info "Executing configure script for $selected_id..."
-              TEMP_CONFIGURE_SCRIPT_FILE=$(mktemp)
-              if [[ -z "$TEMP_CONFIGURE_SCRIPT_FILE" || ! -f "$TEMP_CONFIGURE_SCRIPT_FILE" ]]; then
-                  print_warning "Failed to create temporary configure script file for $selected_id. Skipping configure step."
-              else
-                  echo "#!/bin/zsh" > "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  echo "set -e" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  echo "# Original file: $yaml_file_path" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  echo "# Item ID: $selected_id (configure step)" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  echo "$configure_script_content" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  chmod +x "$TEMP_CONFIGURE_SCRIPT_FILE"
-                  
-                  if "$TEMP_CONFIGURE_SCRIPT_FILE"; then
-                      print_success "Configure script for '$selected_id' completed successfully."
-                  else
-                      configure_script_exit_code=$?
-                      print_warning "Configure script for '$selected_id' failed with exit code: $configure_script_exit_code."
-                  fi
-                  rm "$TEMP_CONFIGURE_SCRIPT_FILE"
-              fi
+        if [[ -n "$validate_script_content" ]]; then
+            print_info "Executing validate script for $selected_id..."
+            TEMP_VALIDATE_SCRIPT_FILE=$(mktemp)
+            if [[ -z "$TEMP_VALIDATE_SCRIPT_FILE" || ! -f "$TEMP_VALIDATE_SCRIPT_FILE" ]]; then
+                print_warning "Failed to create temporary validate script file for $selected_id. Assuming installation is needed."
             else
-              print_info "No '.configure.script' found for '$selected_id'. Skipping configure step."
+                echo "#!/bin/zsh" > "$TEMP_VALIDATE_SCRIPT_FILE"
+                echo "set -e" >> "$TEMP_VALIDATE_SCRIPT_FILE"
+                # Note: validate scripts might also need to not exit on error for certain checks, 
+                # but for now, we assume they will handle their own logic and exit 0 for "is_installed=true"
+                echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_VALIDATE_SCRIPT_FILE"
+                echo "# Original file: $yaml_file_path" >> "$TEMP_VALIDATE_SCRIPT_FILE"
+                echo "# Item ID: $selected_id (validate step)" >> "$TEMP_VALIDATE_SCRIPT_FILE"
+                echo "$validate_script_content" >> "$TEMP_VALIDATE_SCRIPT_FILE"
+                chmod +x "$TEMP_VALIDATE_SCRIPT_FILE"
+
+                if "$TEMP_VALIDATE_SCRIPT_FILE"; then
+                    print_success "Validation passed for '$selected_id' (already installed/configured). Skipping install & configure steps."
+                    should_skip_install_and_configure=true
+                else
+                    validate_script_exit_code=$?
+                    print_info "Validation failed for '$selected_id' (exit code: $validate_script_exit_code) or item not present. Proceeding with installation."
+                fi
+                rm "$TEMP_VALIDATE_SCRIPT_FILE"
             fi
-            # --- END CONFIGURE SCRIPT EXECUTION ---
-            
-          else
-            script_exit_code=$?
-            print_warning "Install script for '$selected_id' failed with exit code: $script_exit_code."
-            # Decide if we should stop or continue with other items (set -e is in the sub-script)
-            # For now, macsnap.sh continues with other selected items unless set -e stops it here.
-          fi
-          rm "$TEMP_SCRIPT_FILE"
         else
-          print_info "No '.install.script' found in $yaml_file_path for '$selected_id'. Nothing to execute for installation step."
+            print_info "No '.validate.script' found for '$selected_id'. Assuming installation is needed."
         fi
+        # --- END VALIDATE SCRIPT EXECUTION ---
+
+        if ! $should_skip_install_and_configure; then
+            # Extract and run install script
+            install_script_content=$(yq e '.install.script // ""' "$yaml_file_path")
+            
+            if [[ -n "$install_script_content" ]]; then
+              print_info "Executing install script for $selected_id..."
+              TEMP_INSTALL_SCRIPT_FILE=$(mktemp)
+              if [[ -z "$TEMP_INSTALL_SCRIPT_FILE" || ! -f "$TEMP_INSTALL_SCRIPT_FILE" ]]; then 
+                  print_warning "Failed to create temporary install script file for $selected_id. Skipping."
+              else
+                  echo "#!/bin/zsh" > "$TEMP_INSTALL_SCRIPT_FILE"
+                  echo "set -e" >> "$TEMP_INSTALL_SCRIPT_FILE"
+                  echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_INSTALL_SCRIPT_FILE"
+                  echo "# Original file: $yaml_file_path" >> "$TEMP_INSTALL_SCRIPT_FILE"
+                  echo "# Item ID: $selected_id (install step)" >> "$TEMP_INSTALL_SCRIPT_FILE"
+                  echo "$install_script_content" >> "$TEMP_INSTALL_SCRIPT_FILE"
+                  chmod +x "$TEMP_INSTALL_SCRIPT_FILE"
+                  
+                  if "$TEMP_INSTALL_SCRIPT_FILE"; then
+                    print_success "Install script for '$selected_id' completed successfully."
+                    
+                    # --- BEGIN CONFIGURE SCRIPT EXECUTION ---
+                    configure_script_content=$(yq e '.configure.script // ""' "$yaml_file_path")
+                    if [[ -n "$configure_script_content" ]]; then
+                      print_info "Executing configure script for $selected_id..."
+                      TEMP_CONFIGURE_SCRIPT_FILE=$(mktemp)
+                      if [[ -z "$TEMP_CONFIGURE_SCRIPT_FILE" || ! -f "$TEMP_CONFIGURE_SCRIPT_FILE" ]]; then
+                          print_warning "Failed to create temporary configure script file for $selected_id. Skipping configure step."
+                      else
+                          echo "#!/bin/zsh" > "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          echo "set -e" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          echo "# Original file: $yaml_file_path" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          echo "# Item ID: $selected_id (configure step)" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          echo "$configure_script_content" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          chmod +x "$TEMP_CONFIGURE_SCRIPT_FILE"
+                          
+                          if "$TEMP_CONFIGURE_SCRIPT_FILE"; then
+                              print_success "Configure script for '$selected_id' completed successfully."
+                          else
+                              configure_script_exit_code=$?
+                              print_warning "Configure script for '$selected_id' failed with exit code: $configure_script_exit_code."
+                          fi
+                          rm "$TEMP_CONFIGURE_SCRIPT_FILE"
+                      fi
+                    else
+                      print_info "No '.configure.script' found for '$selected_id'. Skipping configure step."
+                    fi
+                    # --- END CONFIGURE SCRIPT EXECUTION ---
+                    
+                  else
+                    script_exit_code=$?
+                    print_warning "Install script for '$selected_id' failed with exit code: $script_exit_code."
+                  fi
+                  rm "$TEMP_INSTALL_SCRIPT_FILE"
+              fi # end check for TEMP_INSTALL_SCRIPT_FILE creation
+            else
+              print_info "No '.install.script' found in $yaml_file_path for '$selected_id'. Nothing to execute for installation step."
+            fi # end check for install_script_content
+        fi # end check for should_skip_install_and_configure
+
         processed_this_id=true
         break # Found and processed the file for this selected_id, move to next selected_id
       fi

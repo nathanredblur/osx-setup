@@ -209,6 +209,36 @@ main() {
           # Capture output for better logging if needed in the future
           if "$TEMP_SCRIPT_FILE"; then
             print_success "Install script for '$selected_id' completed successfully."
+            
+            # --- BEGIN CONFIGURE SCRIPT EXECUTION ---
+            configure_script_content=$(yq e '.configure.script // ""' "$yaml_file_path")
+            if [[ -n "$configure_script_content" ]]; then
+              print_info "Executing configure script for $selected_id..."
+              TEMP_CONFIGURE_SCRIPT_FILE=$(mktemp)
+              if [[ -z "$TEMP_CONFIGURE_SCRIPT_FILE" || ! -f "$TEMP_CONFIGURE_SCRIPT_FILE" ]]; then
+                  print_warning "Failed to create temporary configure script file for $selected_id. Skipping configure step."
+              else
+                  echo "#!/bin/zsh" > "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  echo "set -e" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  echo "export ITEM_CONFIG_DIR=\"$CONFIGS_DIR\"" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  echo "# Original file: $yaml_file_path" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  echo "# Item ID: $selected_id (configure step)" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  echo "$configure_script_content" >> "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  chmod +x "$TEMP_CONFIGURE_SCRIPT_FILE"
+                  
+                  if "$TEMP_CONFIGURE_SCRIPT_FILE"; then
+                      print_success "Configure script for '$selected_id' completed successfully."
+                  else
+                      configure_script_exit_code=$?
+                      print_warning "Configure script for '$selected_id' failed with exit code: $configure_script_exit_code."
+                  fi
+                  rm "$TEMP_CONFIGURE_SCRIPT_FILE"
+              fi
+            else
+              print_info "No '.configure.script' found for '$selected_id'. Skipping configure step."
+            fi
+            # --- END CONFIGURE SCRIPT EXECUTION ---
+            
           else
             script_exit_code=$?
             print_warning "Install script for '$selected_id' failed with exit code: $script_exit_code."

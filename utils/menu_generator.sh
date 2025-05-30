@@ -21,34 +21,41 @@ CONFIGS_DIR="$(cd "$(dirname "$0")/../configs" && pwd)" # Absolute path to confi
 # Use parallel indexed arrays for mapping names to IDs
 menu_item_names=()
 menu_item_ids=()
-
-# Removed Associative Array Sanity Check as we are no longer using them.
+pre_selected_item_names_list=() # For items to be pre-selected
 
 if [ ! -d "$CONFIGS_DIR" ]; then
     echo "Error: Configuration directory not found: $CONFIGS_DIR" >&2
     exit 1
 fi
 
-# Find all .yml files in the configs directory
-# and extract 'name' and 'id' for the menu
+# Find all .yml/.yaml files in the configs directory
+# and extract 'name', 'id', and 'selected_by_default' for the menu
 while IFS= read -r -d '' yaml_file; do
     echo "Debug (Find Loop): Processing file path from find: '$yaml_file'" >&2
 
     raw_name_from_yq=$(yq e -r '.name' "$yaml_file")
     raw_id_from_yq=$(yq e -r '.id' "$yaml_file")
+    # Read .selected_by_default, default to false if missing or null
+    raw_selected_by_default=$(yq e '.selected_by_default // false' "$yaml_file") 
 
-    echo "Debug (YQ Output): Raw Name from yq: '$raw_name_from_yq', Raw ID from yq: '$raw_id_from_yq'" >&2
+    echo "Debug (YQ Output): Raw Name: '$raw_name_from_yq', Raw ID: '$raw_id_from_yq', Raw SelectedByDefault: '$raw_selected_by_default'" >&2
     
-    # Aggressively clean item_name and item_id
     item_name=$(echo "$raw_name_from_yq" | tr -cd '[[:print:]]' | xargs)
     item_id=$(echo "$raw_id_from_yq" | tr -cd '[[:print:]]' | xargs)
+    # Convert selected_by_default to a clean true/false string for reliable comparison
+    selected_by_default_cleaned=$(echo "$raw_selected_by_default" | tr '[:upper:]' '[:lower:]' | xargs)
 
-    echo "Debug (Population): YAML: '$yaml_file', Cleaned Name: '$item_name', Cleaned ID: '$item_id'" >&2
+    echo "Debug (Population): YAML: '$yaml_file', Cleaned Name: '$item_name', Cleaned ID: '$item_id', Cleaned SelectedByDefault: '$selected_by_default_cleaned'" >&2
     
     if [[ -n "$item_name" && "$item_name" != "null" && -n "$item_id" && "$item_id" != "null" ]]; then
         menu_item_names+=("$item_name")
         menu_item_ids+=("$item_id")
         echo "Debug (Population): Added '$item_name' (ID: '$item_id') to arrays." >&2
+        
+        if [[ "$selected_by_default_cleaned" == "true" ]]; then
+            pre_selected_item_names_list+=("$item_name")
+            echo "Debug (Population): '$item_name' marked for pre-selection." >&2
+        fi
     else
         echo "Warning: Skipping '$yaml_file' as it's missing 'name' or 'id', or they are null after cleaning." >&2
     fi
@@ -56,13 +63,24 @@ done < <(find "$CONFIGS_DIR" -maxdepth 1 -type f \( -name "*.yml" -o -name "*.ya
 
 if [ ${#menu_item_names[@]} -eq 0 ]; then
     echo "No valid configuration items found in $CONFIGS_DIR to display in menu." >&2
-    # Output a specific message that macsnap.sh can check for if needed
     echo "STATUS:NO_ITEMS_FOUND"
-    exit 0 # Exit cleanly so macsnap.sh can handle this message
+    exit 0
 fi
 
-# Display the menu using gum choose. Allow multiple selections with --no-limit.
-selected_names_str=$(gum choose --no-limit --header "Select items to process:" "${menu_item_names[@]}")
+# Construct the --selected argument for gum choose
+gum_choose_selected_arg=""
+if [ ${#pre_selected_item_names_list[@]} -gt 0 ]; then
+  # Join the array into a comma-separated string
+  gum_choose_selected_arg="--selected=$(IFS=,; echo "${pre_selected_item_names_list[*]}")"
+  echo "Debug (Gum Args): Pre-selected items string for gum: $gum_choose_selected_arg" >&2
+fi
+
+# Display the menu using gum choose.
+# Pass the pre-selected items string if it was constructed.
+# Using ${=gum_choose_selected_arg} ensures Zsh performs word splitting on the argument if it contains spaces,
+# and handles it correctly if it's empty.
+selected_names_str=$(gum choose --no-limit --header "Select items to process (Space to toggle, Enter to confirm):" "${menu_item_names[@]}" ${=gum_choose_selected_arg})
+
 
 # If nothing is selected (e.g., user pressed Esc or string is empty), exit
 if [ -z "$selected_names_str" ]; then

@@ -1,0 +1,35 @@
+id: "synthesia"
+name: "Synthesia"
+description: "Learn how to play the piano using falling notes."
+type: "brew_cask"
+category: "Media"
+selected_by_default: false
+dependencies:
+  - "homebrew_setup" # Assuming 'homebrew_setup' is the ID for your Homebrew core installation
+install:
+  script: |
+    log_info "Installing Synthesia..."
+    if brew install --cask synthesia; then
+      log_info "SUCCESS: Synthesia installed successfully."
+    else
+      log_info "ERROR: Synthesia installation failed."
+      exit 1
+    fi
+validate:
+  script: |
+    if brew list --cask | grep -q "^synthesia$"; then
+      log_debug "Synthesia is installed."
+      exit 0 # Installed
+    else
+      log_debug "Synthesia is NOT installed."
+      exit 1 # Not installed
+    fi
+uninstall:
+  script: |
+    log_info "Uninstalling Synthesia..."
+    if brew uninstall --cask synthesia; then
+      log_info "SUCCESS: Synthesia uninstalled successfully."
+    else
+      log_info "ERROR: Synthesia uninstallation failed."
+      exit 1
+    fi

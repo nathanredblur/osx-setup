@@ -1,0 +1,30 @@
+id: "trackpad_settings"
+name: "Trackpad Settings"
+description: "Configure trackpad with tap to click and other improvements"
+type: "system_config"
+category: "System Tweaks"
+install:
+  script: |
+    echo "This item only configures existing system settings"
+validate:
+  script: |
+    # Always return 1 (not configured) so configure script runs
+    exit 1
+configure:
+  script: |
+    echo "Applying trackpad settings..."
+
+    # Enable tap to click
+    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+    defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+    defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+    defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+
+    # Enable three finger drag
+    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+    defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+
+    # Set tracking speed (1 = slow, 3 = fast)
+    defaults write NSGlobalDomain com.apple.trackpad.scaling -float 2.0
+
+    echo "Trackpad settings applied. You may need to restart or log out/in for all changes to take effect."

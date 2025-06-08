@@ -1,0 +1,17 @@
+id: "raycast"
+name: "Raycast"
+description: "Blazingly fast, totally extendable launcher"
+type: "brew_cask"
+category: "Productivity"
+dependencies: []
+install:
+  script: |
+    echo "Installing Raycast..."
+    brew install --cask raycast
+validate:
+  script: |
+    brew list --cask | grep -q "raycast" || ls /Applications/ | grep -q "Raycast.app"
+configure:
+  script: |
+    echo "Raycast configuration complete"
+    echo "Launch Raycast and complete the setup process"

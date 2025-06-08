@@ -2,7 +2,9 @@
 
 ## 1. System Overview
 
-**MacSnap Setup** is an interactive terminal application designed to automate the installation and configuration of macOS systems (version 15.4.1 and up). Built with Gum (a tool for glamorous shell scripts), it provides a user-friendly interface for managing software installation and system customization. The tool is designed to be re-runnable, allowing users to install new items without affecting already installed software.
+**MacSnap Setup** is an interactive terminal application designed to automate the installation and configuration of macOS systems (version 15.4.1 and up). Built with Python, it provides a user-friendly command-line interface for managing software installation and system customization. The tool is designed to be re-runnable, allowing users to install new items without affecting already installed software.
+
+The application is executed via `setup.sh`, which handles the initial setup of prerequisites (Homebrew) and Python environment configuration before launching the main Python application.
 
 ## 2. Architecture
 
@@ -10,20 +12,21 @@
 
 1.  **Command Line Interface (CLI)**
 
-    - Gum-based UI.
+    - Python-based interactive interface.
     - Interactive selection menus for categories and items.
-    - Animated progress indicators and real-time feedback.
+    - Real-time feedback and progress indicators.
+    - Optional verbose logging with `--verbose` parameter.
 
 2.  **Configuration System**
 
     - YAML configuration files for all installable software, system settings, and custom scripts.
-    - Each item is defined in its own YAML file within a structured directory.
+    - Each item is defined in its own YAML file within the `configs/` directory.
     - Support for dependencies to ensure correct installation order.
     - Categorization of items (e.g., essentials, development, shells) within YAML files for UI grouping.
 
 3.  **Installation Engine**
 
-    - Parses YAML configurations and executes associated Zsh scripts.
+    - Parses YAML configurations and executes associated installation scripts.
     - Validates existing installations to avoid redundant operations.
     - Handles various installation types through specific handlers.
     - Manages error handling: continues on non-critical failures, halts dependent items if a critical dependency fails.
@@ -32,359 +35,528 @@
 4.  **System Configuration Engine**
 
     - Applies system settings via `defaults` commands and other macOS mechanisms.
-    - Manages settings for trackpad, keyboard (including a custom `hidutil`-based remapping agent), dock, and accessibility.
+    - Manages settings for trackpad, keyboard (including custom remapping), dock, and accessibility.
     - Guides users through necessary permission grants.
 
 5.  **Logging System**
-    - Comprehensive logging of all operations, script outputs (stdout/stderr), and errors to a user-accessible file (e.g., `~/Library/Logs/MacSnap/setup.log`).
+    - Comprehensive logging of all operations, script outputs (stdout/stderr), and errors.
+    - Optional verbose mode activated with `--verbose` parameter.
+    - Logs stored in user-accessible location (e.g., `~/Library/Logs/MacSnap/setup.log`).
 
 ### 2.2 Directory Structure
 
-The project files (`macsnap.sh`, `utils/`, `configs/`) are located at the root of the workspace:
+The project files are organized as follows:
 
 ```
 ./
-├── macsnap.sh              # Main executable shell script
-├── utils/                  # Directory for utility shell scripts used by macsnap.sh
-└── configs/                # Root directory for all configuration and script files
-    ├── homebrew_setup.yml  # Example: Homebrew setup YAML configuration
-    ├── iterm2_config.yml   # Example: iTerm2 configuration YAML
+├── setup.sh               # Bootstrap script - installs Homebrew and configures Python environment
+├── macsnap.py             # Main Python application entry point
+├── requirements.txt       # Python dependencies
+├── utils/                 # Python utility modules for the macsnap application
+│   ├── __init__.py
+│   ├── config_loader.py   # YAML configuration loading and parsing
+│   ├── installer.py       # Installation engine and handlers
+│   ├── logger.py          # Logging system
+│   ├── ui.py             # User interface components
+│   └── validators.py      # Configuration validation
+└── configs/               # Root directory for all configuration files
+    ├── vscode.yml         # Example: VS Code configuration YAML
+    ├── iterm2_config.yml  # Example: iTerm2 configuration YAML
     ├── com.googlecode.iterm2.plist # Auxiliary file for iTerm2
-    ├── keyboard_fix.sh     # Example: A shell script for keyboard fixes
-    ├── custom-keyboard-map.plist # Auxiliary file for keyboard_fix.sh
-    └── ...                 # Other .yml, .sh, or auxiliary files
+    ├── trackpad_settings.yml # Example: System configuration YAML
+    ├── development/       # Optional: User-defined subdirectory for organization
+    │   ├── docker.yml
+    │   └── node.yml
+    ├── productivity/      # Optional: User-defined subdirectory for organization
+    │   └── raycast.yml
+    └── ...                # Other .yml or auxiliary files
 ```
 
-### 2.3 Scripting Environment
+**Note**: The `configs/` directory can contain user-defined subdirectories for better file organization. However, **the physical directory structure does not determine how items are grouped in the user interface**. Menu categorization is based solely on the `category` field within each YAML file.
 
-- All scripts defined within YAML configurations (`install`, `validate`, `configure`, `uninstall`) or standalone `.sh` files in the `configs/` directory will be executed as **Zsh scripts**.
-- An environment variable `ITEM_CONFIG_DIR` will be injected into each script's execution context. This variable will contain the absolute path to the `configs/` directory (e.g., if the workspace root is `/Users/name/projects/osx-setup`, then `ITEM_CONFIG_DIR` would be `/Users/name/projects/osx-setup/configs/`). Scripts can use this variable to access any YAML, SH, or auxiliary files located directly within the `configs/` directory (e.g., `cp "${ITEM_CONFIG_DIR}/some_aux_file.plist" /path/to/destination`).
+### 2.3 Execution Flow
+
+1. **Bootstrap Phase**: `setup.sh` is executed first to:
+
+   - Install Homebrew (core requirement)
+   - Set up Python virtual environment
+   - Install Python dependencies from `requirements.txt`
+
+2. **Main Application**: `macsnap.py` is launched, which:
+   - Loads and validates YAML configurations from `configs/`
+   - Presents interactive menus for software selection
+   - Executes installation and configuration scripts
+   - Provides logging and error handling
+
+### 2.4 Scripting Environment
+
+- All scripts defined within YAML configurations (`install`, `validate`, `configure`, `uninstall`) will be executed as shell scripts from within the Python application.
+- An environment variable `ITEM_CONFIG_DIR` will be injected into each script's execution context, containing the absolute path to the `configs/` directory.
+- Scripts can use this variable to access any YAML or auxiliary files located within the `configs/` directory (e.g., `cp "${ITEM_CONFIG_DIR}/some_aux_file.plist" /path/to/destination`).
 
 ## 3. Configuration File Format (YAML)
 
-Each installable item or system configuration is defined in its own YAML file (e.g., `iterm2.yaml`).
+Each installable item or system configuration is defined in its own YAML file (e.g., `vscode.yml`).
 
 ### 3.1 Key Fields:
 
-- `id` (string, required): Unique identifier (e.g., "iterm2", "trackpad-settings").
-- `name` (string, required): User-friendly display name (e.g., "iTerm2", "Trackpad Settings").
+- `id` (string, required): Unique identifier (e.g., "vscode", "trackpad-settings").
+- `name` (string, required): User-friendly display name (e.g., "Visual Studio Code", "Trackpad Settings").
 - `description` (string, optional): Brief description of the item.
 - `type` (string, required): Defines the installation/configuration handler to use.
   - Supported types:
     - `brew`: For Homebrew formulae.
     - `brew_cask`: For Homebrew Casks (GUI applications).
     - `mas`: For Mac App Store apps (requires user to be signed into App Store).
-    - `direct_download_dmg`: For apps distributed as `.dmg` files (involves mounting, copying `.app`).
+    - `direct_download_dmg`: For apps distributed as `.dmg` files.
     - `direct_download_pkg`: For apps distributed via `.pkg` installers.
     - `proto_tool`: For tools managed by `proto` (e.g., Node.js, npm).
     - `system_config`: For applying system settings using `defaults` commands.
-    - `launch_agent`: For setting up and managing custom Launch Agents (e.g., for `hidutil` keyboard remapping).
-    - `shell_script`: For generic Zsh scripts that don't fit other types.
-- `category` (string, required): Groups the item in the UI (e.g., "Essentials", "Development Tools", "System Tweaks", "Browsers"). This field is for UI presentation and is independent of the `configs/` subdirectory the YAML resides in.
-- `required` (boolean, optional, default: `false`): If `true`, this item might be a critical dependency. Items in `configs/init/` are typically implicitly required or ordered.
+    - `launch_agent`: For setting up and managing custom Launch Agents.
+    - `shell_script`: For generic shell scripts that don't fit other types.
+- `category` (string, required): Groups the item in the UI (e.g., "Core Utilities", "Development", "System Tweaks", "Browsers").
+- `selected_by_default` (boolean, optional, default: `false`): If `true`, this item will be pre-selected in the interface.
 - `dependencies` (list of strings, optional): A list of `id`s of other items that must be successfully processed before this item.
 - `install` (object, optional):
-  - `script` (string, required): Zsh script to perform the installation.
+  - `script` (string, required): Shell script to perform the installation.
 - `validate` (object, optional):
-  - `script` (string, required): Zsh script to check if the item is already installed/configured. Should exit with `0` if validation passes (item is present/configured), non-zero otherwise.
+  - `script` (string, required): Shell script to check if the item is already installed/configured. Should exit with `0` if validation passes, non-zero otherwise.
 - `configure` (object, optional):
-  - `script` (string, required): Zsh script for post-installation configuration.
+  - `script` (string, required): Shell script for post-installation configuration.
 - `uninstall` (object, optional):
-  - `script` (string, required): Zsh script to uninstall the item.
+  - `script` (string, required): Shell script to uninstall the item.
 
-### 3.2 Example: Software Installation (`iterm2.yaml`)
-
-Located at `configs/apps/iterm2/iterm2.yaml`:
+### 3.2 Example: Software Installation (`vscode.yml`)
 
 ```yaml
-id: "iterm2"
-name: "iTerm2"
-description: "A replacement for Terminal and the successor to iTerm."
+id: "vscode"
+name: "Visual Studio Code"
+description: "Free source-code editor made by Microsoft"
 type: "brew_cask"
-category: "Terminal" # UI Grouping
-dependencies:
-  - "brew" # Assumes a brew.yaml exists with id: "brew", likely in configs/init/
+category: "Development"
+selected_by_default: false
 install:
   script: |
-    echo "Installing iTerm2..."
-    brew install --cask iterm2
+    echo "Installing Visual Studio Code..."
+    brew install --cask visual-studio-code
 validate:
   script: |
-    brew list --cask | grep -q "^iterm2$"
+    brew list --cask | grep -q "visual-studio-code" || ls /Applications/ | grep -q "Visual Studio Code.app"
 configure:
   script: |
-    echo "Configuring iTerm2 preferences..."
-    # ITEM_CONFIG_DIR will point to configs/apps/iterm2/
-    cp "${ITEM_CONFIG_DIR}/com.googlecode.iterm2.plist" "${HOME}/Library/Preferences/com.googlecode.iterm2.plist"
-uninstall:
-  script: |
-    echo "Uninstalling iTerm2..."
-    brew uninstall --cask iterm2
+    echo "Configuring Visual Studio Code..."
+    # Install the 'code' command in PATH if available
+    if command -v code &> /dev/null; then
+      echo "VS Code 'code' command is available"
+    else
+      echo "You may need to install 'code' command from VS Code Command Palette"
+    fi
 ```
 
-Auxiliary file `configs/apps/iterm2/com.googlecode.iterm2.plist` would contain the iTerm2 preferences.
-
-### 3.3 Example: System Configuration (`trackpad-settings.yaml`)
-
-Located at `configs/system/trackpad-settings/trackpad-settings.yaml`:
+### 3.3 Example: System Configuration (`trackpad_settings.yml`)
 
 ```yaml
-id: "trackpad-settings"
+id: "trackpad_settings"
 name: "Trackpad Settings"
-description: "Configure trackpad with tap to click."
+description: "Configure trackpad with tap to click and other improvements"
 type: "system_config"
-category: "System Tweaks" # UI Grouping
+category: "System Tweaks"
+selected_by_default: true
+install:
+  script: |
+    echo "This item only configures existing system settings"
+validate:
+  script: |
+    # Always return 1 (not configured) so configure script runs
+    exit 1
 configure:
   script: |
     echo "Applying trackpad settings..."
+    # Enable tap to click
     defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
     defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
     defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
     defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-validate:
-  script: |
-    defaults read com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking | grep -q "1"
-
-# uninstall script could revert settings if desired
+    echo "Trackpad settings applied successfully"
 ```
-
-### 3.4 Example: Keyboard Remapping Agent (`keyboard-fix.yaml`)
-
-Located at `configs/system/keyboard-fix/keyboard-fix.yaml`:
-
-```yaml
-id: "keyboard-fix"
-name: "Custom Keyboard Remapping"
-description: "Applies custom keyboard remappings using hidutil via a Launch Agent."
-type: "launch_agent"
-category: "System Tweaks" # UI Grouping
-install:
-  script: |
-    PLIST_NAME="com.user.keyboardremap.plist"
-    PLIST_TARGET_DIR="${HOME}/Library/LaunchAgents"
-    PLIST_TARGET_PATH="${PLIST_TARGET_DIR}/${PLIST_NAME}"
-
-    echo "Installing keyboard remapping Launch Agent..."
-    # ITEM_CONFIG_DIR points to configs/system/keyboard-fix/
-    # Assume custom-keyboard-map.plist in ITEM_CONFIG_DIR defines the hidutil commands
-    cp "${ITEM_CONFIG_DIR}/custom-keyboard-map.plist" "${PLIST_TARGET_PATH}"
-    launchctl load "${PLIST_TARGET_PATH}"
-validate:
-  script: |
-    launchctl list | grep -q "com.user.keyboardremap"
-uninstall:
-  script: |
-    PLIST_NAME="com.user.keyboardremap.plist"
-    PLIST_TARGET_PATH="${HOME}/Library/LaunchAgents/${PLIST_NAME}"
-    echo "Uninstalling keyboard remapping Launch Agent..."
-    launchctl unload "${PLIST_TARGET_PATH}"
-    rm -f "${PLIST_TARGET_PATH}"
-```
-
-An auxiliary file like `configs/system/keyboard-fix/custom-keyboard-map.plist` would contain the actual Launch Agent definition invoking `hidutil`.
 
 ## 4. User Interface (UI) Design
 
-### 4.1 Cyberpunk Theme Elements
+### 4.1 Python CLI Interface
 
-- **Color Palette**: Primary: Electric blue (`#00FFFF`), Secondary: Neon pink (`#FF00FF`), Accent: Neon green (`#00FF00`), Background: Dark with grid patterns, Text: High contrast with glow effects. (Note: Gum styling might be more limited than Ink, adapt as needed)
-- **Typography**: Monospace fonts (e.g., "Hack", "Fira Code"). (Note: Gum uses terminal's font)
-- **Animations**: Gum offers some styling but complex animations like "Matrix-like" data flow might be simplified or omitted.
+- **Two-Column Layout**: Left sidebar for category navigation, main content area for item selection.
+- **Interactive Navigation**: Real-time description display when browsing options.
+- **Progress Feedback**: Real-time feedback during installation and configuration processes.
+- **Error Handling**: Clear error messages and recovery suggestions.
+- **Logging Options**: Optional verbose output with `--verbose` flag.
 
-### 4.2 Main UI Components
+### 4.2 Main UI Layout
 
-1.  **Header Component**: ASCII art logo, system information (macOS version, username), current operation status.
-2.  **Main Menu Screen**: Categories (derived from YAML `category` field) displayed in a grid or selectable list. Cyberpunk-styled selection indicators. Status summary (installed/pending/total).
-3.  **Category View Screen**: List of installable items within a selected UI category, status indicators (installed, pending, failed), multi-select capability, dependency highlighting.
-4.  **Installation Progress Screen**: Animated progress bars, real-time Zsh script output from installations/configurations, clear error messages and visual indicators for failures.
-5.  **Summary Screen**: Post-operation summary with success/failure counts, list of problematic items, options for viewing logs or next steps.
+The interface uses a two-column design:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    MacSnap Setup v1.0                          │
+│                 macOS 15.4.1 | User: john                      │
+├──────────────────┬──────────────────────────────────────────────┤
+│   Categories     │               Selected Category              │
+│                  │                                              │
+│ > Core Utilities │  ┌─ Visual Studio Code ──────────────────┐   │
+│   Development    │  │ Free source-code editor made by       │   │
+│   Productivity   │  │ Microsoft for Windows, Linux and      │   │
+│   Browsers       │  │ macOS. It includes support for        │   │
+│   System Tweaks  │  │ debugging, Git control, syntax        │   │
+│   Media          │  │ highlighting, intelligent code         │   │
+│                  │  │ completion, snippets, and code         │   │
+│                  │  │ refactoring.                           │   │
+│                  │  └─ [✓] Install [Configure] [Details] ───┘   │
+│                  │                                              │
+│                  │  ┌─ Docker Desktop ──────────────────────┐   │
+│                  │  │ Containerization platform for         │   │
+│                  │  │ developers...                          │   │
+│                  │  └─ [ ] Install [Configure] [Details] ───┘   │
+│                  │                                              │
+└──────────────────┴──────────────────────────────────────────────┘
+```
+
+### 4.3 UI Components
+
+1.  **Header Section**: Application banner, system information (macOS version, username), current operation status.
+
+2.  **Left Sidebar (Categories Panel)**:
+
+    - Displays all available categories derived from YAML `category` fields
+    - Allows navigation between categories
+    - Shows selection indicator for current category
+    - Categories are sorted alphabetically
+
+3.  **Main Content Area (Items Panel)**:
+
+    - Displays all items within the selected category
+    - Shows item name, description, and status for each option
+    - Provides real-time description viewing when navigating through items
+    - Status indicators: installed (✓), not installed ( ), failed (✗), pending (⏳)
+    - Multi-select capability for batch operations
+    - Action buttons: Install, Configure, Uninstall, Details
+
+4.  **Description Display**:
+
+    - Dynamic description text that updates as user navigates through items
+    - Shows full item description from YAML files
+    - Displays dependencies and requirements
+
+5.  **Installation Progress Screen**:
+
+    - Full-screen overlay during operations
+    - Progress indicators and real-time script output
+    - Clear error messages and visual indicators for failures
+
+6.  **Summary Screen**:
+    - Post-operation summary with success/failure counts
+    - List of problematic items with details
+    - Options for viewing logs or performing additional actions
 
 ## 5. Core Functions and Logic
 
-### 5.1 Configuration Management (`config-loader.sh`, `validator.sh`)
+### 5.1 Configuration Management (`utils/config_loader.py`, `utils/validators.py`)
 
-- `loadConfigurations(baseConfigDir)`: Recursively scans `configs/init/`, `configs/apps/`, and `configs/system/` for `*.yaml` files within their respective item subdirectories. Parses them (using a shell YAML parser like `yq`) and builds an in-memory representation (e.g., associative arrays), storing `ITEM_CONFIG_DIR` for each.
-- `validateConfigurations(configs)`: Checks YAMLs for schema compliance, valid `type` values, and presence of required script blocks.
-- Dependency Graph: Builds and resolves dependencies listed in YAML files.
+- `load_configurations()`: Recursively scans the entire `configs/` directory and all subdirectories for `*.yml` files, parses them using Python YAML parser, and builds configuration objects. The physical directory structure is used only for file organization and does not affect UI categorization.
+- `validate_configurations()`: Checks YAMLs for schema compliance, valid `type` values, and presence of required script blocks.
+- **Dependency Resolution**: Builds and resolves dependencies listed in YAML files.
+- **Category Extraction**: Extracts unique categories from all YAML files based on the `category` field for UI organization.
 
-### 5.2 Installation Engine (`engine.sh`)
+### 5.2 Installation Engine (`utils/installer.py`)
 
-- `checkInstallStatus(config, itemConfigDir)`: Executes `validate` script.
-- `installItem(config, itemConfigDir)`: Executes `install` script.
-- `configureItem(config, itemConfigDir)`: Executes `configure` script.
-- `uninstallItem(config, itemConfigDir)`: Executes `uninstall` script.
-- `batchProcess(selectedItems, operationType)`:
-  - Determines correct order based on dependencies (items in `configs/init/` might have implicit ordering or be processed first).
-  - For each item, calls the relevant function (`installItem`, `uninstallItem`, etc.).
-  - Handles error logic: logs errors, continues if non-critical, skips dependents on critical failures.
-  - Updates UI (using Gum commands for feedback) with progress and status.
+- `check_install_status()`: Executes `validate` script for an item.
+- `install_item()`: Executes `install` script for an item.
+- `configure_item()`: Executes `configure` script for an item.
+- `uninstall_item()`: Executes `uninstall` script for an item.
+- `batch_process()`: Orchestrates processing of selected items, handles dependencies, manages error flow.
 
-### 5.3 System Configuration (`system-config.sh`)
+### 5.3 Logging System (`utils/logger.py`)
 
-- Provides helper functions or manages more complex system configuration tasks if needed beyond simple script execution by `engine.sh`.
-- Specifically handles the logic for `type: "launch_agent"` for keyboard remapping via `hidutil`.
+- Configurable logging levels (INFO, DEBUG, ERROR).
+- Optional verbose mode activated with `--verbose` parameter.
+- File-based logging to `~/Library/Logs/MacSnap/setup.log`.
+- Console output formatting and progress indication.
 
-### 5.4 Shell Execution (`utils/shell.sh` or integrated into `engine.sh`)
+### 5.4 User Interface (`utils/ui.py`)
 
-- Provides a robust function to execute Zsh scripts, capture stdout/stderr, exit codes, and stream output to the UI (via Gum) and logger.
-- Injects `ITEM_CONFIG_DIR` environment variable.
-
-### 5.5 Permissions and Sudo (`utils/permissions.sh`)
-
-- MacSnap Setup itself will not require `sudo` to run.
-- Individual Zsh scripts within YAMLs that need elevated privileges must include `sudo` in their commands (e.g., `sudo brew install ...`). macOS will handle the `sudo` prompt.
-- The application may guide users to manually grant permissions if required (e.g., Accessibility for certain `defaults` commands or Full Disk Access for broad file operations, though the latter should be minimized).
+- **Two-Column Layout Management**: Handles the left sidebar (categories) and main content area (items) layout.
+- **Category Navigation**: Manages category selection and switching between different software categories.
+- **Item Display and Selection**: Renders items within selected categories with descriptions, status indicators, and action buttons.
+- **Real-time Description Updates**: Updates item descriptions dynamically as users navigate through options.
+- **Multi-Selection Support**: Allows users to select multiple items for batch operations.
+- **Progress Indication**: Real-time progress feedback during installation and configuration processes.
+- **Error Handling**: Clear error message formatting and display with recovery suggestions.
+- **User Input Validation**: Handles user input validation and confirmation prompts.
 
 ## 6. Implementation Details for Handlers
 
-Specific logic for each `type` in YAML:
+Specific logic for each `type` in YAML configurations:
 
-1.  **`brew`, `brew_cask`**: Scripts will use `brew install/uninstall/list` commands.
-2.  **`mas`**: Scripts use `mas install/list`. User must be signed into App Store. Failures due to this will be logged.
-3.  **`direct_download_dmg`**: Scripts will `curl` the DMG, `hdiutil attach`, `cp -R` the `.app` bundle, `hdiutil detach`, and clean up.
-4.  **`direct_download_pkg`**: Scripts will `curl` the PKG and use `sudo installer -pkg ... -target /`.
-5.  **`proto_tool`**: Scripts use `proto install <tool>`, `proto run <tool> -- <command>`.
+1.  **`brew`, `brew_cask`**: Scripts use `brew install/uninstall/list` commands.
+2.  **`mas`**: Scripts use `mas install/list`. User must be signed into App Store.
+3.  **`direct_download_dmg`**: Scripts download DMG files, mount them, copy applications, and clean up.
+4.  **`direct_download_pkg`**: Scripts download and install PKG files using `installer` command.
+5.  **`proto_tool`**: Scripts use `proto install <tool>` and related commands.
 6.  **`system_config`**: Scripts primarily use `defaults write/read/delete` commands.
-7.  **`launch_agent`**: `install` script copies/creates a `.plist` in `~/Library/LaunchAgents` (using `ITEM_CONFIG_DIR` for templates) and loads it with `launchctl load`. `uninstall` script uses `launchctl unload` and removes the plist.
-8.  **`shell_script`**: Generic Zsh script execution.
+7.  **`launch_agent`**: Scripts manage `.plist` files in `~/Library/LaunchAgents` using `launchctl`.
+8.  **`shell_script`**: Generic shell script execution with environment variable injection.
 
-## 7. Specific Software Installation List (Examples)
+## 7. Technical Requirements
 
-(Items will be placed in `configs/init/`, `configs/apps/`, or `configs/system/` subdirectories as appropriate. The `category` field in YAML will drive UI grouping.)
+- **Python 3.8+**: Core runtime environment
+- **macOS 15.4.1+**: Target operating system
+- **Homebrew**: Installed automatically by `setup.sh` as a core requirement
+- **Internet Connection**: Required for downloading software and packages
 
-### 7.1 Initial Setup (`configs/init/`)
+**Note**: Homebrew is not included in the YAML configurations as it is a core requirement of the application and is installed directly by the `setup.sh` bootstrap script.
 
-- Homebrew (`brew/brew.yaml`, type: `shell_script` for initial install, `category: "Core Utilities"`)
-- Mac App Store CLI (`mas-cli/mas-cli.yaml`, type: `brew`, depends on "brew", `category: "Core Utilities"`)
-- Proto version manager (`proto/proto.yaml`, type: `brew`, depends on "brew", `category: "Development"`)
+## 8. Usage
 
-### 7.2 Applications (`configs/apps/`)
+### 8.1 Initial Setup
 
-- iTerm2 (`iterm2/iterm2.yaml`, type: `brew_cask`, `category: "Terminal"`)
-- Node.js (`node/node.yaml`, type: `proto_tool`, depends on "proto", `category: "Development"`)
-- npm, yarn, pnpm, uv (similar `proto_tool` types, `category: "Development"`)
-- Docker (`docker/docker.yaml`, type: `brew_cask`, `category: "Development"`)
-- Visual Studio Code (`vscode/vscode.yaml`, type: `brew_cask`, `category: "Development"`)
-- Oh My Posh (`oh-my-posh/oh-my-posh.yaml`, type: `brew`, `category: "Shell Enhancement"`)
-- Antidote (`antidote/antidote.yaml`, type: `brew` or `shell_script`, `category: "Shell Enhancement"`)
-- Warp Terminal (`warp/warp.yaml`, type: `brew_cask`, `category: "Terminal"`)
-- Raycast (`raycast/raycast.yaml`, type: `brew_cask`, `category: "Productivity"`)
-- CleanShot X (`cleanshotx/cleanshotx.yaml`, type: `mas` or `brew_cask`, `category: "Productivity"`)
-- Google Chrome (`chrome/chrome.yaml`, type: `brew_cask`, `category: "Browsers"`)
-- Spotify (`spotify/spotify.yaml`, type: `brew_cask`, `category: "Media"`)
-- VLC (`vlc/vlc.yaml`, type: `brew_cask`, `category: "Media"`)
-- Telegram (`telegram/telegram.yaml`, type: `brew_cask` or `mas`, `category: "Communication"`)
-- ChatGPT Desktop (`chatgpt-desktop/chatgpt-desktop.yaml`, type: `brew_cask` or `direct_download_dmg`, `category: "AI Tools"`)
-- Claude Desktop (`claude-desktop/claude-desktop.yaml`, type: `brew_cask` or `direct_download_dmg`, `category: "AI Tools"`)
-- Synthesia (`synthesia/synthesia.yaml`, type: `direct_download_dmg` or `brew_cask`, `category: "Media"`)
+```bash
+# Clone or download MacSnap Setup
+cd macsnap-setup
 
-### 7.3 System Configurations (`configs/system/`)
+# Run the bootstrap script (installs Homebrew and sets up Python environment)
+./setup.sh
 
-- Trackpad: Tap to click (`trackpad-tap-click/trackpad-tap-click.yaml`, type: `system_config`, `category: "System Tweaks"`)
-- Dock: Auto-hide, size (`dock-settings/dock-settings.yaml`, type: `system_config`, `category: "System Tweaks"`)
-- Keyboard: Repeat rate (`keyboard-repeat/keyboard-repeat.yaml`, type: `system_config`, `category: "System Tweaks"`)
-- Custom keyboard remapping agent (`keyboard-fix/keyboard-fix.yaml`, type: `launch_agent` using `hidutil`, `category: "System Tweaks"`)
+# The setup script will automatically launch macsnap.py after setup
+```
 
-## 8. Technical Requirements
+### 8.2 Running MacSnap
 
-- Node.js 18+
-- Gum framework (for terminal UI)
-- `yaml` library (for parsing configuration files)
-- macOS 15.4.1 or newer
-- User must have privileges to run `sudo` for commands that require it within scripts.
+```bash
+# Normal execution
+python macsnap.py
+
+# With verbose logging
+python macsnap.py --verbose
+```
 
 ## 9. Implementation Plan & Checklist
 
-Here is the phased plan for developing MacSnap Setup:
+### Phase 0: Project Foundation & Setup ✅
 
-### Phase 0: Project Initialization & Core Setup
+- [x] **Project Structure**: Create root directory structure with proper organization
+- [x] **Documentation**: Create comprehensive README with architecture and specifications
+- [x] **Bootstrap Script**: `setup.sh` for Homebrew installation and Python environment setup
+- [x] **Python Dependencies**: `requirements.txt` with necessary packages
+- [x] **Initial Files**: Basic `macsnap.py` entry point created
 
-- [x] **Set up Project Files:** Ensure `macsnap.sh`, `utils/`, and `configs/` are at the workspace root.
-- [x] **Initialize Shell Script Project:** (No equivalent to `pnpm init`, main script `macsnap.sh` will be created)
-- [x] **Install Core Dependencies:** Install `gum`, `yq` (for YAML parsing).
-- [x] **Establish Directory Structure:** Create the `utils/` and `configs/` directories at the workspace root as specified in section 2.2.
-- [/] **Create Main Executable:** Develop the `macsnap.sh` main shell script entry point at the workspace root.
+### Phase 1: Core Python Modules Development
 
-### Phase 1: Configuration System Development
+#### 1.1 Configuration System (`utils/config_loader.py`) ✅
 
-- [ ] **`config-loader.sh` - Load Configurations:**
-  - [ ] Implement `loadConfigurations(baseConfigDir)` to recursively find and parse `*.yaml` files from `configs/init/`, `configs/apps/`, and `configs/system/` item subdirectories using `yq`.
-  - [ ] Store the path to each item's specific directory to be passed as `ITEM_CONFIG_DIR` to scripts.
-- [ ] **`validator.sh` - Validate YAML Structure:**
-  - [ ] Implement `validateConfigurations(configs)` to check for correct YAML format, required fields, and defined `type` values.
-  - [ ] Ensure all defined `type` values are recognized: `brew`, `brew_cask`, `mas`, `direct_download_dmg`, `direct_download_pkg`, `proto_tool`, `system_config`, `launch_agent`, `shell_script`.
-- [ ] **Dependency Resolution:** Implement logic in shell script to build a dependency graph and determine correct processing order.
+- [x] **File Discovery**: Implement recursive scanning of `configs/` directory for `*.yml` files
+- [x] **YAML Parsing**: Parse YAML files and build configuration objects
+- [x] **Category Extraction**: Extract unique categories from `category` fields across all YAML files
+- [x] **Environment Variables**: Set up `ITEM_CONFIG_DIR` injection for scripts
+- [x] **Error Handling**: Handle malformed YAML files and missing dependencies
 
-### Phase 2: Core Engine Development (`engine.sh`)
+#### 1.2 Configuration Validation (`utils/validators.py`) ✅
 
-- [ ] **Script Execution Functions:**
-  - [ ] `checkInstallStatus(config, itemConfigDir)`: Execute `validate` script.
-  - [ ] `installItem(config, itemConfigDir)`: Execute `install` script.
-  - [ ] `configureItem(config, itemConfigDir)`: Execute `configure` script.
-  - [ ] `uninstallItem(config, itemConfigDir)`: Execute `uninstall` script.
-- [ ] **`batchProcess(selectedItems, operationType)`:** Orchestrate item processing, handle dependencies, manage error flow (continue/halt dependents), and pass `ITEM_CONFIG_DIR`.
+- [x] **Schema Validation**: Validate YAML structure and required fields (`id`, `name`, `type`, `category`)
+- [x] **Type Validation**: Ensure `type` field contains valid values (`brew`, `brew_cask`, `mas`, etc.)
+- [x] **Script Validation**: Check presence of required script blocks based on item type
+- [x] **Dependency Validation**: Validate that all dependencies reference existing item IDs
+- [x] **Circular Dependency Detection**: Prevent circular dependency chains
 
-### Phase 3: UI Development (Gum commands - `src/cli/`)
+#### 1.3 Installation Engine (`utils/installer.py`) ✅
 
-- [ ] **Styling (`styles/` - Environment Variables):** Define Gum styling environment variables for colors.
-- [ ] **Basic UI Components (`components/` - Shell Functions):** `Header.sh`, `Footer.sh`, `ProgressBar.sh` (using `gum progress`), `SelectionList.sh` (using `gum choose` or `gum filter`).
-- [ ] **Main Screens (`screens/` - Shell Scripts):** `MainMenu.sh`, `CategoryView.sh`, `InstallProgress.sh`, `SummaryScreen.sh`.
-- [ ] **Integrate UI with Engine:** Connect UI to display data, reflect progress (e.g. `gum spin`), and trigger engine actions, using the YAML `category` field for UI grouping.
+- [x] **Script Execution**: Execute shell scripts from YAML with proper environment setup
+- [x] **Dependency Resolution**: Build and resolve dependency graphs for correct installation order
+- [x] **Installation Functions**:
+  - [x] `check_install_status()` - Execute `validate` scripts
+  - [x] `install_item()` - Execute `install` scripts
+  - [x] `configure_item()` - Execute `configure` scripts
+  - [x] `uninstall_item()` - Execute `uninstall` scripts
+- [x] **Batch Processing**: Handle multiple item selection and batch operations
+- [x] **Error Handling**: Continue on non-critical failures, halt dependents on critical failures
+- [x] **Type Handlers**: Implement specific logic for each installation type
 
-### Phase 4: Core Utilities & Handlers
+#### 1.4 Logging System (`utils/logger.py`) ✅
 
-- [ ] **Shell Execution (integrated into `engine.sh`):** Develop robust Zsh script execution function, injecting `ITEM_CONFIG_DIR` and handling output streaming (potentially with `gum log`).
-- [ ] **`logger.sh` (`utils/`):** Implement comprehensive file-based logging (e.g., `~/Library/Logs/MacSnap/setup.log`). Log script executions, errors, and key events.
-- [ ] **Type Handlers (in `engine.sh` or dedicated functions):** Implement the specific logic wrapper for each `type` to call the correct script fields.
-- [ ] **`permissions.sh` (`utils/`):** Basic functions to guide users for manual permission settings if script failures indicate them.
+- [x] **Log Levels**: Implement INFO, DEBUG, ERROR logging levels
+- [x] **Verbose Mode**: Support `--verbose` command line parameter
+- [x] **File Logging**: Write logs to `~/Library/Logs/MacSnap/setup.log`
+- [x] **Console Output**: Formatted console output with progress indication
+- [x] **Script Output Capture**: Capture and log stdout/stderr from executed scripts
 
-### Phase 5: Populate Configuration Files (`configs/`)
+#### 1.5 User Interface (`utils/ui.py`) ✅
 
-- [ ] **For each item listed in section 7 (and others planned):**
-  - [ ] Create its subdirectory within the appropriate top-level folder (`configs/init/`, `configs/apps/`, or `configs/system/`). For example, `configs/apps/iterm2/`.
-  - [ ] Create the item's YAML file (e.g., `iterm2.yaml`).
-  - [ ] Add auxiliary files (plists, templates, etc.) into the item's subdirectory.
-  - [ ] Write idempotent Zsh scripts for `install`, `validate`, `configure` (if needed), and `uninstall`, using `${ITEM_CONFIG_DIR}` to reference local files.
-  - [ ] Define `dependencies` where appropriate and set the `category` field for UI display.
+- [x] **Two-Column Layout**: Implement left sidebar (categories) and main content area (items)
+- [x] **Category Navigation**:
+  - [x] Display categories alphabetically
+  - [x] Handle category selection and switching
+  - [x] Show current selection indicator
+- [x] **Item Display**:
+  - [x] List items within selected category
+  - [x] Show status indicators (✓, ✗, ⏳, etc.)
+  - [x] Display item names and descriptions
+  - [x] Real-time description updates during navigation
+- [x] **Multi-Selection**: Allow selecting multiple items for batch operations
+- [x] **Action Buttons**: Install, Configure, Uninstall, Details buttons
+- [x] **Progress Display**: Full-screen overlay for installation progress
+- [x] **Error Display**: Clear error messages with recovery suggestions
 
-### Phase 6: UI Enhancements & Theme (Gum Styling)
+### Phase 2: Main Application Development
 
-- [ ] **Apply Consistent Aesthetic:** Refine all UI components with Gum styling options.
-- [ ] **Implement Interactive Elements:** Use `gum input`, `gum write`, `gum confirm`, etc. for interactivity.
-- [ ] **Enhance Feedback:** Utilize `gum notify`, `gum spin`, `gum progress` effectively.
+#### 2.1 Main Application (`macsnap.py`) ✅
 
-### Phase 7: Specific Feature Implementations
+- [x] **Command Line Arguments**: Parse `--verbose` and other command line options
+- [x] **Application Initialization**: Set up logging, load configurations, validate setup
+- [x] **Main Loop**: Implement main user interface loop with category/item navigation
+- [x] **Event Handling**: Handle user input for navigation, selection, and actions
+- [x] **Installation Orchestration**: Coordinate between UI, installer, and logger
+- [x] **Graceful Exit**: Handle Ctrl+C and other exit conditions properly
 
-- [ ] **Oh My Posh Setup:** Ensure YAML scripts for Oh My Posh correctly handle theme installation and font recommendations, using `ITEM_CONFIG_DIR` if bundling assets.
-- [ ] **Antidote Configuration:** Ensure YAML scripts correctly set up Antidote and manage Zsh plugin lists.
-- [ ] **Keyboard Fix Agent (`hidutil` + Launch Agent):**
-  - [ ] Create `keyboard-fix.yaml` (type `launch_agent`) with its `.plist` template (defining `hidutil` commands) in its `ITEM_CONFIG_DIR` (e.g. `configs/system/keyboard-fix/`).
-  - [ ] `install.script` should copy/customize the plist to `~/Library/LaunchAgents/` and load with `launchctl`.
-  - [ ] `validate.script` checks if the agent is loaded (`launchctl list`).
-  - [ ] `uninstall.script` unloads and removes the plist.
+### Phase 3: Configuration Files Population
 
-### Phase 8: Testing
+#### 3.1 Core Utilities
 
-- [ ] **Unit Tests:** For core logic (config loading, YAML validation, dependency resolution, script execution utilities).
-- [ ] **Integration Tests:** Test individual type handlers with mock configurations.
-- [ ] **End-to-End Testing:**
-  - [ ] On a clean macOS VM, test installation/configuration of a representative software subset from `init`, `apps`, and `system`.
-  - [ ] Verify system settings are applied correctly.
-  - [ ] Test error handling (item failure, critical dependency failure) and UI feedback.
-  - [ ] Verify correct usage of `ITEM_CONFIG_DIR` in scripts.
-  - [ ] Confirm log file creation and content.
+- [x] **mas-cli**: Mac App Store CLI configuration
+- [ ] **yq**: YAML processor for potential script use
+- [ ] **git**: Git configuration and setup
 
-### Phase 9: Documentation & Packaging
+#### 3.2 Development Tools
 
-- [ ] **Refine `logger.sh`:** Ensure logging is robust and informative.
-- [ ] **User Documentation:** Update/create comprehensive user guide: how to run, explanation of UI categories (using Gum for presentation), troubleshooting common issues, log file location and interpretation.
-- [ ] **Developer Documentation (Optional but Recommended):** Guidelines on how to add new software/configurations (YAML structure, script writing, placing files in `init/`, `apps/`, or `system/`).
-- [ ] **Distribution Preparation:** Refine `macsnap` script, consider creating an installer or simple distribution archive.
+- [x] **Visual Studio Code**: Code editor with extensions
+- [x] **Docker Desktop**: Containerization platform
+- [ ] **Node.js**: JavaScript runtime (via brew or proto)
+- [ ] **Python Tools**: pip, pipenv, poetry configurations
+- [ ] **Oh My Zsh**: Shell enhancement framework
+- [ ] **Git Tools**: GitHub CLI, Git GUI tools
 
-### Phase 10: Iteration & Refinement
+#### 3.3 Productivity Applications
 
-- [ ] **Address Testing Issues:** Fix bugs identified during all testing phases.
-- [ ] **Refine UI/UX:** Based on usability testing and feedback.
-- [ ] **Incorporate Feedback:** Address any further user feedback on initial versions.
+- [x] **Raycast**: Launcher and productivity tool
+- [ ] **Alfred**: Alternative launcher (if user prefers)
+- [ ] **1Password**: Password manager
+- [ ] **Notion**: Note-taking and productivity
+- [ ] **Slack**: Team communication
+- [ ] **Zoom**: Video conferencing
 
-This revised technical design document provides a comprehensive blueprint for the MacSnap Setup application.
+#### 3.4 Browsers
+
+- [x] **Google Chrome**: Primary browser
+- [ ] **Firefox**: Alternative browser
+- [ ] **Safari Extensions**: Safari-specific enhancements
+- [ ] **Arc**: Modern browser alternative
+
+#### 3.5 Media & Communication
+
+- [ ] **Spotify**: Music streaming
+- [ ] **VLC**: Media player
+- [ ] **Telegram**: Messaging app
+- [ ] **Discord**: Gaming/community chat
+- [ ] **WhatsApp**: Messaging app
+
+#### 3.6 System Tweaks
+
+- [x] **Trackpad Settings**: Tap to click and sensitivity
+- [x] **Dock Settings**: Auto-hide, size, position
+- [ ] **Keyboard Settings**: Repeat rate, modifier keys
+- [ ] **Finder Settings**: Show hidden files, default view
+- [ ] **Menu Bar**: Hide/show items, organization
+- [ ] **Security Settings**: Firewall, privacy configurations
+
+### Phase 4: Advanced Features
+
+#### 4.1 Installation Types Implementation
+
+- [ ] **brew**: Homebrew formula installation
+- [ ] **brew_cask**: Homebrew cask (GUI app) installation
+- [ ] **mas**: Mac App Store app installation
+- [ ] **direct_download_dmg**: DMG download and installation
+- [ ] **direct_download_pkg**: PKG download and installation
+- [ ] **proto_tool**: Proto tool manager integration
+- [ ] **system_config**: macOS defaults configuration
+- [ ] **launch_agent**: Launch agent setup and management
+- [ ] **shell_script**: Generic shell script execution
+
+#### 4.2 Advanced UI Features
+
+- [ ] **Search/Filter**: Search within categories and across all items
+- [ ] **Favorites**: Mark frequently used items as favorites
+- [ ] **Installation History**: Track and display installation history
+- [ ] **Update Notifications**: Check for updates to installed applications
+- [ ] **Backup/Restore**: Export/import configuration selections
+
+### Phase 5: Testing & Quality Assurance
+
+#### 5.1 Unit Testing
+
+- [ ] **Configuration Loading**: Test YAML parsing and validation
+- [ ] **Dependency Resolution**: Test dependency graph building and resolution
+- [ ] **Script Execution**: Test script execution with mocked commands
+- [ ] **UI Components**: Test individual UI components and navigation
+- [ ] **Error Handling**: Test error conditions and recovery
+
+#### 5.2 Integration Testing
+
+- [ ] **End-to-End Flows**: Test complete installation workflows
+- [ ] **Type Handler Testing**: Test each installation type with real/mock environments
+- [ ] **Dependency Chain Testing**: Test complex dependency scenarios
+- [ ] **UI Integration**: Test complete UI navigation and selection workflows
+
+#### 5.3 System Testing
+
+- [ ] **Clean macOS Testing**: Test on fresh macOS installation (VM recommended)
+- [ ] **Permission Handling**: Test sudo prompts and permission requirements
+- [ ] **Error Recovery**: Test recovery from failed installations
+- [ ] **Performance Testing**: Test with large numbers of configuration files
+
+### Phase 6: Documentation & Distribution
+
+#### 6.1 User Documentation
+
+- [ ] **Installation Guide**: Step-by-step setup instructions
+- [ ] **Usage Guide**: How to navigate and use the interface
+- [ ] **Troubleshooting Guide**: Common issues and solutions
+- [ ] **Configuration Guide**: How to add custom software configurations
+
+#### 6.2 Developer Documentation
+
+- [ ] **Architecture Documentation**: Code organization and design patterns
+- [ ] **API Documentation**: Function and class documentation
+- [ ] **Configuration Schema**: YAML configuration format specification
+- [ ] **Contributing Guide**: Guidelines for adding new configurations
+
+#### 6.3 Distribution Preparation
+
+- [ ] **Setup Script Refinement**: Polish `setup.sh` for reliable execution
+- [ ] **Packaging**: Create distribution package or installer
+- [ ] **Version Management**: Implement version checking and updates
+- [ ] **Release Notes**: Document features and changes
+
+### Phase 7: Enhancement & Maintenance
+
+#### 7.1 Community Features
+
+- [ ] **Configuration Sharing**: Allow users to share configuration files
+- [ ] **Online Repository**: Central repository for community configurations
+- [ ] **Update Mechanism**: Automatic updates for configurations and app
+
+#### 7.2 Advanced Features
+
+- [ ] **Profile Management**: Multiple configuration profiles (work, personal, etc.)
+- [ ] **Scheduled Operations**: Schedule installations or updates
+- [ ] **Notification System**: Native macOS notifications for completed operations
+- [ ] **Analytics**: Optional usage analytics and improvement suggestions
+
+---
+
+**Current Status**: Phase 0 Complete ✅ | **Phase 1 Complete ✅** | **Phase 2 Complete ✅**
+
+**Next Priority**: Begin Phase 3 - Configuration Files Population (or test the complete application).
+
+git configs
+git config --global pull.rebase true
+git config --global rebase.autoStash true
+
+some other nice mac apps
+https://www.youtube.com/watch?v=D2_8qJi2jpQ

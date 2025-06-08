@@ -1,0 +1,18 @@
+id: "mas_cli"
+name: "Mac App Store CLI"
+description: "Command line interface for the Mac App Store"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+dependencies: []
+install:
+  script: |
+    echo "Installing mas-cli..."
+    brew install mas
+validate:
+  script: |
+    command -v mas &> /dev/null
+configure:
+  script: |
+    echo "mas-cli configuration complete"
+    mas version

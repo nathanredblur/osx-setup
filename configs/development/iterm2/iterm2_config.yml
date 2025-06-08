@@ -4,8 +4,7 @@ description: "A replacement for Terminal and the successor to iTerm."
 type: "brew_cask"
 category: "Terminal"
 selected_by_default: true
-dependencies:
-  - "brew"
+dependencies: []
 install:
   script: |
     echo "Installing iTerm2..."

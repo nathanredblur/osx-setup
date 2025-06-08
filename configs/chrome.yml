@@ -1,0 +1,16 @@
+id: "chrome"
+name: "Google Chrome"
+description: "Fast, secure, and free web browser"
+type: "brew_cask"
+category: "Browsers"
+dependencies: []
+install:
+  script: |
+    echo "Installing Google Chrome..."
+    brew install --cask google-chrome
+validate:
+  script: |
+    brew list --cask | grep -q "google-chrome" || ls /Applications/ | grep -q "Google Chrome.app"
+configure:
+  script: |
+    echo "Google Chrome configuration complete"

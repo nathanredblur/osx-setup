@@ -1,0 +1,22 @@
+id: "vscode"
+name: "Visual Studio Code"
+description: "Free source-code editor made by Microsoft"
+type: "brew_cask"
+category: "Development"
+dependencies: []
+install:
+  script: |
+    echo "Installing Visual Studio Code..."
+    brew install --cask visual-studio-code
+validate:
+  script: |
+    brew list --cask | grep -q "visual-studio-code" || ls /Applications/ | grep -q "Visual Studio Code.app"
+configure:
+  script: |
+    echo "Visual Studio Code configuration complete"
+    # Install the 'code' command in PATH
+    if command -v code &> /dev/null; then
+      echo "VS Code 'code' command is available"
+    else
+      echo "You may need to install 'code' command from VS Code Command Palette: Shell Command: Install 'code' command in PATH"
+    fi

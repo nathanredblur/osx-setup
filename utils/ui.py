@@ -1,41 +1,52 @@
 """
-User Interface for MacSnap Setup.
+Modern User Interface for MacSnap Setup using Textual.
 
 This module provides:
-- Two-column layout: left sidebar (categories) and main content area (items)
-- Category navigation with alphabetical sorting
-- Item display with status indicators and descriptions
-- Multi-selection support for batch operations
-- Action buttons and progress display
-- Error handling and recovery suggestions
+- Rich, modern terminal interface using Textual
+- Two-column layout with interactive widgets
+- Real-time status updates and progress tracking
+- Beautiful styling and animations
+- Mouse and keyboard support
+- Responsive design
 """
 
-import curses
-import sys
-import os
+import asyncio
 import platform
-from typing import Dict, List, Set, Optional, Tuple, Any, Callable
+import os
+from typing import Dict, List, Set, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
-from datetime import datetime
+
+from textual.app import App, ComposeResult
+from textual.containers import Container, Horizontal, Vertical, ScrollableContainer
+from textual.widgets import (
+    Header, Footer, Button, Static, DataTable, ProgressBar, 
+    Label, Checkbox, Tree, Tabs, Tab, Collapsible, Pretty,
+    Select, Input, TextArea, RadioSet, RadioButton, Switch
+)
+from textual.reactive import reactive
+from textual.message import Message
+from textual.binding import Binding
+from textual.screen import Screen, ModalScreen
+from textual.coordinate import Coordinate
+from textual import events
+from textual.color import Color
+from rich.console import Console
+from rich.text import Text
+from rich.table import Table
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.syntax import Syntax
+from rich.markdown import Markdown
 
 from .config_loader import ConfigItem, ConfigLoader
 from .installer import InstallationEngine, ExecutionResult, OperationResult
 from .logger import MacSnapLogger, get_logger
 
-class UIState(Enum):
-    """States of the user interface."""
-    CATEGORY_SELECTION = "category_selection"
-    ITEM_SELECTION = "item_selection"
-    CONFIRMATION = "confirmation"
-    INSTALLATION = "installation"
-    RESULTS = "results"
-    ERROR = "error"
-
 class ItemStatus(Enum):
     """Status of items for display."""
     UNKNOWN = "unknown"
-    INSTALLED = "installed"
+    INSTALLED = "installed" 
     NOT_INSTALLED = "not_installed"
     SELECTED = "selected"
     INSTALLING = "installing"
@@ -47,86 +58,586 @@ class UIItem:
     config: ConfigItem
     status: ItemStatus
     selected: bool = False
-    description_lines: List[str] = None
     
-    def __post_init__(self):
-        if self.description_lines is None:
-            self.description_lines = self._wrap_description()
+    @property
+    def status_emoji(self) -> str:
+        """Get emoji for current status."""
+        return {
+            ItemStatus.INSTALLED: "✅",
+            ItemStatus.NOT_INSTALLED: "⭕", 
+            ItemStatus.SELECTED: "☑️",
+            ItemStatus.INSTALLING: "⏳",
+            ItemStatus.FAILED: "❌",
+            ItemStatus.UNKNOWN: "❓"
+        }.get(self.status, "❓")
     
-    def _wrap_description(self, width: int = 50) -> List[str]:
-        """Wrap description text to fit in the display area."""
-        if not self.config.description:
-            return ["No description available."]
-        
-        words = self.config.description.split()
-        lines = []
-        current_line = ""
-        
-        for word in words:
-            if len(current_line + " " + word) <= width:
-                if current_line:
-                    current_line += " " + word
-                else:
-                    current_line = word
-            else:
-                if current_line:
-                    lines.append(current_line)
-                current_line = word
-        
-        if current_line:
-            lines.append(current_line)
-        
-        return lines or ["No description available."]
+    @property
+    def status_color(self) -> str:
+        """Get color for current status."""
+        return {
+            ItemStatus.INSTALLED: "green",
+            ItemStatus.NOT_INSTALLED: "grey50",
+            ItemStatus.SELECTED: "blue", 
+            ItemStatus.INSTALLING: "yellow",
+            ItemStatus.FAILED: "red",
+            ItemStatus.UNKNOWN: "grey70"
+        }.get(self.status, "grey70")
 
-class MacSnapUI:
-    """
-    Terminal user interface for MacSnap Setup.
+class CategoryList(Vertical):
+    """Widget for displaying category list in sidebar."""
     
-    Features:
-    - Two-column layout with category sidebar and item content area
-    - Interactive navigation with keyboard controls
-    - Real-time status checking and progress display
-    - Multi-selection support for batch operations
-    - Colored output and status indicators
+    # Make widget focusable
+    can_focus = True
+    
+    def __init__(self, categories: List[str], ui_items: Dict[str, List[UIItem]]):
+        super().__init__()
+        self.categories = categories
+        self.ui_items = ui_items
+        self.selected_category = categories[0] if categories else ""
+        self.focus_index = 0  # Track which category has focus
+    
+    def compose(self) -> ComposeResult:
+        """Create the category list."""
+        yield Static("📁 Categories", id="category-title")
+        
+        for i, category in enumerate(self.categories):
+            item_count = len(self.ui_items.get(category, []))
+            is_selected = category == self.selected_category
+            
+            # Create category item
+            category_text = f"{'▶ ' if is_selected else '  '}{category} ({item_count})"
+            
+            category_classes = "category-item"
+            if is_selected:
+                category_classes += " category-item-selected"
+            
+            category_widget = Static(
+                category_text,
+                classes=category_classes,
+                id=f"cat-{category.lower().replace(' ', '-')}"
+            )
+            yield category_widget
+    
+    def set_selected_category(self, category: str):
+        """Update selected category without recomposing."""
+        if category in self.categories:
+            old_category = self.selected_category
+            self.selected_category = category
+            self.focus_index = self.categories.index(category)
+            
+            # Update the display of old and new selected items
+            self._update_category_display(old_category, False)
+            self._update_category_display(category, True)
+    
+    def _update_category_display(self, category: str, selected: bool):
+        """Update display of a specific category."""
+        category_id = f"cat-{category.lower().replace(' ', '-')}"
+        try:
+            category_widget = self.query_one(f"#{category_id}", Static)
+            item_count = len(self.ui_items.get(category, []))
+            
+            # Update text and classes
+            category_text = f"{'▶ ' if selected else '  '}{category} ({item_count})"
+            category_widget.update(category_text)
+            
+            if selected:
+                category_widget.add_class("category-item-selected")
+            else:
+                category_widget.remove_class("category-item-selected")
+        except:
+            pass  # Widget not found, ignore
+    
+    def on_click(self, event) -> None:
+        """Handle category clicks."""
+        # Prevent event bubbling
+        event.stop()
+        
+        # Find which category was clicked
+        for i, category in enumerate(self.categories):
+            category_id = f"cat-{category.lower().replace(' ', '-')}"
+            if hasattr(event.widget, 'id') and event.widget.id == category_id:
+                self.focus_index = i
+                self.post_message(CategorySelected(category))
+                break
+    
+    def on_key(self, event) -> None:
+        """Handle keyboard navigation when focused."""
+        if event.key == "up":
+            self.focus_index = (self.focus_index - 1) % len(self.categories)
+            new_category = self.categories[self.focus_index]
+            self.post_message(CategorySelected(new_category))
+            event.prevent_default()
+        elif event.key == "down":
+            self.focus_index = (self.focus_index + 1) % len(self.categories)
+            new_category = self.categories[self.focus_index]
+            self.post_message(CategorySelected(new_category))
+            event.prevent_default()
+        elif event.key == "enter" or event.key == "space":
+            # Select current category and move focus to items table
+            current_category = self.categories[self.focus_index]
+            self.post_message(CategorySelected(current_category))
+            
+            # Send message to move focus to items table
+            self.post_message(FocusItemTable())
+            event.prevent_default()
+
+class CategorySelected(Message):
+    """Message sent when a category is selected."""
+    
+    def __init__(self, category: str):
+        super().__init__()
+        self.category = category
+
+class FocusItemTable(Message):
+    """Message sent to focus the items table."""
+    pass
+
+class FocusCategoryList(Message):
+    """Message sent to focus the category list."""
+    pass
+
+class ItemTable(DataTable):
+    """Custom data table for items with enhanced functionality."""
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.ui_items: List[UIItem] = []
+        self.selected_items: Set[str] = set()
+        self.last_cursor_position = 0  # Remember cursor position
+    
+    def add_items(self, items: List[UIItem]):
+        """Add items to the table."""
+        # Save current cursor position
+        old_cursor_row = getattr(self, 'cursor_row', 0) or 0
+        
+        self.ui_items = items
+        self.clear()
+        
+        # Add columns
+        self.add_column("Status", width=8)
+        self.add_column("Name", width=30) 
+        self.add_column("Type", width=12)
+        self.add_column("Selected", width=10)
+        
+        # Add rows
+        for item in items:
+            selected_text = "☑️ Yes" if item.selected else "☐ No"
+            self.add_row(
+                item.status_emoji,
+                item.config.name,
+                item.config.type,
+                selected_text,
+                key=item.config.id
+            )
+        
+        # Restore cursor position if possible
+        if len(items) > 0:
+            self.last_cursor_position = min(old_cursor_row, len(items) - 1)
+            # Use call_later to ensure the table is fully rendered before setting cursor
+            self.call_later(self._restore_cursor_position)
+    
+    def _restore_cursor_position(self):
+        """Restore cursor to saved position."""
+        try:
+            if self.last_cursor_position < self.row_count:
+                self.cursor_row = self.last_cursor_position
+        except Exception:
+            pass  # Ignore if table not ready
+    
+    def toggle_selection(self, item_id: str):
+        """Toggle selection of an item."""
+        # Save current cursor position
+        current_cursor = getattr(self, 'cursor_row', 0) or 0
+        
+        for item in self.ui_items:
+            if item.config.id == item_id:
+                item.selected = not item.selected
+                break
+        
+        # Refresh the table while preserving cursor position
+        self.last_cursor_position = current_cursor
+        self.add_items(self.ui_items)
+    
+    def on_key(self, event) -> None:
+        """Handle keyboard navigation in items table."""
+        if event.key == "escape" or event.key == "backspace":
+            # Return focus to category list
+            self.post_message(FocusCategoryList())
+            event.prevent_default()
+
+class ItemDetailPanel(Static):
+    """Panel showing detailed information about selected item."""
+    
+    item: reactive[Optional[UIItem]] = reactive(None)
+    
+    def watch_item(self, item: Optional[UIItem]) -> None:
+        """Update display when item changes."""
+        if item is None:
+            self.update("📋 Select an item to view details")
+            return
+        
+        # Create rich content with Tokyo Night colors
+        content_lines = []
+        
+        # Title with emoji
+        title_line = f"📦 {item.config.name}"
+        content_lines.append(title_line)
+        content_lines.append("─" * len(title_line))
+        content_lines.append("")
+        
+        # Status with color
+        status_display = item.status.value.replace("_", " ").title()
+        status_line = f"Status: {item.status_emoji} {status_display}"
+        content_lines.append(status_line)
+        
+        # Basic info
+        content_lines.append(f"Type: {item.config.type}")
+        content_lines.append(f"Category: {item.config.category}")
+        
+        if item.selected:
+            content_lines.append("Selection: ☑️ Selected for installation")
+        else:
+            content_lines.append("Selection: ☐ Not selected")
+        
+        content_lines.append("")
+        
+        # Description
+        if item.config.description:
+            content_lines.append("📝 Description:")
+            # Word wrap description
+            desc_words = item.config.description.split()
+            current_line = ""
+            for word in desc_words:
+                if len(current_line + " " + word) <= 60:  # Wrap at 60 chars
+                    current_line += " " + word if current_line else word
+                else:
+                    if current_line:
+                        content_lines.append(f"   {current_line}")
+                    current_line = word
+            if current_line:
+                content_lines.append(f"   {current_line}")
+            content_lines.append("")
+        
+        # Dependencies
+        if item.config.dependencies:
+            content_lines.append("🔗 Dependencies:")
+            for dep in item.config.dependencies:
+                content_lines.append(f"   • {dep}")
+            content_lines.append("")
+        
+        # Scripts info
+        scripts = []
+        if item.config.install_script:
+            scripts.append("install")
+        if item.config.validate_script:
+            scripts.append("validate")
+        if item.config.configure_script:
+            scripts.append("configure")
+        if item.config.uninstall_script:
+            scripts.append("uninstall")
+        
+        if scripts:
+            content_lines.append("⚙️ Available scripts:")
+            content_lines.append(f"   {', '.join(scripts)}")
+        
+        # Join content and update
+        content_text = "\n".join(content_lines)
+        self.update(content_text)
+
+class ProgressScreen(ModalScreen):
+    """Modal screen for showing installation progress."""
+    
+    def __init__(self, selected_items: List[str]):
+        super().__init__()
+        self.selected_items = selected_items
+        self.progress_log: List[str] = []
+    
+    def compose(self) -> ComposeResult:
+        with Container(id="progress-container"):
+            yield Label("Installing Selected Items", id="progress-title")
+            yield ProgressBar(id="progress-bar")
+            yield Label("Preparing...", id="progress-status")
+            yield ScrollableContainer(
+                Static("", id="progress-log"),
+                id="progress-log-container"
+            )
+            with Horizontal(id="progress-buttons"):
+                yield Button("Cancel", variant="error", id="cancel-btn")
+    
+    def add_log_entry(self, message: str):
+        """Add a log entry to the progress display."""
+        self.progress_log.append(message)
+        log_widget = self.query_one("#progress-log", Static)
+        log_widget.update("\n".join(self.progress_log))
+        
+        # Scroll to bottom
+        container = self.query_one("#progress-log-container", ScrollableContainer)
+        container.scroll_end()
+    
+    def update_progress(self, current: int, total: int, message: str):
+        """Update progress bar and status."""
+        progress_bar = self.query_one("#progress-bar", ProgressBar)
+        status_label = self.query_one("#progress-status", Label)
+        
+        progress_bar.update(progress=current / total * 100)
+        status_label.update(f"{message} ({current}/{total})")
+
+class ResultsScreen(ModalScreen):
+    """Modal screen for showing installation results."""
+    
+    def __init__(self, results: List[ExecutionResult]):
+        super().__init__()
+        self.results = results
+    
+    def compose(self) -> ComposeResult:
+        with Container(id="results-container"):
+            yield Label("Installation Complete", id="results-title")
+            yield self._create_results_table()
+            with Horizontal(id="results-buttons"):
+                yield Button("Close", variant="primary", id="close-btn")
+    
+    def _create_results_table(self) -> DataTable:
+        """Create results table."""
+        table = DataTable(id="results-table")
+        table.add_column("Item", width=25)
+        table.add_column("Operation", width=15)
+        table.add_column("Result", width=15)
+        table.add_column("Duration", width=10)
+        
+        for result in self.results:
+            result_emoji = {
+                OperationResult.SUCCESS: "✅",
+                OperationResult.ALREADY_INSTALLED: "✅",
+                OperationResult.FAILED: "❌",
+                OperationResult.SKIPPED: "⏭️"
+            }.get(result.result, "❓")
+            
+            table.add_row(
+                result.item_id,
+                result.operation,
+                f"{result_emoji} {result.result.value}",
+                f"{result.duration:.1f}s"
+            )
+        
+        return table
+
+class MacSnapApp(App):
     """
+    Main MacSnap Setup application using Textual.
+    
+    A modern, rich terminal interface for macOS software installation.
+    """
+    
+    # Set Tokyo Night theme as default
+    DARK = True
+    
+    CSS = """
+    /* Tokyo Night theme colors */
+    Screen {
+        background: #1a1b26;
+        color: #c0caf5;
+    }
+    
+    #main-container {
+        background: #1a1b26;
+    }
+    
+    /* Left sidebar for categories */
+    #category-sidebar {
+        dock: left;
+        width: 25%;
+        background: #16161e;
+        border-right: solid #3b4261;
+        padding: 1;
+    }
+    
+    CategoryList:focus {
+        border: solid #7aa2f7;
+    }
+    
+    #category-title {
+        text-style: bold;
+        color: #7aa2f7;
+        margin-bottom: 1;
+    }
+    
+    #category-list {
+        height: 100%;
+    }
+    
+    /* Main content area */
+    #content-area {
+        background: #1a1b26;
+        padding: 1;
+    }
+    
+    #item-table {
+        height: 2fr;
+        border: solid #3b4261;
+        margin-bottom: 1;
+        background: #1a1b26;
+    }
+    
+    #item-detail {
+        height: 1fr;
+        border: solid #3b4261;
+        padding: 1;
+        background: #16161e;
+        color: #c0caf5;
+    }
+    
+    /* Control panel */
+    #control-panel {
+        dock: bottom;
+        height: 5;
+        background: #16161e;
+        border-top: solid #3b4261;
+        padding: 1;
+    }
+    
+    #action-buttons {
+        align: center middle;
+    }
+    
+    Button {
+        margin: 0 1;
+        min-width: 16;
+    }
+    
+    Button.-primary {
+        background: #7aa2f7;
+        color: #1a1b26;
+    }
+    
+    Button.-error {
+        background: #f7768e;
+        color: #1a1b26;
+    }
+    
+    Button.-default {
+        background: #3b4261;
+        color: #c0caf5;
+    }
+    
+    /* Category list styling */
+    .category-item {
+        padding: 0 1;
+        margin-bottom: 1;
+        color: #c0caf5;
+        width: 100%;
+    }
+    
+    .category-item:hover {
+        background: #3b4261;
+        color: #7aa2f7;
+    }
+    
+    .category-item-selected {
+        background: #7aa2f7;
+        color: #1a1b26;
+        text-style: bold;
+    }
+    
+    .category-item-selected:hover {
+        background: #9ece6a;
+        color: #1a1b26;
+    }
+    
+    .category-item-count {
+        color: #565f89;
+    }
+    
+    /* Status colors with Tokyo Night palette */
+    .status-installed {
+        color: #9ece6a;
+    }
+    
+    .status-failed {
+        color: #f7768e;
+    }
+    
+    .status-installing {
+        color: #e0af68;
+    }
+    
+    .status-selected {
+        color: #7aa2f7;
+    }
+    
+    /* Modal screens */
+    #progress-container, #results-container {
+        width: 80%;
+        height: 80%;
+        margin: 2;
+        background: #16161e;
+        border: solid #7aa2f7;
+    }
+    
+    #progress-title, #results-title {
+        text-style: bold;
+        text-align: center;
+        margin: 1;
+        color: #7aa2f7;
+    }
+    
+    #progress-log-container {
+        height: 60%;
+        border: solid #3b4261;
+        margin: 1;
+        background: #1a1b26;
+    }
+    
+    #progress-log {
+        padding: 1;
+        color: #c0caf5;
+    }
+    
+    /* Data table styling */
+    DataTable {
+        background: #1a1b26;
+        color: #c0caf5;
+    }
+    
+    DataTable > .datatable--header {
+        background: #16161e;
+        color: #7aa2f7;
+        text-style: bold;
+    }
+    
+    DataTable > .datatable--cursor {
+        background: #7aa2f7;
+        color: #1a1b26;
+    }
+    """
+    
+    BINDINGS = [
+        Binding("q", "quit", "Quit"),
+        Binding("r", "refresh", "Refresh"),
+        Binding("i", "install", "Install Selected"),
+        Binding("space", "toggle_selection", "Toggle Selection"),
+        Binding("ctrl+a", "select_all", "Select All"),
+        Binding("ctrl+d", "deselect_all", "Deselect All"),
+        Binding("tab", "focus_next", "Focus Next"),
+        Binding("shift+tab", "focus_previous", "Focus Previous"),
+        Binding("escape", "focus_categories", "Focus Categories"),
+        Binding("backspace", "focus_categories", "Focus Categories"),
+    ]
     
     def __init__(self, config_loader: ConfigLoader, verbose: bool = False):
-        """
-        Initialize the MacSnap UI.
-        
-        Args:
-            config_loader: Loaded configuration data
-            verbose: Enable verbose logging
-        """
+        super().__init__()
         self.config_loader = config_loader
         self.verbose = verbose
         self.logger = get_logger(verbose=verbose)
         self.engine = InstallationEngine(verbose=verbose)
         
         # UI state
-        self.state = UIState.CATEGORY_SELECTION
         self.categories = sorted(config_loader.categories)
-        self.current_category_index = 0
-        self.current_item_index = 0
+        self.ui_items: Dict[str, List[UIItem]] = {}
+        self.current_category = self.categories[0] if self.categories else ""
         self.selected_items: Set[str] = set()
         
-        # UI items by category
-        self.ui_items: Dict[str, List[UIItem]] = {}
+        # Initialize UI items
         self._initialize_ui_items()
-        
-        # Screen dimensions and layout
-        self.screen = None
-        self.height = 0
-        self.width = 0
-        self.sidebar_width = 20
-        self.header_height = 3
-        
-        # Colors
-        self.colors_initialized = False
-        
-        # Progress tracking
-        self.installation_progress: List[str] = []
-        self.current_operation = ""
     
     def _initialize_ui_items(self):
         """Initialize UI items grouped by category."""
@@ -145,78 +656,192 @@ class MacSnapUI:
                     if config.selected_by_default:
                         self.selected_items.add(config.id)
             
-            # Sort items alphabetically within each category
+            # Sort items alphabetically
             self.ui_items[category].sort(key=lambda x: x.config.name)
     
-    def _init_colors(self):
-        """Initialize color pairs for the UI."""
-        if not self.colors_initialized and curses.has_colors():
-            curses.start_color()
-            curses.use_default_colors()
-            
-            # Define color pairs
-            curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)    # Header
-            curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_WHITE)   # Selected
-            curses.init_pair(3, curses.COLOR_GREEN, -1)                   # Installed
-            curses.init_pair(4, curses.COLOR_RED, -1)                     # Failed
-            curses.init_pair(5, curses.COLOR_YELLOW, -1)                  # Warning
-            curses.init_pair(6, curses.COLOR_CYAN, -1)                    # Info
-            curses.init_pair(7, curses.COLOR_MAGENTA, -1)                 # Selected item
-            curses.init_pair(8, curses.COLOR_WHITE, curses.COLOR_RED)     # Error
-            
-            self.colors_initialized = True
-    
-    def run(self) -> bool:
-        """
-        Run the MacSnap UI.
+    def compose(self) -> ComposeResult:
+        """Create the UI layout."""
+        yield Header(show_clock=True)
         
-        Returns:
-            True if operations completed successfully, False otherwise
-        """
+        with Container(id="main-container"):
+            # Left sidebar with categories
+            with Container(id="category-sidebar"):
+                yield CategoryList(self.categories, self.ui_items)
+            
+            # Main content area
+            with Vertical(id="content-area"):
+                # Item table
+                yield ItemTable(id="item-table")
+                
+                # Item detail panel
+                yield ItemDetailPanel("Select an item to view details", id="item-detail")
+        
+        # Control panel
+        with Container(id="control-panel"):
+            with Horizontal(id="action-buttons"):
+                yield Button("Refresh Status", id="refresh-btn", variant="default")
+                yield Button("Install Selected", id="install-btn", variant="primary")
+                yield Button("Uninstall Selected", id="uninstall-btn", variant="error")
+                yield Button("Select All", id="select-all-btn", variant="default")
+                yield Button("Deselect All", id="deselect-all-btn", variant="default")
+        
+        yield Footer()
+    
+    def on_mount(self) -> None:
+        """Initialize the app after mounting."""
+        # Load initial data for the first category
+        if self.categories:
+            self._load_category_data(self.current_category)
+        
+        # Check initial status
+        self.run_worker(self._check_initial_status())
+    
+    def on_category_selected(self, event: CategorySelected) -> None:
+        """Handle category selection from sidebar."""
+        self._switch_category(event.category)
+    
+    def on_focus_item_table(self, event: FocusItemTable) -> None:
+        """Handle focus request for items table."""
         try:
-            return curses.wrapper(self._main_loop)
-        except KeyboardInterrupt:
-            self.logger.info("Operation cancelled by user")
-            return False
+            item_table = self.query_one("#item-table", ItemTable)
+            item_table.focus()
+            self.logger.debug("Focus moved to items table")
         except Exception as e:
-            self.logger.error(f"UI error: {e}")
-            return False
+            self.logger.debug(f"Could not focus items table: {e}")
     
-    def _main_loop(self, stdscr) -> bool:
-        """Main UI loop."""
-        self.screen = stdscr
-        self._init_colors()
-        curses.curs_set(0)  # Hide cursor
+    def on_focus_category_list(self, event: FocusCategoryList) -> None:
+        """Handle focus request for category list."""
+        try:
+            category_list = self.query_one(CategoryList)
+            category_list.focus()
+            self.logger.debug("Focus moved to category list")
+        except Exception as e:
+            self.logger.debug(f"Could not focus category list: {e}")
+    
+    def _load_category_data(self, category: str):
+        """Load data for a specific category."""
+        items = self.ui_items.get(category, [])
+        table = self.query_one("#item-table", ItemTable)
+        table.add_items(items)
         
-        # Initial setup
-        self._update_screen_size()
-        self._check_initial_status()
+        # Update selected items count
+        self._update_selection_count()
+    
+    def _update_selection_count(self):
+        """Update the selection count display."""
+        # This could be displayed in the footer or header
+        selected_count = len(self.selected_items)
+        # For now, we'll just log it
+        self.logger.debug(f"Selected items: {selected_count}")
+    
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        """Handle row selection in the data table."""
+        if event.row_key:
+            item_id = str(event.row_key)
+            # Find the item and show details
+            current_items = self.ui_items.get(self.current_category, [])
+            for ui_item in current_items:
+                if ui_item.config.id == item_id:
+                    detail_panel = self.query_one("#item-detail", ItemDetailPanel)
+                    detail_panel.item = ui_item
+                    self.logger.debug(f"Selected item: {ui_item.config.name}")
+                    return
+    
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        if event.button.id == "refresh-btn":
+            self.action_refresh()
+        elif event.button.id == "install-btn":
+            self.action_install()
+        elif event.button.id == "uninstall-btn":
+            self.action_uninstall()
+        elif event.button.id == "select-all-btn":
+            self.action_select_all()
+        elif event.button.id == "deselect-all-btn":
+            self.action_deselect_all()
+    
+    def action_quit(self) -> None:
+        """Quit the application."""
+        self.exit()
+    
+    def action_refresh(self) -> None:
+        """Refresh installation status."""
+        self.run_worker(self._check_initial_status())
+    
+    def action_install(self) -> None:
+        """Install selected items."""
+        if not self.selected_items:
+            self.notify("No items selected for installation", severity="warning")
+            return
         
-        while True:
-            self._draw_screen()
-            self._handle_input()
+        self.run_worker(self._run_installation())
+    
+    def action_uninstall(self) -> None:
+        """Uninstall selected items."""
+        if not self.selected_items:
+            self.notify("No items selected for uninstallation", severity="warning")
+            return
+        
+        self.run_worker(self._run_uninstallation())
+    
+    def action_select_all(self) -> None:
+        """Select all items in current category."""
+        items = self.ui_items.get(self.current_category, [])
+        for item in items:
+            item.selected = True
+            self.selected_items.add(item.config.id)
+        
+        self._load_category_data(self.current_category)
+        self.notify(f"Selected all items in {self.current_category}")
+    
+    def action_deselect_all(self) -> None:
+        """Deselect all items."""
+        for category_items in self.ui_items.values():
+            for item in category_items:
+                item.selected = False
+        
+        self.selected_items.clear()
+        self._load_category_data(self.current_category)
+        self.notify("Deselected all items")
+    
+    def action_toggle_selection(self) -> None:
+        """Toggle selection of current item."""
+        table = self.query_one("#item-table", ItemTable)
+        if table.cursor_row is not None and table.cursor_row < len(table.ui_items):
+            ui_item = table.ui_items[table.cursor_row]
+            table.toggle_selection(ui_item.config.id)
             
-            if self.state == UIState.RESULTS:
-                # Show results and ask if user wants to continue
-                self._draw_screen()
-                self.screen.getch()  # Wait for any key
-                break
-        
-        return True
+            # Update global selected items
+            if ui_item.selected:
+                self.selected_items.add(ui_item.config.id)
+            else:
+                self.selected_items.discard(ui_item.config.id)
+            
+            self._update_selection_count()
     
-    def _update_screen_size(self):
-        """Update screen dimensions."""
-        self.height, self.width = self.screen.getmaxyx()
-        
-        # Adjust sidebar width based on screen size
-        if self.width < 80:
-            self.sidebar_width = max(15, self.width // 4)
-        else:
-            self.sidebar_width = 20
+    def action_focus_categories(self) -> None:
+        """Focus the category list (from Esc/Backspace)."""
+        try:
+            category_list = self.query_one(CategoryList)
+            category_list.focus()
+            self.logger.debug("Focus moved to category list via action")
+        except Exception as e:
+            self.logger.debug(f"Could not focus category list via action: {e}")
     
-    def _check_initial_status(self):
+    def _switch_category(self, category: str):
+        """Switch to a specific category."""
+        self.current_category = category
+        self._load_category_data(self.current_category)
+        
+        # Update category list selection
+        category_list = self.query_one(CategoryList)
+        category_list.set_selected_category(self.current_category)
+        
+        self.logger.debug(f"Switched to category: {self.current_category}")
+    
+    async def _check_initial_status(self) -> None:
         """Check initial installation status for all items."""
-        self.logger.debug("Checking initial installation status...")
+        self.notify("Checking installation status...")
         
         total_items = sum(len(items) for items in self.ui_items.values())
         checked = 0
@@ -228,451 +853,22 @@ class MacSnapUI:
                                 else ItemStatus.NOT_INSTALLED)
                 checked += 1
                 
-                # Update progress (could show a progress bar here)
-                if checked % 3 == 0:  # Update every 3 items to avoid too much redrawing
-                    self._draw_loading_screen(f"Checking status... {checked}/{total_items}")
+                # Update UI periodically
+                if checked % 3 == 0:
+                    progress = (checked / total_items) * 100
+                    self.notify(f"Checking status... {checked}/{total_items} ({progress:.0f}%)")
         
-        self.logger.debug(f"Status check completed for {total_items} items")
+        # Refresh current category
+        self._load_category_data(self.current_category)
+        self.notify("Status check completed", severity="information")
     
-    def _draw_screen(self):
-        """Draw the entire screen based on current state."""
-        self.screen.clear()
-        
-        if self.state == UIState.INSTALLATION:
-            self._draw_installation_screen()
-        elif self.state == UIState.RESULTS:
-            self._draw_results_screen()
-        elif self.state == UIState.ERROR:
-            self._draw_error_screen()
-        else:
-            self._draw_main_screen()
-        
-        self.screen.refresh()
-    
-    def _draw_main_screen(self):
-        """Draw the main two-column interface."""
-        # Draw header
-        self._draw_header()
-        
-        # Draw vertical separator
-        for y in range(self.header_height, self.height - 1):
-            self.screen.addch(y, self.sidebar_width, '│')
-        
-        # Draw sidebar (categories)
-        self._draw_sidebar()
-        
-        # Draw main content area (items)
-        self._draw_content_area()
-        
-        # Draw footer with instructions
-        self._draw_footer()
-    
-    def _draw_header(self):
-        """Draw the header section."""
-        if self.height < 10 or self.width < 50:
-            return  # Skip header if screen too small
-        
-        # Title
-        title = "MacSnap Setup v1.0"
-        user_info = f"macOS {platform.mac_ver()[0]} | User: {os.getenv('USER', 'unknown')}"
-        
-        if self.colors_initialized:
-            self.screen.attron(curses.color_pair(1) | curses.A_BOLD)
-        
-        # Center title
-        title_x = max(0, (self.width - len(title)) // 2)
-        self.screen.addstr(0, title_x, title)
-        
-        # Right-align user info
-        user_x = max(0, self.width - len(user_info) - 1)
-        self.screen.addstr(1, user_x, user_info)
-        
-        if self.colors_initialized:
-            self.screen.attroff(curses.color_pair(1) | curses.A_BOLD)
-        
-        # Horizontal separator
-        self.screen.addstr(2, 0, "─" * self.width)
-    
-    def _draw_sidebar(self):
-        """Draw the categories sidebar."""
-        if not self.categories:
-            return
-        
-        start_y = self.header_height + 1
-        max_visible = self.height - self.header_height - 3
-        
-        # Title
-        self.screen.addstr(start_y, 2, "Categories", curses.A_BOLD)
-        
-        # Categories list
-        for i, category in enumerate(self.categories):
-            if i >= max_visible - 2:
-                break
-            
-            y = start_y + 2 + i
-            x = 2
-            
-            # Truncate category name if too long
-            display_name = category
-            max_name_width = self.sidebar_width - 4
-            if len(display_name) > max_name_width:
-                display_name = display_name[:max_name_width-3] + "..."
-            
-            # Highlight current category
-            if i == self.current_category_index:
-                if self.colors_initialized:
-                    self.screen.attron(curses.color_pair(2))
-                self.screen.addstr(y, x, f"> {display_name}")
-                if self.colors_initialized:
-                    self.screen.attroff(curses.color_pair(2))
-            else:
-                self.screen.addstr(y, x, f"  {display_name}")
-        
-        # Show selection count
-        selected_count = len(self.selected_items)
-        if selected_count > 0:
-            count_text = f"Selected: {selected_count}"
-            count_y = self.height - 2
-            self.screen.addstr(count_y, 2, count_text)
-    
-    def _draw_content_area(self):
-        """Draw the main content area with items."""
-        if not self.categories:
-            return
-        
-        current_category = self.categories[self.current_category_index]
-        items = self.ui_items.get(current_category, [])
-        
-        start_x = self.sidebar_width + 2
-        start_y = self.header_height + 1
-        content_width = self.width - start_x - 2
-        max_visible = self.height - self.header_height - 3
-        
-        # Category title
-        self.screen.addstr(start_y, start_x, f"{current_category} ({len(items)} items)", curses.A_BOLD)
-        
-        if not items:
-            self.screen.addstr(start_y + 2, start_x, "No items in this category.")
-            return
-        
-        # Calculate scroll offset
-        scroll_offset = max(0, self.current_item_index - max_visible + 4)
-        
-        # Draw items
-        for i, ui_item in enumerate(items[scroll_offset:scroll_offset + max_visible - 3]):
-            actual_index = i + scroll_offset
-            item = ui_item.config
-            
-            y = start_y + 2 + i
-            
-            # Status indicator
-            status_char = self._get_status_char(ui_item)
-            status_color = self._get_status_color(ui_item)
-            
-            # Selection indicator
-            selection_char = "☑" if ui_item.selected else "☐"
-            
-            if self.colors_initialized and status_color:
-                self.screen.attron(status_color)
-            
-            # Highlight current item
-            is_current = actual_index == self.current_item_index
-            if is_current and self.colors_initialized:
-                self.screen.attron(curses.color_pair(2))
-            
-            # Item name (truncated if necessary)
-            max_name_width = content_width - 10
-            display_name = item.name
-            if len(display_name) > max_name_width:
-                display_name = display_name[:max_name_width-3] + "..."
-            
-            item_text = f"{selection_char} {status_char} {display_name}"
-            self.screen.addstr(y, start_x, item_text)
-            
-            if is_current and self.colors_initialized:
-                self.screen.attroff(curses.color_pair(2))
-            
-            if self.colors_initialized and status_color:
-                self.screen.attroff(status_color)
-        
-        # Draw description for current item
-        if items and 0 <= self.current_item_index < len(items):
-            current_item = items[self.current_item_index]
-            self._draw_item_description(current_item, start_x, start_y + max_visible)
-    
-    def _draw_item_description(self, ui_item: UIItem, start_x: int, start_y: int):
-        """Draw the description for the current item."""
-        if start_y >= self.height - 2:
-            return
-        
-        # Description box
-        desc_lines = ui_item.description_lines
-        box_height = min(len(desc_lines) + 2, self.height - start_y - 1)
-        content_width = self.width - start_x - 2
-        
-        # Draw description title
-        title = f"Description: {ui_item.config.name}"
-        if len(title) > content_width:
-            title = title[:content_width-3] + "..."
-        
-        self.screen.addstr(start_y, start_x, title, curses.A_BOLD)
-        
-        # Draw description lines
-        for i, line in enumerate(desc_lines[:box_height-2]):
-            if start_y + 1 + i >= self.height:
-                break
-            
-            # Truncate line if too long
-            if len(line) > content_width:
-                line = line[:content_width-3] + "..."
-            
-            self.screen.addstr(start_y + 1 + i, start_x, line)
-    
-    def _draw_footer(self):
-        """Draw footer with instructions."""
-        if self.height < 5:
-            return
-        
-        footer_y = self.height - 1
-        
-        if self.state == UIState.CATEGORY_SELECTION:
-            instructions = "↑↓: Navigate  Tab: Switch to items  Space: Select  Enter: Install  Q: Quit"
-        elif self.state == UIState.ITEM_SELECTION:
-            instructions = "↑↓: Navigate  Tab: Categories  Space: Toggle  Enter: Install  Q: Quit"
-        else:
-            instructions = "Q: Quit"
-        
-        # Truncate if too long
-        if len(instructions) > self.width:
-            instructions = instructions[:self.width-3] + "..."
-        
-        self.screen.addstr(footer_y, 0, instructions)
-    
-    def _get_status_char(self, ui_item: UIItem) -> str:
-        """Get status character for an item."""
-        if ui_item.status == ItemStatus.INSTALLED:
-            return "✓"
-        elif ui_item.status == ItemStatus.FAILED:
-            return "✗"
-        elif ui_item.status == ItemStatus.INSTALLING:
-            return "⏳"
-        elif ui_item.status == ItemStatus.NOT_INSTALLED:
-            return "○"
-        else:
-            return "?"
-    
-    def _get_status_color(self, ui_item: UIItem) -> Optional[int]:
-        """Get color for item status."""
-        if not self.colors_initialized:
-            return None
-        
-        if ui_item.status == ItemStatus.INSTALLED:
-            return curses.color_pair(3)  # Green
-        elif ui_item.status == ItemStatus.FAILED:
-            return curses.color_pair(4)  # Red
-        elif ui_item.status == ItemStatus.INSTALLING:
-            return curses.color_pair(5)  # Yellow
-        elif ui_item.selected:
-            return curses.color_pair(7)  # Magenta
-        
-        return None
-    
-    def _draw_loading_screen(self, message: str):
-        """Draw a loading screen with message."""
-        self.screen.clear()
-        
-        center_y = self.height // 2
-        center_x = max(0, (self.width - len(message)) // 2)
-        
-        self.screen.addstr(center_y, center_x, message)
-        self.screen.refresh()
-    
-    def _draw_installation_screen(self):
-        """Draw installation progress screen."""
-        self.screen.clear()
-        
-        # Title
-        title = "Installing Selected Items"
-        title_x = max(0, (self.width - len(title)) // 2)
-        self.screen.addstr(2, title_x, title, curses.A_BOLD)
-        
-        # Current operation
-        if self.current_operation:
-            op_y = 4
-            op_x = max(0, (self.width - len(self.current_operation)) // 2)
-            self.screen.addstr(op_y, op_x, self.current_operation)
-        
-        # Progress log
-        start_y = 6
-        max_lines = self.height - start_y - 3
-        
-        for i, line in enumerate(self.installation_progress[-max_lines:]):
-            if start_y + i < self.height - 2:
-                # Truncate long lines
-                if len(line) > self.width - 2:
-                    line = line[:self.width-5] + "..."
-                self.screen.addstr(start_y + i, 1, line)
-        
-        # Instructions
-        instructions = "Installation in progress... Please wait."
-        instr_y = self.height - 1
-        self.screen.addstr(instr_y, 1, instructions)
-    
-    def _draw_results_screen(self):
-        """Draw installation results screen."""
-        self.screen.clear()
-        
-        # Title
-        title = "Installation Complete"
-        title_x = max(0, (self.width - len(title)) // 2)
-        if self.colors_initialized:
-            self.screen.attron(curses.color_pair(1) | curses.A_BOLD)
-        self.screen.addstr(2, title_x, title)
-        if self.colors_initialized:
-            self.screen.attroff(curses.color_pair(1) | curses.A_BOLD)
-        
-        # Summary
-        summary = self.engine.get_installation_summary()
-        start_y = 4
-        
-        lines = [
-            f"Total operations: {summary['total_operations']}",
-            f"Successful: {summary.get('installed_items', 0)}",
-            f"Failed: {summary.get('failed_items', 0)}",
-            f"Skipped: {summary.get('skipped_items', 0)}",
-            f"Duration: {summary.get('total_duration', 0):.1f}s"
-        ]
-        
-        for i, line in enumerate(lines):
-            if start_y + i < self.height - 3:
-                line_x = max(0, (self.width - len(line)) // 2)
-                self.screen.addstr(start_y + i, line_x, line)
-        
-        # Failed items
-        failed_items = summary.get('failed_item_ids', [])
-        if failed_items:
-            fail_y = start_y + len(lines) + 2
-            self.screen.addstr(fail_y, 2, "Failed items:", curses.A_BOLD)
-            for i, item_id in enumerate(failed_items[:5]):  # Show max 5
-                if fail_y + 1 + i < self.height - 2:
-                    self.screen.addstr(fail_y + 1 + i, 4, f"- {item_id}")
-        
-        # Instructions
-        instructions = "Press any key to exit..."
-        instr_y = self.height - 1
-        instr_x = max(0, (self.width - len(instructions)) // 2)
-        self.screen.addstr(instr_y, instr_x, instructions)
-    
-    def _draw_error_screen(self):
-        """Draw error screen."""
-        self.screen.clear()
-        
-        title = "Error"
-        title_x = max(0, (self.width - len(title)) // 2)
-        if self.colors_initialized:
-            self.screen.attron(curses.color_pair(8) | curses.A_BOLD)
-        self.screen.addstr(2, title_x, title)
-        if self.colors_initialized:
-            self.screen.attroff(curses.color_pair(8) | curses.A_BOLD)
-        
-        error_msg = "An error occurred during installation."
-        error_x = max(0, (self.width - len(error_msg)) // 2)
-        self.screen.addstr(4, error_x, error_msg)
-        
-        instructions = "Press any key to continue..."
-        instr_y = self.height - 1
-        instr_x = max(0, (self.width - len(instructions)) // 2)
-        self.screen.addstr(instr_y, instr_x, instructions)
-    
-    def _handle_input(self):
-        """Handle keyboard input."""
-        try:
-            key = self.screen.getch()
-        except:
-            return
-        
-        if key == ord('q') or key == ord('Q'):
-            sys.exit(0)
-        elif key == curses.KEY_UP:
-            self._handle_up()
-        elif key == curses.KEY_DOWN:
-            self._handle_down()
-        elif key == ord('\t'):  # Tab
-            self._handle_tab()
-        elif key == ord(' '):  # Space
-            self._handle_space()
-        elif key == ord('\n') or key == curses.KEY_ENTER or key == 10 or key == 13:
-            self._handle_enter()
-    
-    def _handle_up(self):
-        """Handle up arrow key."""
-        if self.state == UIState.CATEGORY_SELECTION:
-            self.current_category_index = max(0, self.current_category_index - 1)
-            self.current_item_index = 0
-        elif self.state == UIState.ITEM_SELECTION:
-            current_category = self.categories[self.current_category_index]
-            items = self.ui_items.get(current_category, [])
-            if items:
-                self.current_item_index = max(0, self.current_item_index - 1)
-    
-    def _handle_down(self):
-        """Handle down arrow key."""
-        if self.state == UIState.CATEGORY_SELECTION:
-            self.current_category_index = min(len(self.categories) - 1, 
-                                            self.current_category_index + 1)
-            self.current_item_index = 0
-        elif self.state == UIState.ITEM_SELECTION:
-            current_category = self.categories[self.current_category_index]
-            items = self.ui_items.get(current_category, [])
-            if items:
-                self.current_item_index = min(len(items) - 1, self.current_item_index + 1)
-    
-    def _handle_tab(self):
-        """Handle tab key to switch between categories and items."""
-        if self.state == UIState.CATEGORY_SELECTION:
-            self.state = UIState.ITEM_SELECTION
-        elif self.state == UIState.ITEM_SELECTION:
-            self.state = UIState.CATEGORY_SELECTION
-    
-    def _handle_space(self):
-        """Handle space key for selection."""
-        if self.state == UIState.ITEM_SELECTION:
-            current_category = self.categories[self.current_category_index]
-            items = self.ui_items.get(current_category, [])
-            
-            if items and 0 <= self.current_item_index < len(items):
-                ui_item = items[self.current_item_index]
-                ui_item.selected = not ui_item.selected
-                
-                if ui_item.selected:
-                    self.selected_items.add(ui_item.config.id)
-                else:
-                    self.selected_items.discard(ui_item.config.id)
-    
-    def _handle_enter(self):
-        """Handle enter key for installation."""
-        if not self.selected_items:
-            return
-        
-        self.state = UIState.INSTALLATION
-        self._run_installation()
-    
-    def _run_installation(self):
-        """Run the installation process."""
-        self.installation_progress.clear()
-        self.current_operation = "Preparing installation..."
+    async def _run_installation(self) -> None:
+        """Run installation process."""
+        # Show progress screen
+        progress_screen = ProgressScreen(list(self.selected_items))
+        self.push_screen(progress_screen)
         
         try:
-            # Get selected configurations
-            selected_configs = {
-                item_id: self.config_loader.configurations[item_id]
-                for item_id in self.selected_items
-                if item_id in self.config_loader.configurations
-            }
-            
-            self.installation_progress.append(f"Installing {len(selected_configs)} items...")
-            self._draw_screen()
-            
             # Run batch installation
             results = self.engine.batch_process(
                 self.config_loader.configurations,
@@ -680,27 +876,59 @@ class MacSnapUI:
                 "install"
             )
             
-            # Update UI item statuses based on results
+            # Update UI item statuses
+            for result in results:
+                for category_items in self.ui_items.values():
+                    for ui_item in category_items:
+                        if ui_item.config.id == result.item_id:
+                            if result.result in [OperationResult.SUCCESS, OperationResult.ALREADY_INSTALLED]:
+                                ui_item.status = ItemStatus.INSTALLED
+                            else:
+                                ui_item.status = ItemStatus.FAILED
+            
+            # Close progress screen and show results
+            self.pop_screen()
+            results_screen = ResultsScreen(results)
+            self.push_screen(results_screen)
+            
+            # Refresh display
+            self._load_category_data(self.current_category)
+            
+        except Exception as e:
+            self.pop_screen()
+            self.notify(f"Installation failed: {e}", severity="error")
+    
+    async def _run_uninstallation(self) -> None:
+        """Run uninstallation process."""
+        # Similar to installation but for uninstall
+        try:
+            results = self.engine.batch_process(
+                self.config_loader.configurations,
+                list(self.selected_items),
+                "uninstall"
+            )
+            
+            # Update statuses
             for result in results:
                 for category_items in self.ui_items.values():
                     for ui_item in category_items:
                         if ui_item.config.id == result.item_id:
                             if result.result == OperationResult.SUCCESS:
-                                ui_item.status = ItemStatus.INSTALLED
-                            elif result.result == OperationResult.ALREADY_INSTALLED:
-                                ui_item.status = ItemStatus.INSTALLED
+                                ui_item.status = ItemStatus.NOT_INSTALLED
                             else:
                                 ui_item.status = ItemStatus.FAILED
             
-            self.state = UIState.RESULTS
+            # Show results
+            results_screen = ResultsScreen(results)
+            self.push_screen(results_screen)
+            
+            # Refresh display
+            self._load_category_data(self.current_category)
             
         except Exception as e:
-            self.logger.error(f"Installation failed: {e}")
-            self.installation_progress.append(f"ERROR: {e}")
-            self.state = UIState.ERROR
+            self.notify(f"Uninstallation failed: {e}", severity="error")
 
 
-# Convenience function for running the UI
 def run_macsnap_ui(verbose: bool = False) -> bool:
     """
     Run the MacSnap UI with loaded configurations.
@@ -721,9 +949,10 @@ def run_macsnap_ui(verbose: bool = False) -> bool:
             print("No configurations found. Please check the configs/ directory.")
             return False
         
-        # Create and run UI
-        ui = MacSnapUI(loader, verbose=verbose)
-        return ui.run()
+        # Create and run the Textual app
+        app = MacSnapApp(loader, verbose=verbose)
+        app.run()
+        return True
         
     except Exception as e:
         print(f"Failed to start MacSnap UI: {e}")

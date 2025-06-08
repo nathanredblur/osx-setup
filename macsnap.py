@@ -30,7 +30,7 @@ from utils.config_loader import load_configs, ConfigLoader
 from utils.validators import ConfigValidator
 from utils.installer import InstallationEngine
 from utils.logger import MacSnapLogger, get_logger, close_logger
-from utils.ui import MacSnapUI, run_macsnap_ui
+from utils.ui import run_macsnap_ui
 
 # Application metadata
 APP_NAME = "MacSnap Setup"
@@ -58,7 +58,7 @@ class MacSnapApp:
         self.config_loader: Optional[ConfigLoader] = None
         self.validator: Optional[ConfigValidator] = None
         self.engine: Optional[InstallationEngine] = None
-        self.ui: Optional[MacSnapUI] = None
+        # UI will be handled by the run_macsnap_ui function
         
         # Setup signal handlers for graceful exit
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -288,10 +288,6 @@ class MacSnapApp:
         self.engine = InstallationEngine(verbose=self.verbose)
         self.logger.debug("Installation engine initialized")
         
-        # Initialize UI
-        self.ui = MacSnapUI(self.config_loader, verbose=self.verbose)
-        self.logger.debug("User interface initialized")
-        
         self.logger.success("Application components initialized")
     
     def _run_main_interface(self) -> int:
@@ -301,14 +297,14 @@ class MacSnapApp:
         Returns:
             Exit code
         """
-        self.logger.info("Starting main user interface...")
+        self.logger.info("🚀 Starting modern Textual user interface...")
         
         try:
             # Show welcome message
             self._show_welcome_message()
             
-            # Run the UI
-            success = self.ui.run()
+            # Run the UI with Textual
+            success = run_macsnap_ui(verbose=self.verbose)
             
             if success:
                 self.logger.success("Application completed successfully")
@@ -323,12 +319,12 @@ class MacSnapApp:
     
     def _show_welcome_message(self):
         """Show welcome message and basic information."""
-        self.logger.info("Welcome to MacSnap Setup!")
-        self.logger.info(f"Version: {APP_VERSION}")
-        self.logger.info(f"Loaded {len(self.config_loader.configurations)} software configurations")
-        self.logger.info("Use arrow keys to navigate, Tab to switch between categories and items")
-        self.logger.info("Press Space to select/deselect items, Enter to install selected items")
-        self.logger.info("Press Q to quit at any time")
+        self.logger.info("✨ Welcome to MacSnap Setup with Textual UI!")
+        self.logger.info(f"🎯 Version: {APP_VERSION}")
+        self.logger.info(f"📦 Loaded {len(self.config_loader.configurations)} software configurations")
+        self.logger.info("🖱️  Use mouse and keyboard navigation")
+        self.logger.info("⌨️  Keyboard shortcuts: Space=Toggle, Enter=Install, Q=Quit")
+        self.logger.info("🎨 Rich interface with real-time updates")
         self.logger.separator()
     
     def _cleanup(self):

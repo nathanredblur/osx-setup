@@ -196,6 +196,189 @@ class FocusCategoryList(Message):
     """Message sent to focus the category list."""
     pass
 
+class ItemButtonList(Vertical):
+    """Simple list widget displaying items as navigable buttons with icons."""
+    
+    can_focus = True
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.ui_items: List[UIItem] = []
+        self.selected_items: Set[str] = set()
+        self.focus_index = 0  # Track which item has focus
+        self._widget_counter = 0  # Counter for unique widget IDs
+        self._item_widgets: Dict[str, Static] = {}  # Map item_id to widget
+    
+    def add_items(self, items: List[UIItem]):
+        """Add items to the button list."""
+        # Save current focus position
+        old_focus = self.focus_index
+        
+        self.ui_items = items
+        self.focus_index = min(old_focus, len(items) - 1) if items else 0
+        
+        # Clear existing widgets completely
+        self.remove_children()
+        
+        # Reset widget counter and mapping for new batch
+        self._widget_counter = 0
+        self._item_widgets.clear()
+        
+        if not items:
+            empty_widget = Static("No items in this category", classes="empty-message")
+            self.mount(empty_widget)
+            return
+        
+        # Add item buttons
+        for i, item in enumerate(items):
+            button_widget = self._create_item_button(item, i == self.focus_index)
+            self._item_widgets[item.config.id] = button_widget
+            self.mount(button_widget)
+    
+    def _create_item_button(self, item: UIItem, has_focus: bool = False) -> Static:
+        """Create a button widget for an item with icons."""
+        # Get type icon
+        type_icon = self._get_type_icon(item.config.type)
+        
+        # Get status icon 
+        status_icon = item.status_emoji
+        
+        # Get selection icon
+        selection_icon = "☑️" if item.selected else "☐"
+        
+        # Build button text
+        button_text = f"{type_icon} {status_icon} {selection_icon} {item.config.name}"
+        
+        # Set CSS classes
+        button_classes = "item-button"
+        if has_focus:
+            button_classes += " item-button-focused"
+        if item.selected:
+            button_classes += " item-button-selected"
+        
+        # Don't use IDs to avoid duplicate issues
+        button_widget = Static(
+            button_text,
+            classes=button_classes
+        )
+        
+        return button_widget
+    
+    def _get_type_icon(self, item_type: str) -> str:
+        """Get icon for item type."""
+        type_icons = {
+            "brew": "🍺",
+            "brew_cask": "📦",
+            "mas": "🏪", 
+            "direct_download_dmg": "💿",
+            "direct_download_pkg": "📦",
+            "proto_tool": "🔧",
+            "system_config": "⚙️",
+            "launch_agent": "🚀",
+            "shell_script": "📜"
+        }
+        return type_icons.get(item_type, "📄")
+    
+    def _update_focus_display(self):
+        """Update visual focus indicators."""
+        for i, item in enumerate(self.ui_items):
+            try:
+                widget = self._item_widgets.get(item.config.id)
+                if widget is None:
+                    continue
+                
+                # Update button content
+                type_icon = self._get_type_icon(item.config.type)
+                status_icon = item.status_emoji
+                selection_icon = "☑️" if item.selected else "☐"
+                button_text = f"{type_icon} {status_icon} {selection_icon} {item.config.name}"
+                widget.update(button_text)
+                
+                # Update classes
+                widget.remove_class("item-button-focused")
+                if i == self.focus_index:
+                    widget.add_class("item-button-focused")
+                
+                # Update selection class
+                if item.selected:
+                    widget.add_class("item-button-selected")
+                else:
+                    widget.remove_class("item-button-selected")
+                    
+            except Exception:
+                pass  # Widget not found, ignore
+    
+    def toggle_selection(self, item_id: str):
+        """Toggle selection of an item."""
+        for item in self.ui_items:
+            if item.config.id == item_id:
+                item.selected = not item.selected
+                break
+        
+        # Update display without full rebuild
+        self._update_focus_display()
+    
+    def get_focused_item(self) -> Optional[UIItem]:
+        """Get currently focused item."""
+        if 0 <= self.focus_index < len(self.ui_items):
+            return self.ui_items[self.focus_index]
+        return None
+    
+    def on_key(self, event) -> None:
+        """Handle keyboard navigation."""
+        if not self.ui_items:
+            return
+            
+        if event.key == "up":
+            self.focus_index = (self.focus_index - 1) % len(self.ui_items)
+            self._update_focus_display()
+            
+            # Update detail panel
+            focused_item = self.get_focused_item()
+            if focused_item:
+                self.post_message(ItemSelected(focused_item))
+            event.prevent_default()
+            
+        elif event.key == "down":
+            self.focus_index = (self.focus_index + 1) % len(self.ui_items)
+            self._update_focus_display()
+            
+            # Update detail panel
+            focused_item = self.get_focused_item()
+            if focused_item:
+                self.post_message(ItemSelected(focused_item))
+            event.prevent_default()
+            
+        elif event.key == "space":
+            # Toggle selection of focused item
+            focused_item = self.get_focused_item()
+            if focused_item:
+                self.toggle_selection(focused_item.config.id)
+            event.prevent_default()
+            
+        elif event.key == "escape" or event.key == "backspace":
+            # Return focus to category list
+            self.post_message(FocusCategoryList())
+            event.prevent_default()
+    
+    def on_click(self, event) -> None:
+        """Handle item clicks."""
+        # Find which item was clicked by checking our widget mapping
+        for i, item in enumerate(self.ui_items):
+            widget = self._item_widgets.get(item.config.id)
+            if widget is not None and event.widget is widget:
+                self.focus_index = i
+                self._update_focus_display()
+                self.post_message(ItemSelected(item))
+                break
+
+class ItemSelected(Message):
+    """Message sent when an item is selected/focused."""
+    
+    def __init__(self, item: UIItem):
+        super().__init__()
+        self.item = item
+
 class ItemTable(DataTable):
     """Custom data table for items with enhanced functionality."""
     
@@ -476,6 +659,8 @@ class MacSnapApp(App):
         border: solid #3b4261;
         margin-bottom: 1;
         background: #1a1b26;
+        scrollbar-background: #16161e;
+        scrollbar-color: #7aa2f7;
     }
     
     #item-detail {
@@ -592,7 +777,44 @@ class MacSnapApp(App):
         color: #c0caf5;
     }
     
-    /* Data table styling */
+    /* Item button list styling */
+    .item-button {
+        padding: 0 1;
+        margin-bottom: 1;
+        color: #c0caf5;
+        width: 100%;
+        background: #1a1b26;
+        border: none;
+    }
+    
+    .item-button:hover {
+        background: #3b4261;
+        color: #7aa2f7;
+    }
+    
+    .item-button-focused {
+        background: #7aa2f7;
+        color: #1a1b26;
+        text-style: bold;
+    }
+    
+    .item-button-focused:hover {
+        background: #9ece6a;
+        color: #1a1b26;
+    }
+    
+    .item-button-selected {
+        border-left: solid #9ece6a;
+    }
+    
+    .empty-message {
+        color: #565f89;
+        text-align: center;
+        padding: 2;
+        text-style: italic;
+    }
+    
+    /* Data table styling (kept for backward compatibility) */
     DataTable {
         background: #1a1b26;
         color: #c0caf5;
@@ -671,7 +893,7 @@ class MacSnapApp(App):
             # Main content area
             with Vertical(id="content-area"):
                 # Item table
-                yield ItemTable(id="item-table")
+                yield ItemButtonList(id="item-table")
                 
                 # Item detail panel
                 yield ItemDetailPanel("Select an item to view details", id="item-detail")
@@ -703,7 +925,7 @@ class MacSnapApp(App):
     def on_focus_item_table(self, event: FocusItemTable) -> None:
         """Handle focus request for items table."""
         try:
-            item_table = self.query_one("#item-table", ItemTable)
+            item_table = self.query_one("#item-table", ItemButtonList)
             item_table.focus()
             self.logger.debug("Focus moved to items table")
         except Exception as e:
@@ -718,11 +940,25 @@ class MacSnapApp(App):
         except Exception as e:
             self.logger.debug(f"Could not focus category list: {e}")
     
+    def on_item_selected(self, event: ItemSelected) -> None:
+        """Handle item selection/focus event."""
+        try:
+            detail_panel = self.query_one("#item-detail", ItemDetailPanel)
+            detail_panel.item = event.item
+            self.logger.debug(f"Item selected: {event.item.config.name}")
+        except Exception as e:
+            self.logger.error(f"Failed to update item detail: {e}")
+    
     def _load_category_data(self, category: str):
         """Load data for a specific category."""
         items = self.ui_items.get(category, [])
-        table = self.query_one("#item-table", ItemTable)
-        table.add_items(items)
+        item_table = self.query_one("#item-table", ItemButtonList)
+        item_table.add_items(items)
+        
+        # Show details for first item if available
+        if items:
+            detail_panel = self.query_one("#item-detail", ItemDetailPanel)
+            detail_panel.item = items[0]
         
         # Update selected items count
         self._update_selection_count()
@@ -806,9 +1042,9 @@ class MacSnapApp(App):
     
     def action_toggle_selection(self) -> None:
         """Toggle selection of current item."""
-        table = self.query_one("#item-table", ItemTable)
-        if table.cursor_row is not None and table.cursor_row < len(table.ui_items):
-            ui_item = table.ui_items[table.cursor_row]
+        table = self.query_one("#item-table", ItemButtonList)
+        if table.focus_index is not None and table.focus_index < len(table.ui_items):
+            ui_item = table.ui_items[table.focus_index]
             table.toggle_selection(ui_item.config.id)
             
             # Update global selected items

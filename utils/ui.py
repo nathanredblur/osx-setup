@@ -18,11 +18,12 @@ from dataclasses import dataclass
 from enum import Enum
 
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal, Vertical, ScrollableContainer
+from textual.containers import Container, Horizontal, Vertical, ScrollableContainer, VerticalScroll
 from textual.widgets import (
     Header, Footer, Button, Static, DataTable, ProgressBar, 
     Label, Checkbox, Tree, Tabs, Tab, Collapsible, Pretty,
-    Select, Input, TextArea, RadioSet, RadioButton, Switch
+    Select, Input, TextArea, RadioSet, RadioButton, Switch,
+    ListView, ListItem
 )
 from textual.reactive import reactive
 from textual.message import Message
@@ -196,47 +197,42 @@ class FocusCategoryList(Message):
     """Message sent to focus the category list."""
     pass
 
-class ItemButtonList(Vertical):
+class ItemButtonList(ListView):
     """Simple list widget displaying items as navigable buttons with icons."""
-    
-    can_focus = True
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.ui_items: List[UIItem] = []
-        self.selected_items: Set[str] = set()
-        self.focus_index = 0  # Track which item has focus
-        self._widget_counter = 0  # Counter for unique widget IDs
-        self._item_widgets: Dict[str, Static] = {}  # Map item_id to widget
+        self.show_category = False
     
-    def add_items(self, items: List[UIItem]):
-        """Add items to the button list."""
-        # Save current focus position
-        old_focus = self.focus_index
-        
+    def add_items(self, items: List[UIItem], show_category: bool = False):
+        """Add items to the ListView."""
         self.ui_items = items
-        self.focus_index = min(old_focus, len(items) - 1) if items else 0
+        self.show_category = show_category
         
-        # Clear existing widgets completely
-        self.remove_children()
-        
-        # Reset widget counter and mapping for new batch
-        self._widget_counter = 0
-        self._item_widgets.clear()
+        # Clear existing items
+        self.clear()
         
         if not items:
-            empty_widget = Static("No items in this category", classes="empty-message")
-            self.mount(empty_widget)
+            # Add empty message as a ListItem
+            empty_item = ListItem(Static("No items in this category", classes="empty-message"))
+            self.append(empty_item)
             return
         
-        # Add item buttons
-        for i, item in enumerate(items):
-            button_widget = self._create_item_button(item, i == self.focus_index)
-            self._item_widgets[item.config.id] = button_widget
-            self.mount(button_widget)
+        # Add items as ListItems
+        list_items = []
+        for item in items:
+            button_text = self._create_item_text(item)
+            button_widget = Static(button_text, classes=self._get_item_classes(item))
+            list_item = ListItem(button_widget)
+            list_item.item_data = item  # Store reference to UIItem
+            list_items.append(list_item)
+        
+        # Add all items at once
+        self.extend(list_items)
     
-    def _create_item_button(self, item: UIItem, has_focus: bool = False) -> Static:
-        """Create a button widget for an item with icons."""
+    def _create_item_text(self, item: UIItem) -> str:
+        """Create text for an item with icons."""
         # Get type icon
         type_icon = self._get_type_icon(item.config.type)
         
@@ -244,25 +240,27 @@ class ItemButtonList(Vertical):
         status_icon = item.status_emoji
         
         # Get selection icon
-        selection_icon = "☑️" if item.selected else "☐"
+        selection_icon = "☑︎" if item.selected else "☐"
         
-        # Build button text
-        button_text = f"{type_icon} {status_icon} {selection_icon} {item.config.name}"
-        
-        # Set CSS classes
-        button_classes = "item-button"
-        if has_focus:
-            button_classes += " item-button-focused"
+        # Build button text with optional category
+        if self.show_category:
+            # Show category in parentheses for "All" view
+            # Truncate category name if too long to keep button readable
+            category_name = item.config.category
+            if len(category_name) > 12:
+                category_name = category_name[:9] + "..."
+            return f"{type_icon} {status_icon} {selection_icon} {item.config.name} ({category_name})"
+        else:
+            return f"{type_icon} {status_icon} {selection_icon} {item.config.name}"
+    
+    def _get_item_classes(self, item: UIItem) -> str:
+        """Get CSS classes for an item."""
+        classes = "item-button"
         if item.selected:
-            button_classes += " item-button-selected"
-        
-        # Don't use IDs to avoid duplicate issues
-        button_widget = Static(
-            button_text,
-            classes=button_classes
-        )
-        
-        return button_widget
+            classes += " item-button-selected"
+        if self.show_category:
+            classes += " item-button-with-category"
+        return classes
     
     def _get_type_icon(self, item_type: str) -> str:
         """Get icon for item type."""
@@ -279,98 +277,78 @@ class ItemButtonList(Vertical):
         }
         return type_icons.get(item_type, "📄")
     
-    def _update_focus_display(self):
-        """Update visual focus indicators."""
-        for i, item in enumerate(self.ui_items):
-            try:
-                widget = self._item_widgets.get(item.config.id)
-                if widget is None:
-                    continue
-                
-                # Update button content
-                type_icon = self._get_type_icon(item.config.type)
-                status_icon = item.status_emoji
-                selection_icon = "☑️" if item.selected else "☐"
-                button_text = f"{type_icon} {status_icon} {selection_icon} {item.config.name}"
-                widget.update(button_text)
-                
-                # Update classes
-                widget.remove_class("item-button-focused")
-                if i == self.focus_index:
-                    widget.add_class("item-button-focused")
-                
-                # Update selection class
-                if item.selected:
-                    widget.add_class("item-button-selected")
-                else:
-                    widget.remove_class("item-button-selected")
+    def refresh_display(self):
+        """Refresh the display of all items."""
+        # Clear and rebuild the list with updated data
+        self.add_items(self.ui_items, self.show_category)
+    
+    def _update_list_item(self, updated_item: UIItem):
+        """Update a specific ListItem without rebuilding the entire list."""
+        try:
+            # Find the ListItem that corresponds to this UIItem
+            for list_item in self.children:
+                if (hasattr(list_item, 'item_data') and 
+                    list_item.item_data.config.id == updated_item.config.id):
                     
-            except Exception:
-                pass  # Widget not found, ignore
+                    # Update the Static widget inside the ListItem
+                    static_widget = list_item.children[0]  # First child should be our Static
+                    if isinstance(static_widget, Static):
+                        # Update text and classes
+                        new_text = self._create_item_text(updated_item)
+                        new_classes = self._get_item_classes(updated_item)
+                        
+                        static_widget.update(new_text)
+                        static_widget.set_classes(new_classes)
+                    
+                    # Update the stored item data
+                    list_item.item_data = updated_item
+                    break
+        except Exception:
+            # If update fails, fall back to full refresh
+            self.refresh_display()
     
     def toggle_selection(self, item_id: str):
         """Toggle selection of an item."""
+        # Find and update the item
+        updated_item = None
         for item in self.ui_items:
             if item.config.id == item_id:
                 item.selected = not item.selected
+                updated_item = item
+                # Send message to parent to handle cross-category updates
+                self.post_message(ItemToggled(item_id, item.selected))
                 break
         
-        # Update display without full rebuild
-        self._update_focus_display()
+        # Update only the specific ListItem without losing focus
+        if updated_item:
+            self._update_list_item(updated_item)
     
-    def get_focused_item(self) -> Optional[UIItem]:
-        """Get currently focused item."""
-        if 0 <= self.focus_index < len(self.ui_items):
-            return self.ui_items[self.focus_index]
+    def get_highlighted_item(self) -> Optional[UIItem]:
+        """Get currently highlighted item."""
+        if self.highlighted_child and hasattr(self.highlighted_child, 'item_data'):
+            return self.highlighted_child.item_data
         return None
     
+    def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
+        """Handle item highlighting."""
+        if hasattr(event.item, 'item_data'):
+            item = event.item.item_data
+            self.post_message(ItemSelected(item))
+    
     def on_key(self, event) -> None:
-        """Handle keyboard navigation."""
-        if not self.ui_items:
-            return
-            
-        if event.key == "up":
-            self.focus_index = (self.focus_index - 1) % len(self.ui_items)
-            self._update_focus_display()
-            
-            # Update detail panel
-            focused_item = self.get_focused_item()
-            if focused_item:
-                self.post_message(ItemSelected(focused_item))
-            event.prevent_default()
-            
-        elif event.key == "down":
-            self.focus_index = (self.focus_index + 1) % len(self.ui_items)
-            self._update_focus_display()
-            
-            # Update detail panel
-            focused_item = self.get_focused_item()
-            if focused_item:
-                self.post_message(ItemSelected(focused_item))
-            event.prevent_default()
-            
-        elif event.key == "space":
-            # Toggle selection of focused item
-            focused_item = self.get_focused_item()
-            if focused_item:
-                self.toggle_selection(focused_item.config.id)
+        """Handle custom key bindings."""
+        if event.key == "space":
+            # Toggle selection of highlighted item
+            highlighted_item = self.get_highlighted_item()
+            if highlighted_item:
+                self.toggle_selection(highlighted_item.config.id)
             event.prevent_default()
             
         elif event.key == "escape" or event.key == "backspace":
             # Return focus to category list
             self.post_message(FocusCategoryList())
             event.prevent_default()
-    
-    def on_click(self, event) -> None:
-        """Handle item clicks."""
-        # Find which item was clicked by checking our widget mapping
-        for i, item in enumerate(self.ui_items):
-            widget = self._item_widgets.get(item.config.id)
-            if widget is not None and event.widget is widget:
-                self.focus_index = i
-                self._update_focus_display()
-                self.post_message(ItemSelected(item))
-                break
+        # For other keys (up, down, enter), let ListView handle them automatically
 
 class ItemSelected(Message):
     """Message sent when an item is selected/focused."""
@@ -378,6 +356,14 @@ class ItemSelected(Message):
     def __init__(self, item: UIItem):
         super().__init__()
         self.item = item
+
+class ItemToggled(Message):
+    """Message sent when an item's selection is toggled."""
+    
+    def __init__(self, item_id: str, selected: bool):
+        super().__init__()
+        self.item_id = item_id
+        self.selected = selected
 
 class ItemTable(DataTable):
     """Custom data table for items with enhanced functionality."""
@@ -778,33 +764,52 @@ class MacSnapApp(App):
     }
     
     /* Item button list styling */
-    .item-button {
-        padding: 0 1;
-        margin-bottom: 1;
-        color: #c0caf5;
-        width: 100%;
+    ItemButtonList {
+        scrollbar-background: #16161e;
+        scrollbar-color: #7aa2f7;
+        scrollbar-size: 1 1;
+    }
+    
+    /* ListView highlighting - uses different CSS structure */
+    ListView > ListItem {
+        padding: 0;
+        margin: 0;
         background: #1a1b26;
-        border: none;
+        height: 3;
+        border: round #3b4261;
     }
     
-    .item-button:hover {
-        background: #3b4261;
-        color: #7aa2f7;
+    ListView > ListItem.--highlight {
+        background: #7aa2f7 !important;
+        border: round #7aa2f7 !important;
     }
     
-    .item-button-focused {
-        background: #7aa2f7;
-        color: #1a1b26;
+    ListView > ListItem.--highlight Static {
+        color: #1a1b26 !important;
         text-style: bold;
     }
     
-    .item-button-focused:hover {
-        background: #9ece6a;
-        color: #1a1b26;
+    ListView > ListItem:hover {
+        background: #3b4261;
+        border: round #7aa2f7;
+    }
+    
+    ListView > ListItem:hover Static {
+        color: #7aa2f7;
+    }
+    
+    .item-button {
+        color: #c0caf5;
+        background: transparent;
+        border: none;
     }
     
     .item-button-selected {
-        border-left: solid #9ece6a;
+        color: #9ece6a;
+    }
+    
+    .item-button-with-category {
+        padding-right: 2;
     }
     
     .empty-message {
@@ -836,7 +841,6 @@ class MacSnapApp(App):
         Binding("q", "quit", "Quit"),
         Binding("r", "refresh", "Refresh"),
         Binding("i", "install", "Install Selected"),
-        Binding("space", "toggle_selection", "Toggle Selection"),
         Binding("ctrl+a", "select_all", "Select All"),
         Binding("ctrl+d", "deselect_all", "Deselect All"),
         Binding("tab", "focus_next", "Focus Next"),
@@ -853,7 +857,8 @@ class MacSnapApp(App):
         self.engine = InstallationEngine(verbose=verbose)
         
         # UI state
-        self.categories = sorted(config_loader.categories)
+        regular_categories = sorted(config_loader.categories)
+        self.categories = ["All"] + regular_categories
         self.ui_items: Dict[str, List[UIItem]] = {}
         self.current_category = self.categories[0] if self.categories else ""
         self.selected_items: Set[str] = set()
@@ -863,7 +868,11 @@ class MacSnapApp(App):
     
     def _initialize_ui_items(self):
         """Initialize UI items grouped by category."""
+        # First initialize regular categories
         for category in self.categories:
+            if category == "All":
+                continue  # Skip "All" for now, handle it separately
+                
             self.ui_items[category] = []
             
             for config in self.config_loader.configurations.values():
@@ -880,6 +889,37 @@ class MacSnapApp(App):
             
             # Sort items alphabetically
             self.ui_items[category].sort(key=lambda x: x.config.name)
+        
+        # Now create the "All" category with all items
+        self._create_all_category()
+    
+    def _create_all_category(self):
+        """Create the 'All' category with all items sorted by category then name."""
+        all_items = []
+        
+        # Collect all items from all categories
+        for category in self.categories:
+            if category == "All":
+                continue
+            
+            for ui_item in self.ui_items[category]:
+                all_items.append(ui_item)
+        
+        # Sort first by category, then by name
+        all_items.sort(key=lambda x: (x.config.category, x.config.name))
+        
+        self.ui_items["All"] = all_items
+    
+    def _update_item_in_original_category(self, item_id: str, selected: bool):
+        """Update an item's selection status in its original category."""
+        for category in self.categories:
+            if category == "All":
+                continue
+            
+            for ui_item in self.ui_items[category]:
+                if ui_item.config.id == item_id:
+                    ui_item.selected = selected
+                    return
     
     def compose(self) -> ComposeResult:
         """Create the UI layout."""
@@ -949,11 +989,32 @@ class MacSnapApp(App):
         except Exception as e:
             self.logger.error(f"Failed to update item detail: {e}")
     
+    def on_item_toggled(self, event: ItemToggled) -> None:
+        """Handle item selection toggle."""
+        try:
+            # Update global selected items
+            if event.selected:
+                self.selected_items.add(event.item_id)
+            else:
+                self.selected_items.discard(event.item_id)
+            
+            # If we're in "All" view, update the item in its original category
+            if self.current_category == "All":
+                self._update_item_in_original_category(event.item_id, event.selected)
+            
+            self._update_selection_count()
+            self.logger.debug(f"Item {event.item_id} {'selected' if event.selected else 'deselected'}")
+        except Exception as e:
+            self.logger.error(f"Failed to handle item toggle: {e}")
+    
     def _load_category_data(self, category: str):
         """Load data for a specific category."""
         items = self.ui_items.get(category, [])
         item_table = self.query_one("#item-table", ItemButtonList)
-        item_table.add_items(items)
+        
+        # Show category names when in "All" view
+        show_category = (category == "All")
+        item_table.add_items(items, show_category=show_category)
         
         # Show details for first item if available
         if items:
@@ -1026,6 +1087,14 @@ class MacSnapApp(App):
         for item in items:
             item.selected = True
             self.selected_items.add(item.config.id)
+            
+            # If we're in "All" view, also update the item in its original category
+            if self.current_category == "All":
+                self._update_item_in_original_category(item.config.id, selected=True)
+        
+        # Regenerate "All" category if needed
+        if self.current_category == "All":
+            self._create_all_category()
         
         self._load_category_data(self.current_category)
         self.notify(f"Selected all items in {self.current_category}")
@@ -1093,6 +1162,9 @@ class MacSnapApp(App):
                 if checked % 3 == 0:
                     progress = (checked / total_items) * 100
                     self.notify(f"Checking status... {checked}/{total_items} ({progress:.0f}%)")
+        
+        # Regenerate "All" category to reflect status changes
+        self._create_all_category()
         
         # Refresh current category
         self._load_category_data(self.current_category)

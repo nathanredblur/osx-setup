@@ -13,7 +13,7 @@ from .item_detail import ItemDetailPanel
 from .action_buttons import ActionButtons
 
 # Import shared data classes
-from .category_list import UIItem
+from .models import UIItem, ItemStatus
 
 # Re-export everything for easy importing
 __all__ = [
@@ -34,5 +34,6 @@ __all__ = [
     "FocusCategoryList",
     
     # Data classes
-    "UIItem"
+    "UIItem",
+    "ItemStatus"
 ] 

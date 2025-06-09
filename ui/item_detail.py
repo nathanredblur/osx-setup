@@ -8,14 +8,7 @@ from textual.reactive import reactive
 import textwrap
 
 from utils.config_loader import ConfigItem
-
-
-class UIItem:
-    """UI representation of a configuration item."""
-    def __init__(self, config: ConfigItem, status: str, selected: bool = False):
-        self.config = config
-        self.status = status
-        self.selected = selected
+from .models import UIItem, ItemStatus
 
 
 class ItemDetailPanel(Static):
@@ -96,8 +89,13 @@ class ItemDetailPanel(Static):
         }
         return type_icons.get(item_type.lower(), "📦")
     
-    def _get_status_display(self, status: str) -> str:
+    def _get_status_display(self, status) -> str:
         """Get formatted status display."""
+        if hasattr(status, 'value'):
+            status_value = status.value
+        else:
+            status_value = str(status).lower()
+            
         status_displays = {
             "installed": "[green]✅ Installed[/green]",
             "not_installed": "[red]⭕ Not Installed[/red]",
@@ -106,4 +104,4 @@ class ItemDetailPanel(Static):
             "failed": "[red]❌ Failed[/red]",
             "unknown": "[dim]❓ Unknown[/dim]"
         }
-        return status_displays.get(status, "[dim]❓ Unknown[/dim]") 
+        return status_displays.get(status_value, "[dim]❓ Unknown[/dim]") 

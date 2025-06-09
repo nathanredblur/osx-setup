@@ -8,14 +8,7 @@ from textual.message import Message
 from textual import events
 
 from utils.config_loader import ConfigItem
-
-
-class UIItem:
-    """UI representation of a configuration item."""
-    def __init__(self, config: ConfigItem, status: str, selected: bool = False):
-        self.config = config
-        self.status = status
-        self.selected = selected
+from .models import UIItem
 
 
 class CategorySelected(Message):

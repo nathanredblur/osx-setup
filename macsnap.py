@@ -23,14 +23,13 @@ import platform
 from pathlib import Path
 from typing import Optional, NoReturn
 
-# Add utils to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'utils'))
+# Utils imports work fine without path modification
 
 from utils.config_loader import load_configs, ConfigLoader
 from utils.validators import ConfigValidator
 from utils.installer import InstallationEngine
 from utils.logger import MacSnapLogger, get_logger, close_logger
-from utils.ui import run_macsnap_ui
+from ui.layout import run_macsnap_ui
 
 # Application metadata
 APP_NAME = "MacSnap Setup"

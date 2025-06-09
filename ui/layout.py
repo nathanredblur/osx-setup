@@ -14,10 +14,13 @@ from utils.logger import get_logger
 
 # Import UI components
 from .styles import LAYOUT_CSS
-from .category_list import CategoryList, CategorySelected, FocusItemTable, UIItem
+from .category_list import CategoryList, CategorySelected, FocusItemTable
 from .item_list import ItemButtonList, ItemSelected, ItemToggled, FocusCategoryList
 from .item_detail import ItemDetailPanel
 from .action_buttons import ActionButtons
+
+# Import shared UI models
+from .models import UIItem, ItemStatus
 
 
 class MacSnapApp(App):
@@ -67,17 +70,20 @@ class MacSnapApp(App):
             if category == "All":
                 continue  # Skip "All" for now, handle it separately
                 
-            # Get items for this category
-            category_items = self.config_loader.get_items_by_category(category)
-            ui_items = []
+            # Use the config_loader's method to get items by category (already sorted)
+            category_configs = self.config_loader.get_items_by_category(category)
             
-            for item in category_items:
+            ui_items = []
+            for config in category_configs:
                 ui_item = UIItem(
-                    config=item,
-                    status="unknown",  # Will be updated by status check
-                    selected=False
+                    config=config,
+                    status=ItemStatus.UNKNOWN,
+                    selected=config.selected_by_default
                 )
                 ui_items.append(ui_item)
+                
+                if config.selected_by_default:
+                    self.selected_items.add(config.id)
             
             self.ui_items[category] = ui_items
         
@@ -85,18 +91,23 @@ class MacSnapApp(App):
         self._create_all_category()
     
     def _create_all_category(self):
-        """Create the 'All' category with items from all other categories."""
+        """Create the 'All' category with all items sorted by category then name."""
         all_items = []
         seen_ids = set()
         
-        for category, items in self.ui_items.items():
+        # Collect all items from all categories, avoiding duplicates
+        for category in self.categories:
             if category == "All":
                 continue
             
-            for item in items:
-                if item.config.id not in seen_ids:
-                    all_items.append(item)
-                    seen_ids.add(item.config.id)
+            for ui_item in self.ui_items[category]:
+                # Only add if we haven't seen this item ID before
+                if ui_item.config.id not in seen_ids:
+                    all_items.append(ui_item)
+                    seen_ids.add(ui_item.config.id)
+        
+        # Sort first by category, then by name
+        all_items.sort(key=lambda x: (x.config.category, x.config.name))
         
         self.ui_items["All"] = all_items
     
@@ -123,18 +134,18 @@ class MacSnapApp(App):
         
         yield Footer()
     
-    def on_mount(self) -> None:
+    async def on_mount(self) -> None:
         """Initialize the app after mounting."""
         # Set native Tokyo Night theme
         self.theme = "tokyo-night"
         
         # Load initial data for the first category
         if self.categories:
-            self._load_category_data(self.current_category)
+            await self._load_category_data(self.current_category)
     
-    def on_category_selected(self, event: CategorySelected) -> None:
+    async def on_category_selected(self, event: CategorySelected) -> None:
         """Handle category selection from sidebar."""
-        self._switch_category(event.category)
+        await self._switch_category(event.category)
     
     def on_focus_item_table(self, event: FocusItemTable) -> None:
         """Handle focus request for items table."""
@@ -177,14 +188,14 @@ class MacSnapApp(App):
         except Exception as e:
             self.logger.error(f"Failed to handle item toggle: {e}")
     
-    def _load_category_data(self, category: str):
+    async def _load_category_data(self, category: str):
         """Load data for a specific category."""
         items = self.ui_items.get(category, [])
         item_table = self.query_one("#item-table", ItemButtonList)
         
         # Show category names when in "All" view
         show_category = (category == "All")
-        item_table.add_items(items, show_category=show_category)
+        await item_table.add_items(items, show_category=show_category)
         
         # Show details for first item if available
         if items:
@@ -199,11 +210,11 @@ class MacSnapApp(App):
         selected_count = len(self.selected_items)
         self.logger.debug(f"Selected items: {selected_count}")
     
-    def _switch_category(self, category: str):
+    async def _switch_category(self, category: str):
         """Switch to a different category."""
         if category in self.categories:
             self.current_category = category
-            self._load_category_data(category)
+            await self._load_category_data(category)
             
             # Update category list selection
             try:
@@ -250,17 +261,30 @@ class MacSnapApp(App):
 
 
 def run_macsnap_ui(verbose: bool = False) -> bool:
-    """Run the MacSnap UI application."""
+    """
+    Run the MacSnap UI with loaded configurations.
+    
+    Args:
+        verbose: Enable verbose logging
+        
+    Returns:
+        True if successful, False otherwise
+    """
     try:
-        from utils.config_loader import ConfigLoader
+        from utils.config_loader import load_configs
         
-        config_loader = ConfigLoader()
-        config_loader.load_all_configs()
+        # Load configurations
+        loader = load_configs('configs')
         
-        app = MacSnapApp(config_loader, verbose=verbose)
+        if not loader.configurations:
+            print("No configurations found. Please check the configs/ directory.")
+            return False
+        
+        # Create and run the Textual app
+        app = MacSnapApp(loader, verbose=verbose)
         app.run()
         return True
         
     except Exception as e:
-        print(f"Error running MacSnap UI: {e}")
+        print(f"Failed to start MacSnap UI: {e}")
         return False 

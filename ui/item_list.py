@@ -155,14 +155,15 @@ class ItemButtonList(ListView):
     def _get_type_icon(self, item_type: str) -> str:
         """Get icon for item type."""
         type_icons = {
-            "app": "📦",
-            "cask": "📦", 
+            "brew": "🍺",
+            "brew_cask": "📦",
             "mas": "🏪",
-            "tap": "🔗",
+            "system_config": "⚙️",
+            "app": "📱",
             "file": "📄",
             "script": "📜",
-            "setting": "⚙️",
-            "config": "🔧"
+            "config": "🔧",
+            "tap": "🔗"
         }
         return type_icons.get(item_type.lower(), "📦")
     

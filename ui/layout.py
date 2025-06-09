@@ -143,6 +143,9 @@ class MacSnapApp(App):
         # Load initial data for the first category
         if self.categories:
             await self._load_category_data(self.current_category)
+        
+        # Check initial installation status
+        self.run_worker(self._check_initial_status())
     
     async def on_category_selected(self, event: CategorySelected) -> None:
         """Handle category selection from sidebar."""
@@ -237,8 +240,7 @@ class MacSnapApp(App):
     
     def action_refresh(self) -> None:
         """Refresh installation status."""
-        # TODO: Implement refresh functionality
-        self.notify("Refresh functionality not yet implemented")
+        self.run_worker(self._check_initial_status())
     
     def action_install(self) -> None:
         """Install selected items."""
@@ -275,6 +277,41 @@ class MacSnapApp(App):
                 item_table.action_toggle_selection()
         except Exception as e:
             self.logger.debug(f"Could not toggle item selection: {e}")
+    
+    async def _check_initial_status(self) -> None:
+        """Check initial installation status for all items."""
+        self.notify("Checking installation status...")
+        
+        total_items = sum(len(items) for items in self.ui_items.values() if items)
+        checked = 0
+        
+        for category in self.categories:
+            if category == "All":
+                continue  # Skip "All" category to avoid duplicates
+                
+            for ui_item in self.ui_items.get(category, []):
+                try:
+                    result = self.engine.check_install_status(ui_item.config)
+                    ui_item.status = (ItemStatus.INSTALLED if result.result.name == "SUCCESS" 
+                                    else ItemStatus.NOT_INSTALLED)
+                    checked += 1
+                    
+                    # Update UI periodically
+                    if checked % 5 == 0:
+                        progress = (checked / total_items) * 100 if total_items > 0 else 0
+                        self.notify(f"Checking status... {checked}/{total_items} ({progress:.0f}%)")
+                        
+                except Exception as e:
+                    self.logger.debug(f"Failed to check status for {ui_item.config.name}: {e}")
+                    ui_item.status = ItemStatus.UNKNOWN
+                    checked += 1
+        
+        # Regenerate "All" category to reflect status changes
+        self._create_all_category()
+        
+        # Refresh current category to show updated status
+        await self._load_category_data(self.current_category)
+        self.notify("Status check completed", severity="information")
 
 
 def run_macsnap_ui(verbose: bool = False) -> bool:

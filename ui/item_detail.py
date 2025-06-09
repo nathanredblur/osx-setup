@@ -70,15 +70,15 @@ class ItemDetailPanel(Static):
     def _get_type_icon(self, item_type: str) -> str:
         """Get icon for item type."""
         type_icons = {
-            "app": "📦",
-            "cask": "📦",
-            "mas": "🏪", 
-            "tap": "🔗",
+            "brew": "🍺",
+            "brew_cask": "📦",
+            "mas": "🏪",
+            "system_config": "⚙️",
+            "app": "📱",
             "file": "📄",
             "script": "📜",
-            "setting": "⚙️",
             "config": "🔧",
-            "brew_cask": "📦"
+            "tap": "🔗"
         }
         return type_icons.get(item_type.lower(), "📦")
     

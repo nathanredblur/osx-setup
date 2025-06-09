@@ -21,36 +21,26 @@ class UIItem:
 class ItemDetailPanel(Static):
     """Panel showing detailed information about selected item."""
     
-    # Component-specific CSS
+    # Component-specific CSS - structure only, theme handles colors
     DEFAULT_CSS = """
-    /* Item detail panel styling */
+    /* Item detail panel structure */
     #item-detail {
         height: 1fr;
-        border: round #3b4261;
+        border: round;
         padding: 1;
-        background: #16161e;
-        color: #c0caf5;
     }
     
     ItemDetailPanel {
         padding: 1;
-        background: #16161e;
-        color: #c0caf5;
-        border: round #3b4261;
+        border: round;
     }
     
     /* Rich text styling for item details */
     ItemDetailPanel .item-name {
         text-style: bold;
-        color: #c0caf5;
-    }
-    
-    ItemDetailPanel .item-status {
-        color: #7aa2f7;
     }
     
     ItemDetailPanel .item-description {
-        color: #9aa5ce;
         margin-top: 1;
     }
     """

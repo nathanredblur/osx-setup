@@ -34,44 +34,25 @@ class FocusItemTable(Message):
 class CategoryList(ListView):
     """ListView for displaying and selecting categories."""
     
-    # Component-specific CSS
+    # Component-specific CSS - structure only, theme handles colors
     DEFAULT_CSS = """
-    /* Category list styling */
+    /* Category list structure */
     CategoryList {
-        scrollbar-background: #16161e;
-        scrollbar-color: #7aa2f7;
         scrollbar-size: 1 1;
     }
     
     CategoryList > ListItem {
         padding: 0;
         margin: 0 0 1 0;
-        background: #3b4261;
         height: 3;
-        border: round #3b4261;
-    }
-    
-    CategoryList > ListItem.--highlight {
-        background: #7aa2f7 !important;
-        border: round #7aa2f7 !important;
+        border: round;
     }
     
     CategoryList > ListItem.--highlight Static {
-        color: #1a1b26 !important;
         text-style: bold;
     }
     
-    CategoryList > ListItem:hover {
-        background: #565f89;
-        border: round #565f89;
-    }
-    
-    CategoryList > ListItem:hover Static {
-        color: #7aa2f7;
-    }
-    
     .category-item {
-        color: #c0caf5;
         background: transparent;
         border: none;
     }
@@ -80,9 +61,8 @@ class CategoryList(ListView):
     #category-sidebar {
         dock: left;
         width: 25%;
-        background: #16161e;
         padding: 1;
-        border: round #3b4261;
+        border: round;
         margin-right: 1;
     }
     """

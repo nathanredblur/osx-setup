@@ -2,20 +2,19 @@
 Action Buttons Component for MacSnap UI
 """
 
-from textual.widgets import Button, Horizontal, Container
-from textual.containers import Horizontal as HorizontalContainer
+from textual.widgets import Button
+from textual.containers import Container, Horizontal as HorizontalContainer
 
 
 class ActionButtons(Container):
     """Container for action buttons (Refresh, Install, etc.)."""
     
-    # Component-specific CSS
+    # Component-specific CSS - structure only, theme handles colors
     DEFAULT_CSS = """
-    /* Control panel and action buttons styling */
+    /* Control panel and action buttons structure */
     #control-panel {
         height: 7;
-        background: #16161e;
-        border: round #3b4261;
+        border: round;
         margin-top: 1;
     }
     
@@ -28,44 +27,22 @@ class ActionButtons(Container):
     }
     
     ActionButtons {
-        background: #16161e;
-        border: round #3b4261;
+        border: round;
         padding: 1;
     }
     
-    /* Button styling */
+    /* Button structure */
     Button {
         margin: 0 1;
         text-style: bold;
         min-width: 10;
         height: 3;
-    }
-    
-    Button.-primary {
-        background: #7aa2f7;
-        color: #1a1b26;
-        border: round #7aa2f7;
-    }
-    
-    Button.-error {
-        background: #f7768e;
-        color: #1a1b26;
-        border: round #f7768e;
-    }
-    
-    Button.-default {
-        background: #3b4261;
-        color: #c0caf5;
-        border: round #3b4261;
+        border: round;
     }
     
     Button:hover {
         text-style: bold;
         opacity: 0.8;
-    }
-    
-    Button:focus {
-        border: thick #7aa2f7;
     }
     """
     

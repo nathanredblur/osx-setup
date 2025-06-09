@@ -18,42 +18,44 @@ ui/
 
 ## 🎨 Distribución de Estilos CSS
 
+### Tema Nativo Tokyo Night
+
+- Usa `self.theme = "tokyo-night"` en lugar de CSS personalizado
+- Textual maneja automáticamente colores, tipografía y efectos
+- Solo se definen estilos estructurales necesarios
+
 ### Estilos Globales (`styles.py`)
 
-- Tema Tokyo Night base
-- Layout de Screen y contenedores principales
-- Header y Footer
-- Modales y DataTable (compatibilidad)
+- Solo layout y estructura
+- Sin colores (manejados por el tema)
 
 ### Estilos por Componente
 
-Cada componente tiene su propio `DEFAULT_CSS` con estilos específicos:
+Cada componente tiene su propio `DEFAULT_CSS` solo con estructura:
 
 #### `CategoryList` (`category_list.py`)
 
-- Estilos de ListView para categorías
-- Highlighting y hover states
+- Estructura de ListView para categorías
+- Layout y dimensiones
 - Sidebar container (`#category-sidebar`)
 
 #### `ItemButtonList` (`item_list.py`)
 
-- ListView para items con iconos
-- Estados de selección y status
+- Estructura de ListView para items
+- Layout y espaciado
 - Container de tabla (`#item-table`)
-- Colores de status (installed, failed, etc.)
 
 #### `ItemDetailPanel` (`item_detail.py`)
 
-- Panel de detalles con texto enriquecido
+- Estructura del panel de detalles
 - Container (`#item-detail`)
-- Clases para nombre, status y descripción
+- Layout de contenido
 
 #### `ActionButtons` (`action_buttons.py`)
 
-- Panel de control (`#control-panel`)
-- Container horizontal (`#action-buttons`)
-- Estilos de botones (primary, error, default)
-- Estados hover y focus
+- Estructura del panel de control (`#control-panel`)
+- Layout horizontal (`#action-buttons`)
+- Dimensiones de botones
 
 ## 🔧 Ventajas de la Separación
 
@@ -117,8 +119,8 @@ Los componentes se comunican usando mensajes de Textual:
 
 ## 💡 Mejores Prácticas
 
-1. **Estilos específicos**: Siempre usar `DEFAULT_CSS` en componentes
-2. **IDs únicos**: Usar selectores de ID para containers específicos
-3. **Clases descriptivas**: Nombres de clase claros y específicos
-4. **Colores consistentes**: Usar paleta Tokyo Night
+1. **Tema nativo**: Usar `self.theme = "tokyo-night"` para colores automáticos
+2. **Solo estructura**: Definir únicamente layout en `DEFAULT_CSS`
+3. **IDs únicos**: Usar selectores de ID para containers específicos
+4. **Clases descriptivas**: Nombres de clase claros y específicos
 5. **Responsive**: Usar unidades `fr` y porcentajes

@@ -4,8 +4,8 @@ Main Layout Component for MacSnap UI
 
 from typing import Dict, List, Set
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Container
-from textual.containers import Vertical
+from textual.widgets import Header, Footer
+from textual.containers import Container, Vertical
 from textual.binding import Binding
 
 from utils.config_loader import ConfigLoader
@@ -13,7 +13,7 @@ from utils.installer import InstallationEngine
 from utils.logger import get_logger
 
 # Import UI components
-from .styles import GLOBAL_CSS
+from .styles import LAYOUT_CSS
 from .category_list import CategoryList, CategorySelected, FocusItemTable, UIItem
 from .item_list import ItemButtonList, ItemSelected, ItemToggled, FocusCategoryList
 from .item_detail import ItemDetailPanel
@@ -27,9 +27,9 @@ class MacSnapApp(App):
     A modern, rich terminal interface for macOS software installation.
     """
     
-    # Set Tokyo Night theme as default
+    # Use native Tokyo Night theme instead of custom CSS
     DARK = True
-    CSS = GLOBAL_CSS
+    CSS = LAYOUT_CSS  # Only structural layout, theme handles colors
     
     BINDINGS = [
         Binding("q", "quit", "Quit"),
@@ -125,6 +125,9 @@ class MacSnapApp(App):
     
     def on_mount(self) -> None:
         """Initialize the app after mounting."""
+        # Set native Tokyo Night theme
+        self.theme = "tokyo-night"
+        
         # Load initial data for the first category
         if self.categories:
             self._load_category_data(self.current_category)

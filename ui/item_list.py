@@ -43,51 +43,28 @@ class FocusCategoryList(Message):
 class ItemButtonList(ListView):
     """ListView for displaying and managing software items."""
     
-    # Component-specific CSS
+    # Component-specific CSS - structure only, theme handles colors
     DEFAULT_CSS = """
-    /* Item button list styling */
+    /* Item button list structure */
     ItemButtonList {
-        scrollbar-background: #16161e;
-        scrollbar-color: #7aa2f7;
         scrollbar-size: 1 1;
     }
     
-    /* ListView highlighting - uses different CSS structure */
+    /* ListView structure */
     ListView > ListItem {
         padding: 0;
         margin: 0;
-        background: #1a1b26;
         height: 3;
-        border: round #3b4261;
-    }
-    
-    ListView > ListItem.--highlight {
-        background: #7aa2f7 !important;
-        border: round #7aa2f7 !important;
+        border: round;
     }
     
     ListView > ListItem.--highlight Static {
-        color: #1a1b26 !important;
         text-style: bold;
     }
     
-    ListView > ListItem:hover {
-        background: #3b4261;
-        border: round #7aa2f7;
-    }
-    
-    ListView > ListItem:hover Static {
-        color: #7aa2f7;
-    }
-    
     .item-button {
-        color: #c0caf5;
         background: transparent;
         border: none;
-    }
-    
-    .item-button-selected {
-        color: #9ece6a;
     }
     
     .item-button-with-category {
@@ -95,37 +72,16 @@ class ItemButtonList(ListView):
     }
     
     .empty-message {
-        color: #565f89;
         text-align: center;
         padding: 2;
         text-style: italic;
     }
     
-    /* Status colors with Tokyo Night palette */
-    .status-installed {
-        color: #9ece6a;
-    }
-    
-    .status-failed {
-        color: #f7768e;
-    }
-    
-    .status-installing {
-        color: #e0af68;
-    }
-    
-    .status-selected {
-        color: #7aa2f7;
-    }
-    
     /* Item table container */
     #item-table {
         height: 2fr;
-        border: round #3b4261;
+        border: round;
         margin-bottom: 1;
-        background: #1a1b26;
-        scrollbar-background: #16161e;
-        scrollbar-color: #7aa2f7;
         padding: 1;
     }
     """

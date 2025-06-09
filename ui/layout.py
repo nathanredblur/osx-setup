@@ -198,6 +198,19 @@ class MacSnapApp(App):
         except Exception as e:
             self.logger.error(f"Failed to handle item toggle: {e}")
     
+    def on_button_pressed(self, event) -> None:
+        """Handle button presses."""
+        if event.button.id == "refresh-btn":
+            self.action_refresh()
+        elif event.button.id == "install-btn":
+            self.action_install()
+        elif event.button.id == "uninstall-btn":
+            self.action_remove()
+        elif event.button.id == "select-all-btn":
+            self.run_worker(self.action_select_all())
+        elif event.button.id == "deselect-all-btn":
+            self.run_worker(self.action_deselect_all())
+    
     async def _load_category_data(self, category: str):
         """Load data for a specific category."""
         items = self.ui_items.get(category, [])
@@ -247,18 +260,69 @@ class MacSnapApp(App):
         if not self.selected_items:
             self.notify("No items selected for installation", severity="warning")
             return
-        # TODO: Implement installation functionality
-        self.notify("Installation functionality not yet implemented")
+        
+        # Show confirmation and run installation
+        selected_count = len(self.selected_items)
+        self.notify(f"Starting installation of {selected_count} items...", severity="information")
+        self.run_worker(self._run_installation())
     
-    def action_select_all(self) -> None:
+    def action_remove(self) -> None:
+        """Remove/uninstall selected items."""
+        if not self.selected_items:
+            self.notify("No items selected for removal", severity="warning")
+            return
+        
+        # Show confirmation and run removal
+        selected_count = len(self.selected_items)
+        self.notify(f"Starting removal of {selected_count} items...", severity="information")
+        self.run_worker(self._run_uninstallation())
+    
+    async def action_select_all(self) -> None:
         """Select all items in current category."""
-        # TODO: Implement select all functionality
-        self.notify("Select all functionality not yet implemented")
+        items = self.ui_items.get(self.current_category, [])
+        if not items:
+            self.notify("No items in current category", severity="warning")
+            return
+            
+        selected_count = 0
+        for item in items:
+            if not item.selected:
+                item.selected = True
+                self.selected_items.add(item.config.id)
+                selected_count += 1
+                
+                # If we're in "All" view, also update the item in its original category
+                if self.current_category == "All":
+                    self._update_item_in_original_category(item.config.id, selected=True)
+        
+        # Regenerate "All" category if needed
+        if self.current_category == "All":
+            self._create_all_category()
+        
+        # Refresh current category display
+        await self._load_category_data(self.current_category)
+        self.notify(f"Selected {selected_count} items in {self.current_category}", severity="information")
     
-    def action_deselect_all(self) -> None:
+    async def action_deselect_all(self) -> None:
         """Deselect all items."""
-        # TODO: Implement deselect all functionality
-        self.notify("Deselect all functionality not yet implemented")
+        deselected_count = 0
+        
+        # Deselect all items across all categories
+        for category_items in self.ui_items.values():
+            for item in category_items:
+                if item.selected:
+                    item.selected = False
+                    deselected_count += 1
+        
+        # Clear global selected items
+        self.selected_items.clear()
+        
+        # Regenerate "All" category
+        self._create_all_category()
+        
+        # Refresh current category display
+        await self._load_category_data(self.current_category)
+        self.notify(f"Deselected {deselected_count} items", severity="information")
     
     def action_focus_categories(self) -> None:
         """Focus the category list."""
@@ -312,6 +376,129 @@ class MacSnapApp(App):
         # Refresh current category to show updated status
         await self._load_category_data(self.current_category)
         self.notify("Status check completed", severity="information")
+    
+    async def _run_installation(self) -> None:
+        """Run installation process."""
+        try:
+            self.notify("Running installation process...")
+            
+            # Get configurations for selected items
+            configs_to_install = {}
+            for item_id in self.selected_items:
+                config = self.config_loader.configurations.get(item_id)
+                if config:
+                    configs_to_install[item_id] = config
+            
+            if not configs_to_install:
+                self.notify("No valid configurations found for selected items", severity="error")
+                return
+            
+            # Run batch installation
+            results = self.engine.batch_process(
+                configs_to_install,
+                list(self.selected_items),
+                "install"
+            )
+            
+            # Update UI item statuses based on results
+            success_count = 0
+            failed_count = 0
+            
+            for result in results:
+                for category_items in self.ui_items.values():
+                    for ui_item in category_items:
+                        if ui_item.config.id == result.item_id:
+                            if result.result.name in ["SUCCESS", "ALREADY_INSTALLED"]:
+                                ui_item.status = ItemStatus.INSTALLED
+                                success_count += 1
+                            else:
+                                ui_item.status = ItemStatus.FAILED
+                                failed_count += 1
+                            break
+            
+            # Regenerate "All" category to reflect status changes
+            self._create_all_category()
+            
+            # Refresh display
+            await self._load_category_data(self.current_category)
+            
+            # Show results
+            if failed_count == 0:
+                self.notify(f"Successfully installed {success_count} items!", severity="success")
+            else:
+                self.notify(f"Installed {success_count} items, {failed_count} failed", severity="warning")
+            
+        except Exception as e:
+            self.notify(f"Installation failed: {e}", severity="error")
+            self.logger.error(f"Installation error: {e}")
+    
+    async def _run_uninstallation(self) -> None:
+        """Run uninstallation process."""
+        try:
+            self.notify("Running uninstallation process...")
+            
+            # Get configurations for selected items
+            configs_to_uninstall = {}
+            for item_id in self.selected_items:
+                config = self.config_loader.configurations.get(item_id)
+                if config:
+                    configs_to_uninstall[item_id] = config
+            
+            if not configs_to_uninstall:
+                self.notify("No valid configurations found for selected items", severity="error")
+                return
+            
+            # Run batch uninstallation
+            results = self.engine.batch_process(
+                configs_to_uninstall,
+                list(self.selected_items),
+                "uninstall"
+            )
+            
+            # Update UI item statuses based on results
+            success_count = 0
+            failed_count = 0
+            
+            for result in results:
+                for category_items in self.ui_items.values():
+                    for ui_item in category_items:
+                        if ui_item.config.id == result.item_id:
+                            if result.result.name == "SUCCESS":
+                                ui_item.status = ItemStatus.NOT_INSTALLED
+                                ui_item.selected = False  # Deselect after uninstall
+                                self.selected_items.discard(result.item_id)
+                                success_count += 1
+                            else:
+                                ui_item.status = ItemStatus.FAILED
+                                failed_count += 1
+                            break
+            
+            # Regenerate "All" category to reflect status changes
+            self._create_all_category()
+            
+            # Refresh display
+            await self._load_category_data(self.current_category)
+            
+            # Show results
+            if failed_count == 0:
+                self.notify(f"Successfully removed {success_count} items!", severity="success")
+            else:
+                self.notify(f"Removed {success_count} items, {failed_count} failed", severity="warning")
+            
+        except Exception as e:
+            self.notify(f"Uninstallation failed: {e}", severity="error")
+            self.logger.error(f"Uninstallation error: {e}")
+    
+    def _update_item_in_original_category(self, item_id: str, selected: bool = None) -> None:
+        """Update an item in its original category when modifying it from 'All' view."""
+        for category, items in self.ui_items.items():
+            if category == "All":
+                continue
+            for ui_item in items:
+                if ui_item.config.id == item_id:
+                    if selected is not None:
+                        ui_item.selected = selected
+                    return
 
 
 def run_macsnap_ui(verbose: bool = False) -> bool:

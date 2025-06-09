@@ -38,6 +38,7 @@ class MacSnapApp(App):
         Binding("q", "quit", "Quit"),
         Binding("r", "refresh", "Refresh"),
         Binding("i", "install", "Install Selected"),
+        Binding("space", "toggle_item_selection", "Toggle Selection", show=False),
         Binding("ctrl+a", "select_all", "Select All"),
         Binding("ctrl+d", "deselect_all", "Deselect All"),
         Binding("tab", "focus_next", "Focus Next"),
@@ -183,6 +184,12 @@ class MacSnapApp(App):
             else:
                 self.selected_items.discard(event.item_id)
             
+            # CRITICAL: Update the actual UIItem objects in our data store
+            for category_items in self.ui_items.values():
+                for ui_item in category_items:
+                    if ui_item.config.id == event.item_id:
+                        ui_item.selected = event.selected
+            
             self._update_selection_count()
             self.logger.debug(f"Item {event.item_id} {'selected' if event.selected else 'deselected'}")
         except Exception as e:
@@ -258,6 +265,16 @@ class MacSnapApp(App):
             category_list.focus()
         except Exception as e:
             self.logger.debug(f"Could not focus categories: {e}")
+    
+    def action_toggle_item_selection(self) -> None:
+        """Toggle selection of the currently highlighted item."""
+        try:
+            # Check if the item table has focus
+            item_table = self.query_one("#item-table", ItemButtonList)
+            if item_table.has_focus:
+                item_table.action_toggle_selection()
+        except Exception as e:
+            self.logger.debug(f"Could not toggle item selection: {e}")
 
 
 def run_macsnap_ui(verbose: bool = False) -> bool:

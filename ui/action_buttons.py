@@ -4,6 +4,7 @@ Action Buttons Component for MacSnap UI
 
 from textual.widgets import Button
 from textual.containers import Container, Horizontal as HorizontalContainer
+from textual.app import ComposeResult
 
 
 class ActionButtons(Container):
@@ -11,33 +12,26 @@ class ActionButtons(Container):
     
     # Component-specific CSS - structure only, theme handles colors
     DEFAULT_CSS = """
-    /* Control panel and action buttons structure */
-    #control-panel {
-        height: 7;
-        border: round;
-        margin-top: 1;
-    }
-    
+    /* Action buttons layout */
     #action-buttons {
         layout: horizontal;
         align: center middle;
         background: transparent;
-        height: 5;
+        height: 3;
         width: 100%;
     }
-    
+
     ActionButtons {
-        border: round;
-        padding: 1;
+        padding: 0;
     }
-    
-    /* Button structure */
-    Button {
+
+    /* Button sizing */
+    .button {
         margin: 0 1;
         text-style: bold;
         min-width: 10;
+        padding: 0 1;
         height: 3;
-        border: round;
     }
     
     Button:hover {
@@ -49,11 +43,11 @@ class ActionButtons(Container):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
-    def compose(self):
+    def compose(self) -> ComposeResult:
         """Compose the action buttons."""
         with HorizontalContainer(id="action-buttons"):
-            yield Button("Refresh", id="refresh-btn", variant="default")
-            yield Button("Install", id="install-btn", variant="primary")
-            yield Button("Remove", id="uninstall-btn", variant="error")
-            yield Button("Select All", id="select-all-btn", variant="default")
-            yield Button("Deselect", id="deselect-all-btn", variant="default") 
+            yield Button("Refresh", id="refresh-btn", variant="default", classes="button")
+            yield Button("Install", id="install-btn", variant="primary", classes="button")
+            yield Button("Remove", id="uninstall-btn", variant="error", classes="button")
+            yield Button("Select All", id="select-all-btn", variant="default", classes="button")
+            yield Button("Deselect", id="deselect-all-btn", variant="default", classes="button") 

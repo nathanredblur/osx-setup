@@ -15,14 +15,7 @@ class ItemDetailPanel(Static):
     """Panel showing detailed information about selected item."""
     
     # Component-specific CSS - structure only, theme handles colors
-    DEFAULT_CSS = """
-    /* Item detail panel structure */
-    #item-detail {
-        height: 1fr;
-        border: round;
-        padding: 1;
-    }
-    
+    DEFAULT_CSS = """    
     ItemDetailPanel {
         padding: 1;
         border: round;

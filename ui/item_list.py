@@ -69,14 +69,6 @@ class ItemButtonList(ListView):
         padding: 2;
         text-style: italic;
     }
-    
-    /* Item table container */
-    #item-table {
-        height: 2fr;
-        border: round;
-        margin-bottom: 1;
-        padding: 1;
-    }
     """
     
     def __init__(self, **kwargs):

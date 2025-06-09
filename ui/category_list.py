@@ -49,15 +49,6 @@ class CategoryList(ListView):
         background: transparent;
         border: none;
     }
-    
-    /* Category sidebar container */
-    #category-sidebar {
-        dock: left;
-        width: 25%;
-        padding: 1;
-        border: round;
-        margin-right: 1;
-    }
     """
     
     def __init__(self, categories: List[str], ui_items: Dict[str, List[UIItem]]):

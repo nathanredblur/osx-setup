@@ -84,11 +84,8 @@ class UIItem:
             ItemStatus.UNKNOWN: "grey70"
         }.get(self.status, "grey70")
 
-class CategoryList(Vertical):
+class CategoryList(ListView):
     """Widget for displaying category list in sidebar."""
-    
-    # Make widget focusable
-    can_focus = True
     
     def __init__(self, categories: List[str], ui_items: Dict[str, List[UIItem]]):
         super().__init__()
@@ -99,14 +96,13 @@ class CategoryList(Vertical):
     
     def compose(self) -> ComposeResult:
         """Create the category list."""
-        yield Static("📁 Categories", id="category-title")
-        
+        # Add categories as ListItems
         for i, category in enumerate(self.categories):
             item_count = len(self.ui_items.get(category, []))
             is_selected = category == self.selected_category
             
-            # Create category item
-            category_text = f"{'▶ ' if is_selected else '  '}{category} ({item_count})"
+            # Create category text
+            category_text = f"{category} ({item_count})"
             
             category_classes = "category-item"
             if is_selected:
@@ -114,71 +110,30 @@ class CategoryList(Vertical):
             
             category_widget = Static(
                 category_text,
-                classes=category_classes,
-                id=f"cat-{category.lower().replace(' ', '-')}"
+                classes=category_classes
             )
-            yield category_widget
+            
+            list_item = ListItem(category_widget)
+            list_item.category_name = category  # Store category reference
+            yield list_item
     
     def set_selected_category(self, category: str):
-        """Update selected category without recomposing."""
+        """Update selected category."""
         if category in self.categories:
-            old_category = self.selected_category
             self.selected_category = category
             self.focus_index = self.categories.index(category)
-            
-            # Update the display of old and new selected items
-            self._update_category_display(old_category, False)
-            self._update_category_display(category, True)
     
-    def _update_category_display(self, category: str, selected: bool):
-        """Update display of a specific category."""
-        category_id = f"cat-{category.lower().replace(' ', '-')}"
-        try:
-            category_widget = self.query_one(f"#{category_id}", Static)
-            item_count = len(self.ui_items.get(category, []))
-            
-            # Update text and classes
-            category_text = f"{'▶ ' if selected else '  '}{category} ({item_count})"
-            category_widget.update(category_text)
-            
-            if selected:
-                category_widget.add_class("category-item-selected")
-            else:
-                category_widget.remove_class("category-item-selected")
-        except:
-            pass  # Widget not found, ignore
-    
-    def on_click(self, event) -> None:
-        """Handle category clicks."""
-        # Prevent event bubbling
-        event.stop()
-        
-        # Find which category was clicked
-        for i, category in enumerate(self.categories):
-            category_id = f"cat-{category.lower().replace(' ', '-')}"
-            if hasattr(event.widget, 'id') and event.widget.id == category_id:
-                self.focus_index = i
-                self.post_message(CategorySelected(category))
-                break
+    def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
+        """Handle category selection."""
+        if event.item and hasattr(event.item, 'category_name'):
+            category = event.item.category_name
+            self.set_selected_category(category)
+            self.post_message(CategorySelected(category))
     
     def on_key(self, event) -> None:
         """Handle keyboard navigation when focused."""
-        if event.key == "up":
-            self.focus_index = (self.focus_index - 1) % len(self.categories)
-            new_category = self.categories[self.focus_index]
-            self.post_message(CategorySelected(new_category))
-            event.prevent_default()
-        elif event.key == "down":
-            self.focus_index = (self.focus_index + 1) % len(self.categories)
-            new_category = self.categories[self.focus_index]
-            self.post_message(CategorySelected(new_category))
-            event.prevent_default()
-        elif event.key == "enter" or event.key == "space":
-            # Select current category and move focus to items table
-            current_category = self.categories[self.focus_index]
-            self.post_message(CategorySelected(current_category))
-            
-            # Send message to move focus to items table
+        if event.key == "enter" or event.key == "space":
+            # Move focus to items table
             self.post_message(FocusItemTable())
             event.prevent_default()
 
@@ -445,73 +400,54 @@ class ItemDetailPanel(Static):
             self.update("📋 Select an item to view details")
             return
         
-        # Create rich content with Tokyo Night colors
+        # Create compact rich content
         content_lines = []
         
-        # Title with emoji
-        title_line = f"📦 {item.config.name}"
-        content_lines.append(title_line)
-        content_lines.append("─" * len(title_line))
-        content_lines.append("")
-        
-        # Status with color
+        # Title with emoji and compact status/type info
+        type_icon = self._get_type_icon(item.config.type)
         status_display = item.status.value.replace("_", " ").title()
-        status_line = f"Status: {item.status_emoji} {status_display}"
+        
+        title_line = f"{type_icon} {item.config.name}"
+        status_line = f"{item.status_emoji} {status_display} • {item.config.type}"
+        
+        content_lines.append(title_line)
         content_lines.append(status_line)
-        
-        # Basic info
-        content_lines.append(f"Type: {item.config.type}")
-        content_lines.append(f"Category: {item.config.category}")
-        
-        if item.selected:
-            content_lines.append("Selection: ☑️ Selected for installation")
-        else:
-            content_lines.append("Selection: ☐ Not selected")
-        
         content_lines.append("")
         
-        # Description
+        # Description (word wrapped)
         if item.config.description:
-            content_lines.append("📝 Description:")
-            # Word wrap description
             desc_words = item.config.description.split()
             current_line = ""
             for word in desc_words:
-                if len(current_line + " " + word) <= 60:  # Wrap at 60 chars
+                if len(current_line + " " + word) <= 70:  # Wrap at 70 chars
                     current_line += " " + word if current_line else word
                 else:
                     if current_line:
-                        content_lines.append(f"   {current_line}")
+                        content_lines.append(current_line)
                     current_line = word
             if current_line:
-                content_lines.append(f"   {current_line}")
-            content_lines.append("")
-        
-        # Dependencies
-        if item.config.dependencies:
-            content_lines.append("🔗 Dependencies:")
-            for dep in item.config.dependencies:
-                content_lines.append(f"   • {dep}")
-            content_lines.append("")
-        
-        # Scripts info
-        scripts = []
-        if item.config.install_script:
-            scripts.append("install")
-        if item.config.validate_script:
-            scripts.append("validate")
-        if item.config.configure_script:
-            scripts.append("configure")
-        if item.config.uninstall_script:
-            scripts.append("uninstall")
-        
-        if scripts:
-            content_lines.append("⚙️ Available scripts:")
-            content_lines.append(f"   {', '.join(scripts)}")
+                content_lines.append(current_line)
+        else:
+            content_lines.append("No description available.")
         
         # Join content and update
         content_text = "\n".join(content_lines)
         self.update(content_text)
+    
+    def _get_type_icon(self, item_type: str) -> str:
+        """Get icon for item type."""
+        type_icons = {
+            "brew": "🍺",
+            "brew_cask": "📦",
+            "mas": "🏪", 
+            "direct_download_dmg": "💿",
+            "direct_download_pkg": "📦",
+            "proto_tool": "🔧",
+            "system_config": "⚙️",
+            "launch_agent": "🚀",
+            "shell_script": "📜"
+        }
+        return type_icons.get(item_type, "📄")
 
 class ProgressScreen(ModalScreen):
     """Modal screen for showing installation progress."""
@@ -607,8 +543,20 @@ class MacSnapApp(App):
         color: #c0caf5;
     }
     
+    Header {
+        background: #16161e;
+        color: #7aa2f7;
+        text-style: bold;
+        dock: top;
+        height: 3;
+        content-align: center middle;
+        border: round #3b4261;
+        margin-bottom: 1;
+    }
+    
     #main-container {
         background: #1a1b26;
+        height: 1fr;
     }
     
     /* Left sidebar for categories */
@@ -616,42 +564,30 @@ class MacSnapApp(App):
         dock: left;
         width: 25%;
         background: #16161e;
-        border-right: solid #3b4261;
         padding: 1;
-    }
-    
-    CategoryList:focus {
-        border: solid #7aa2f7;
-    }
-    
-    #category-title {
-        text-style: bold;
-        color: #7aa2f7;
-        margin-bottom: 1;
-    }
-    
-    #category-list {
-        height: 100%;
+        border: round #3b4261;
+        margin-right: 1;
     }
     
     /* Main content area */
     #content-area {
         background: #1a1b26;
-        padding: 1;
+        padding: 0;
     }
     
     #item-table {
         height: 2fr;
-        border: solid #3b4261;
+        border: round #3b4261;
         margin-bottom: 1;
         background: #1a1b26;
         scrollbar-background: #16161e;
         scrollbar-color: #7aa2f7;
+        padding: 1;
     }
     
     #item-detail {
         height: 1fr;
-        border: solid #3b4261;
+        border: round #3b4261;
         padding: 1;
         background: #16161e;
         color: #c0caf5;
@@ -659,20 +595,42 @@ class MacSnapApp(App):
     
     /* Control panel */
     #control-panel {
-        dock: bottom;
-        height: 5;
+        height: 7;
         background: #16161e;
-        border-top: solid #3b4261;
-        padding: 1;
+        border: round #3b4261;
+        margin-top: 1;
     }
     
     #action-buttons {
+        layout: horizontal;
         align: center middle;
+        background: transparent;
+        height: 5;
+        width: 100%;
+    }
+    
+    /* Footer styling */
+    Footer {
+        background: #16161e;
+        color: #c0caf5;
+        padding: 0 1;
+        height: 3;
+        border: round #3b4261;
+    }
+    
+    Footer > .footer--highlight {
+        background: #7aa2f7;
+        color: #1a1b26;
+    }
+    
+    Footer > .footer--key {
+        color: #7aa2f7;
+        text-style: bold;
     }
     
     Button {
         margin: 0 1;
-        min-width: 16;
+        text-style: bold;
     }
     
     Button.-primary {
@@ -690,32 +648,49 @@ class MacSnapApp(App):
         color: #c0caf5;
     }
     
+    Button:hover {
+        text-style: bold;
+        opacity: 0.8;
+    }
+    
     /* Category list styling */
-    .category-item {
-        padding: 0 1;
-        margin-bottom: 1;
-        color: #c0caf5;
-        width: 100%;
+    CategoryList {
+        scrollbar-background: #16161e;
+        scrollbar-color: #7aa2f7;
+        scrollbar-size: 1 1;
     }
     
-    .category-item:hover {
+    CategoryList > ListItem {
+        padding: 0;
+        margin: 0 0 1 0;
         background: #3b4261;
-        color: #7aa2f7;
+        height: 3;
+        border: round #3b4261;
     }
     
-    .category-item-selected {
-        background: #7aa2f7;
-        color: #1a1b26;
+    CategoryList > ListItem.--highlight {
+        background: #7aa2f7 !important;
+        border: round #7aa2f7 !important;
+    }
+    
+    CategoryList > ListItem.--highlight Static {
+        color: #1a1b26 !important;
         text-style: bold;
     }
     
-    .category-item-selected:hover {
-        background: #9ece6a;
-        color: #1a1b26;
+    CategoryList > ListItem:hover {
+        background: #565f89;
+        border: round #565f89;
     }
     
-    .category-item-count {
-        color: #565f89;
+    CategoryList > ListItem:hover Static {
+        color: #7aa2f7;
+    }
+    
+    .category-item {
+        color: #c0caf5;
+        background: transparent;
+        border: none;
     }
     
     /* Status colors with Tokyo Night palette */
@@ -741,7 +716,7 @@ class MacSnapApp(App):
         height: 80%;
         margin: 2;
         background: #16161e;
-        border: solid #7aa2f7;
+        border: round #7aa2f7;
     }
     
     #progress-title, #results-title {
@@ -753,7 +728,7 @@ class MacSnapApp(App):
     
     #progress-log-container {
         height: 60%;
-        border: solid #3b4261;
+        border: round #3b4261;
         margin: 1;
         background: #1a1b26;
     }
@@ -834,6 +809,25 @@ class MacSnapApp(App):
     DataTable > .datatable--cursor {
         background: #7aa2f7;
         color: #1a1b26;
+    }
+    
+    /* Footer styling */
+    Footer {
+        dock: bottom;
+        background: #16161e;
+        color: #c0caf5;
+        padding: 0 1;
+        height: 3;
+    }
+    
+    Footer > .footer--highlight {
+        background: #7aa2f7;
+        color: #1a1b26;
+    }
+    
+    Footer > .footer--key {
+        color: #7aa2f7;
+        text-style: bold;
     }
     """
     
@@ -938,14 +932,14 @@ class MacSnapApp(App):
                 # Item detail panel
                 yield ItemDetailPanel("Select an item to view details", id="item-detail")
         
-        # Control panel
+        # Control panel outside main container
         with Container(id="control-panel"):
             with Horizontal(id="action-buttons"):
-                yield Button("Refresh Status", id="refresh-btn", variant="default")
-                yield Button("Install Selected", id="install-btn", variant="primary")
-                yield Button("Uninstall Selected", id="uninstall-btn", variant="error")
+                yield Button("Refresh", id="refresh-btn", variant="default")
+                yield Button("Install", id="install-btn", variant="primary")
+                yield Button("Remove", id="uninstall-btn", variant="error")
                 yield Button("Select All", id="select-all-btn", variant="default")
-                yield Button("Deselect All", id="deselect-all-btn", variant="default")
+                yield Button("Deselect", id="deselect-all-btn", variant="default")
         
         yield Footer()
     
@@ -1056,6 +1050,8 @@ class MacSnapApp(App):
             self.action_select_all()
         elif event.button.id == "deselect-all-btn":
             self.action_deselect_all()
+    
+
     
     def action_quit(self) -> None:
         """Quit the application."""

@@ -2,13 +2,14 @@
 Main Layout Component for MacSnap UI
 """
 
+import sys
 from typing import Dict, List, Set
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer
 from textual.containers import Container, Vertical
 from textual.binding import Binding
 
-from utils.config_loader import ConfigLoader
+from utils.config_loader import ConfigLoader, ConfigItem
 from utils.installer import InstallationEngine
 from utils.logger import get_logger
 
@@ -18,6 +19,7 @@ from .category_list import CategoryList, CategorySelected, FocusItemTable
 from .item_list import ItemButtonList, ItemSelected, ItemToggled, FocusCategoryList
 from .item_detail import ItemDetailPanel
 from .action_buttons import ActionButtons
+
 
 # Import shared UI models
 from .models import UIItem, ItemStatus
@@ -60,6 +62,10 @@ class MacSnapApp(App):
         self.ui_items: Dict[str, List[UIItem]] = {}
         self.current_category = self.categories[0] if self.categories else ""
         self.selected_items: Set[str] = set()
+        
+        # Pending operations (executed after UI closes)
+        self._pending_installation = None
+        self._pending_uninstallation = None
         
         # Initialize UI items
         self._initialize_ui_items()
@@ -137,15 +143,22 @@ class MacSnapApp(App):
     
     async def on_mount(self) -> None:
         """Initialize the app after mounting."""
-        # Set native Tokyo Night theme
-        self.theme = "tokyo-night"
-        
-        # Load initial data for the first category
-        if self.categories:
-            await self._load_category_data(self.current_category)
-        
-        # Check initial installation status
-        self.run_worker(self._check_initial_status())
+        try:
+            # Set native Tokyo Night theme
+            self.theme = "tokyo-night"
+            
+            # Load initial data for the first category
+            if self.categories:
+                await self._load_category_data(self.current_category)
+            
+            # Check initial installation status
+            self.run_worker(self._check_initial_status())
+        except Exception as e:
+            error_msg = f"Failed to initialize app: {e}"
+            print(f"ERROR: {error_msg}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            self.notify(error_msg, severity="error")
     
     async def on_category_selected(self, event: CategorySelected) -> None:
         """Handle category selection from sidebar."""
@@ -200,16 +213,23 @@ class MacSnapApp(App):
     
     def on_button_pressed(self, event) -> None:
         """Handle button presses."""
-        if event.button.id == "refresh-btn":
-            self.action_refresh()
-        elif event.button.id == "install-btn":
-            self.action_install()
-        elif event.button.id == "uninstall-btn":
-            self.action_remove()
-        elif event.button.id == "select-all-btn":
-            self.run_worker(self.action_select_all())
-        elif event.button.id == "deselect-all-btn":
-            self.run_worker(self.action_deselect_all())
+        try:
+            if event.button.id == "refresh-btn":
+                self.action_refresh()
+            elif event.button.id == "install-btn":
+                self.action_install()
+            elif event.button.id == "uninstall-btn":
+                self.action_remove()
+            elif event.button.id == "select-all-btn":
+                self.run_worker(self.action_select_all())
+            elif event.button.id == "deselect-all-btn":
+                self.run_worker(self.action_deselect_all())
+        except Exception as e:
+            error_msg = f"Button press error: {e}"
+            print(f"ERROR: {error_msg}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            self.notify(error_msg, severity="error")
     
     async def _load_category_data(self, category: str):
         """Load data for a specific category."""
@@ -377,117 +397,84 @@ class MacSnapApp(App):
         await self._load_category_data(self.current_category)
         self.notify("Status check completed", severity="information")
     
-    async def _run_installation(self) -> None:
-        """Run installation process."""
+    def _run_installation(self) -> None:
+        """Run installation process by exiting UI and running in terminal."""
         try:
-            self.notify("Running installation process...")
-            
             # Get configurations for selected items
             configs_to_install = {}
+            selected_names = []
             for item_id in self.selected_items:
                 config = self.config_loader.configurations.get(item_id)
                 if config:
                     configs_to_install[item_id] = config
+                    selected_names.append(config.name)
             
             if not configs_to_install:
                 self.notify("No valid configurations found for selected items", severity="error")
                 return
             
-            # Run batch installation
-            results = self.engine.batch_process(
-                configs_to_install,
-                list(self.selected_items),
-                "install"
-            )
+            # Store configs for execution after UI closes
+            self._pending_installation = configs_to_install
             
-            # Update UI item statuses based on results
-            success_count = 0
-            failed_count = 0
-            
-            for result in results:
-                for category_items in self.ui_items.values():
-                    for ui_item in category_items:
-                        if ui_item.config.id == result.item_id:
-                            if result.result.name in ["SUCCESS", "ALREADY_INSTALLED"]:
-                                ui_item.status = ItemStatus.INSTALLED
-                                success_count += 1
-                            else:
-                                ui_item.status = ItemStatus.FAILED
-                                failed_count += 1
-                            break
-            
-            # Regenerate "All" category to reflect status changes
-            self._create_all_category()
-            
-            # Refresh display
-            await self._load_category_data(self.current_category)
-            
-            # Show results
-            if failed_count == 0:
-                self.notify(f"Successfully installed {success_count} items!", severity="success")
-            else:
-                self.notify(f"Installed {success_count} items, {failed_count} failed", severity="warning")
+            # Close the UI - execution will happen in the exit callback
+            self.app.exit()
             
         except Exception as e:
-            self.notify(f"Installation failed: {e}", severity="error")
+            error_msg = f"Installation failed: {e}"
+            self.notify(error_msg, severity="error")
             self.logger.error(f"Installation error: {e}")
+            # Also print to stderr for debugging
+            print(f"ERROR: {error_msg}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
     
-    async def _run_uninstallation(self) -> None:
-        """Run uninstallation process."""
+    def _run_uninstallation(self) -> None:
+        """Run uninstallation process by exiting UI and running in terminal."""
         try:
-            self.notify("Running uninstallation process...")
-            
             # Get configurations for selected items
             configs_to_uninstall = {}
+            selected_names = []
             for item_id in self.selected_items:
                 config = self.config_loader.configurations.get(item_id)
                 if config:
                     configs_to_uninstall[item_id] = config
+                    selected_names.append(config.name)
             
             if not configs_to_uninstall:
                 self.notify("No valid configurations found for selected items", severity="error")
                 return
             
-            # Run batch uninstallation
-            results = self.engine.batch_process(
-                configs_to_uninstall,
-                list(self.selected_items),
-                "uninstall"
-            )
+            # Store configs for execution after UI closes
+            self._pending_uninstallation = configs_to_uninstall
             
-            # Update UI item statuses based on results
-            success_count = 0
-            failed_count = 0
-            
-            for result in results:
-                for category_items in self.ui_items.values():
-                    for ui_item in category_items:
-                        if ui_item.config.id == result.item_id:
-                            if result.result.name == "SUCCESS":
-                                ui_item.status = ItemStatus.NOT_INSTALLED
-                                ui_item.selected = False  # Deselect after uninstall
-                                self.selected_items.discard(result.item_id)
-                                success_count += 1
-                            else:
-                                ui_item.status = ItemStatus.FAILED
-                                failed_count += 1
-                            break
-            
-            # Regenerate "All" category to reflect status changes
-            self._create_all_category()
-            
-            # Refresh display
-            await self._load_category_data(self.current_category)
-            
-            # Show results
-            if failed_count == 0:
-                self.notify(f"Successfully removed {success_count} items!", severity="success")
-            else:
-                self.notify(f"Removed {success_count} items, {failed_count} failed", severity="warning")
+            # Close the UI - execution will happen in the exit callback
+            self.app.exit()
             
         except Exception as e:
-            self.notify(f"Uninstallation failed: {e}", severity="error")
+            error_msg = f"Uninstallation failed: {e}"
+            self.notify(error_msg, severity="error")
             self.logger.error(f"Uninstallation error: {e}")
+            # Also print to stderr for debugging
+            print(f"ERROR: {error_msg}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+    
+
+    
+    def _update_item_status(self, item_id: str, status: ItemStatus) -> None:
+        """Update the status of an item across all categories."""
+        for category_items in self.ui_items.values():
+            for ui_item in category_items:
+                if ui_item.config.id == item_id:
+                    ui_item.status = status
+    
+    def _deselect_item(self, item_id: str) -> None:
+        """Deselect an item across all categories."""
+        for category_items in self.ui_items.values():
+            for ui_item in category_items:
+                if ui_item.config.id == item_id:
+                    ui_item.selected = False
+        self.selected_items.discard(item_id)
     
     def _update_item_in_original_category(self, item_id: str, selected: bool = None) -> None:
         """Update an item in its original category when modifying it from 'All' view."""
@@ -499,6 +486,165 @@ class MacSnapApp(App):
                     if selected is not None:
                         ui_item.selected = selected
                     return
+
+    def _execute_terminal_installation(self, configs: Dict[str, ConfigItem]) -> None:
+        """Execute installation process directly in terminal."""
+        print("\n" + "="*60)
+        print("🚀 MacSnap Installation Process")
+        print("="*60)
+        print(f"Installing {len(configs)} selected items...\n")
+        
+        successful_items = []
+        failed_items = []
+        
+        for idx, (item_id, config) in enumerate(configs.items(), 1):
+            print(f"[{idx}/{len(configs)}] Installing: {config.name}")
+            print("-" * 40)
+            
+            if not config.install_script:
+                print(f"⚠️  Skipping {config.name}: No install script defined")
+                continue
+            
+            try:
+                # Execute the installation script
+                success = self._run_script_in_terminal(config.install_script, config.name)
+                
+                if success:
+                    print(f"✅ {config.name} installed successfully!")
+                    successful_items.append(config.name)
+                else:
+                    print(f"❌ {config.name} installation failed!")
+                    failed_items.append(config.name)
+                    
+            except Exception as e:
+                print(f"❌ Error installing {config.name}: {e}")
+                failed_items.append(config.name)
+            
+            print()  # Add spacing between items
+        
+        # Print summary
+        print("="*60)
+        print("📊 Installation Summary")
+        print("="*60)
+        
+        if successful_items:
+            print(f"✅ Successfully installed ({len(successful_items)}):")
+            for item in successful_items:
+                print(f"   • {item}")
+        
+        if failed_items:
+            print(f"\n❌ Failed to install ({len(failed_items)}):")
+            for item in failed_items:
+                print(f"   • {item}")
+        
+        print(f"\nProcess completed: {len(successful_items)} successful, {len(failed_items)} failed")
+    
+    def _execute_terminal_uninstallation(self, configs: Dict[str, ConfigItem]) -> None:
+        """Execute uninstallation process directly in terminal."""
+        print("\n" + "="*60)
+        print("🗑️  MacSnap Uninstallation Process")
+        print("="*60)
+        print(f"Uninstalling {len(configs)} selected items...\n")
+        
+        successful_items = []
+        failed_items = []
+        
+        for idx, (item_id, config) in enumerate(configs.items(), 1):
+            print(f"[{idx}/{len(configs)}] Uninstalling: {config.name}")
+            print("-" * 40)
+            
+            if not config.uninstall_script:
+                print(f"⚠️  Skipping {config.name}: No uninstall script defined")
+                continue
+            
+            try:
+                # Execute the uninstallation script
+                success = self._run_script_in_terminal(config.uninstall_script, config.name)
+                
+                if success:
+                    print(f"✅ {config.name} uninstalled successfully!")
+                    successful_items.append(config.name)
+                else:
+                    print(f"❌ {config.name} uninstallation failed!")
+                    failed_items.append(config.name)
+                    
+            except Exception as e:
+                print(f"❌ Error uninstalling {config.name}: {e}")
+                failed_items.append(config.name)
+            
+            print()  # Add spacing between items
+        
+        # Print summary
+        print("="*60)
+        print("📊 Uninstallation Summary")
+        print("="*60)
+        
+        if successful_items:
+            print(f"✅ Successfully uninstalled ({len(successful_items)}):")
+            for item in successful_items:
+                print(f"   • {item}")
+        
+        if failed_items:
+            print(f"\n❌ Failed to uninstall ({len(failed_items)}):")
+            for item in failed_items:
+                print(f"   • {item}")
+        
+        print(f"\nProcess completed: {len(successful_items)} successful, {len(failed_items)} failed")
+
+    def _run_script_in_terminal(self, script_content: str, item_name: str) -> bool:
+        """Execute a script content in terminal and show real-time output."""
+        import subprocess
+        import os
+        import tempfile
+        
+        if not script_content or not script_content.strip():
+            print(f"⚠️  No script content provided for {item_name}")
+            return False
+        
+        # Create temporary script file
+        temp_script = None
+        try:
+            # Create temporary file with .sh extension
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
+                # Add shebang and script content
+                f.write('#!/bin/bash\n')
+                f.write('set -e\n')  # Exit on any error
+                f.write('\n')
+                f.write(script_content)
+                temp_script = f.name
+            
+            # Make script executable
+            os.chmod(temp_script, 0o755)
+            
+            # Execute the script with bash
+            process = subprocess.Popen(
+                ['/bin/bash', temp_script],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                universal_newlines=True
+            )
+            
+            # Stream output in real-time
+            for line in iter(process.stdout.readline, ''):
+                print(line.rstrip())
+            
+            # Wait for completion
+            process.wait()
+            
+            return process.returncode == 0
+            
+        except Exception as e:
+            print(f"❌ Error executing script for {item_name}: {e}")
+            return False
+        finally:
+            # Clean up temporary file
+            if temp_script and os.path.exists(temp_script):
+                try:
+                    os.unlink(temp_script)
+                except Exception as e:
+                    print(f"Warning: Could not clean up temporary script: {e}")
 
 
 def run_macsnap_ui(verbose: bool = False) -> bool:
@@ -513,6 +659,8 @@ def run_macsnap_ui(verbose: bool = False) -> bool:
     """
     try:
         from utils.config_loader import load_configs
+        import time
+        import sys
         
         # Load configurations
         loader = load_configs('configs')
@@ -524,8 +672,30 @@ def run_macsnap_ui(verbose: bool = False) -> bool:
         # Create and run the Textual app
         app = MacSnapApp(loader, verbose=verbose)
         app.run()
+        
+        # After UI closes, check for pending operations
+        # Small delay to ensure terminal is ready
+        time.sleep(0.1)
+        sys.stdout.flush()
+        sys.stderr.flush()
+        
+        # Execute pending operations
+        if hasattr(app, '_pending_installation') and app._pending_installation:
+            print("\n" + "="*60)
+            print("🚀 Executing pending installation...")
+            print("="*60)
+            app._execute_terminal_installation(app._pending_installation)
+            
+        elif hasattr(app, '_pending_uninstallation') and app._pending_uninstallation:
+            print("\n" + "="*60)
+            print("🗑️  Executing pending uninstallation...")
+            print("="*60)
+            app._execute_terminal_uninstallation(app._pending_uninstallation)
+        
         return True
         
     except Exception as e:
         print(f"Failed to start MacSnap UI: {e}")
+        import traceback
+        traceback.print_exc()
         return False 

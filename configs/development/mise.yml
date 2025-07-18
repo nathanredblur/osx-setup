@@ -1,0 +1,45 @@
+id: "mise"
+name: "Mise"
+description: "Polyglot runtime manager (formerly rtx) that supports multiple programming languages and tools with fast performance"
+type: "brew"
+category: "Development"
+selected_by_default: true
+requires_license: false
+tags:
+  - version-manager
+  - runtime
+  - development
+  - polyglot
+  - tools
+url: "https://mise.jdx.dev/"
+notes: |
+  - Polyglot runtime manager for multiple languages
+  - Supports Node.js, Python, Ruby, Java, Go, and many more
+  - Fast performance with Rust implementation
+  - Compatible with .tool-versions files
+  - Plugin ecosystem for extending functionality
+  - 
+  - 📌 After installation:
+  - 1. Add to shell profile: eval "$(mise activate zsh)"
+  - 2. Install a runtime: mise install node@latest
+  - 3. Set global version: mise global node@latest
+  - 4. Create .tool-versions file in project: mise local node@18
+dependencies: []
+install:
+  script: |
+    echo "Installing Mise..."
+    brew install mise
+validate:
+  script: |
+    command -v mise &> /dev/null
+configure:
+  script: |
+    echo "Mise configuration complete"
+    echo "Add to shell profile: eval \"\$(mise activate zsh)\""
+    echo "Install a runtime: mise install node@latest"
+    echo "Set global version: mise global node@latest"
+    echo "Create .tool-versions file in projects: mise local node@18"
+uninstall:
+  script: |
+    echo "Uninstalling Mise..."
+    brew uninstall mise

@@ -1,0 +1,34 @@
+id: "rectangle"
+name: "Rectangle"
+description: "Free window management app that lets you move and resize windows using keyboard shortcuts or snap areas"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: true
+requires_license: false
+tags:
+  - window-management
+  - productivity
+  - shortcuts
+  - free
+url: "https://rectangleapp.com/"
+notes: |
+  - Free and open source window manager
+  - Supports keyboard shortcuts and snap areas
+  - Nearly complete replacement for Spectacle
+  - Integrates well with macOS
+dependencies: []
+install:
+  script: |
+    echo "Installing Rectangle..."
+    brew install --cask rectangle
+validate:
+  script: |
+    brew list --cask | grep -q "rectangle" || ls /Applications/ | grep -q "Rectangle.app"
+configure:
+  script: |
+    echo "Rectangle configuration complete"
+    echo "Launch Rectangle and grant accessibility permissions when prompted"
+uninstall:
+  script: |
+    echo "Uninstalling Rectangle..."
+    brew uninstall --cask rectangle

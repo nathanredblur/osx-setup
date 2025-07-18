@@ -3,6 +3,19 @@ name: "Raycast"
 description: "Blazingly fast, totally extendable launcher"
 type: "brew_cask"
 category: "Productivity"
+selected_by_default: true
+requires_license: false
+tags:
+  - launcher
+  - productivity
+  - shortcuts
+  - automation
+url: "https://www.raycast.com/"
+notes: |
+  - Modern launcher with extensive extension ecosystem
+  - Built-in features for clipboard history, window management, and calculations
+  - Supports custom scripts and extensions
+  - Free tier with paid Pro features available
 dependencies: []
 install:
   script: |
@@ -15,3 +28,7 @@ configure:
   script: |
     echo "Raycast configuration complete"
     echo "Launch Raycast and complete the setup process"
+uninstall:
+  script: |
+    echo "Uninstalling Raycast..."
+    brew uninstall --cask raycast

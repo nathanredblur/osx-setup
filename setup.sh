@@ -46,6 +46,9 @@ install_homebrew() {
     elif [[ -x /usr/local/bin/brew ]]; then
         export PATH="/usr/local/bin:$PATH"
     fi
+    brew analytics off
+    brew update
+    brew upgrade
   fi
 }
 

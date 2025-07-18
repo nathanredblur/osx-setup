@@ -3,6 +3,20 @@ name: "Dock Settings"
 description: "Configure Dock auto-hide, size, and behavior"
 type: "system_config"
 category: "System Tweaks"
+selected_by_default: true
+requires_license: false
+tags:
+  - system-config
+  - dock
+  - ui
+  - productivity
+url: "https://support.apple.com/en-us/HT201730"
+notes: |
+  - Configures dock auto-hide for more screen space
+  - Adjusts dock size and behavior preferences
+  - Applies system-wide dock settings
+  - No additional software required
+dependencies: []
 install:
   script: |
     echo "This item only configures existing system settings"

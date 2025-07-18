@@ -1,0 +1,46 @@
+id: "swiftbar"
+name: "SwiftBar"
+description: "Powerful macOS menu bar customization tool that lets you create custom menu bar apps with simple scripts"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - menubar
+  - customization
+  - scripting
+  - productivity
+  - automation
+url: "https://swiftbar.app/"
+notes: |
+  - Create custom menu bar programs with simple scripts
+  - Compatible with BitBar/xbar plugin ecosystem
+  - Supports multiple programming languages (Shell, Python, Ruby, etc.)
+  - Built-in plugin repository with hundreds of plugins
+  - Refresh intervals and scheduling support
+  - Free and open source
+  - 
+  - 📌 After installation:
+  - 1. Browse plugins at: https://github.com/matryer/xbar-plugins/tree/main
+  - 2. Popular plugins to try:
+  -    • Now Playing: https://github.com/matryer/xbar-plugins/blob/main/Music/nowplaying.5s.sh
+  -    • System monitors, weather, calendar, and more
+  - 3. Create your own scripts or customize existing ones
+dependencies: []
+install:
+  script: |
+    echo "Installing SwiftBar..."
+    brew install --cask swiftbar
+validate:
+  script: |
+    brew list --cask | grep -q "swiftbar" || ls /Applications/ | grep -q "SwiftBar.app"
+configure:
+  script: |
+    echo "SwiftBar configuration complete"
+    echo "Launch SwiftBar and create a plugins directory"
+    echo "Visit https://github.com/matryer/xbar-plugins/tree/main for available plugins"
+    echo "Try the Now Playing plugin: https://github.com/matryer/xbar-plugins/blob/main/Music/nowplaying.5s.sh"
+uninstall:
+  script: |
+    echo "Uninstalling SwiftBar..."
+    brew uninstall --cask swiftbar

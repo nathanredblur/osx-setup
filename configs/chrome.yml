@@ -3,6 +3,19 @@ name: "Google Chrome"
 description: "Fast, secure, and free web browser"
 type: "brew_cask"
 category: "Browsers"
+selected_by_default: true
+requires_license: false
+tags:
+  - browser
+  - web
+  - google
+  - essential
+url: "https://www.google.com/chrome/"
+notes: |
+  - Most popular web browser with extensive extension ecosystem
+  - Syncs with Google account for bookmarks, history, and passwords
+  - Built-in developer tools and security features
+  - Regular updates and security patches
 dependencies: []
 install:
   script: |
@@ -14,3 +27,7 @@ validate:
 configure:
   script: |
     echo "Google Chrome configuration complete"
+uninstall:
+  script: |
+    echo "Uninstalling Google Chrome..."
+    brew uninstall --cask google-chrome

@@ -4,6 +4,18 @@ description: "Command line interface for the Mac App Store"
 type: "brew"
 category: "Core Utilities"
 selected_by_default: true
+requires_license: false
+tags:
+  - cli
+  - app-store
+  - utilities
+  - essential
+url: "https://github.com/mas-cli/mas"
+notes: |
+  - Requires being signed into the Mac App Store
+  - Allows installation and management of Mac App Store apps via command line
+  - Useful for automation and scripting
+  - Can list, install, upgrade, and search for apps
 dependencies: []
 install:
   script: |
@@ -16,3 +28,7 @@ configure:
   script: |
     echo "mas-cli configuration complete"
     mas version
+uninstall:
+  script: |
+    echo "Uninstalling mas-cli..."
+    brew uninstall mas

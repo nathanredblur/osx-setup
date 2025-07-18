@@ -90,16 +90,11 @@ class CategoryList(ListView):
     
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
         """Handle category selection."""
-        if event.item and hasattr(event.item, 'id'):
-            # Extract category name from item id
-            category_id = event.item.id.replace('category-', '').replace('-', ' ')
+        if event.item and hasattr(event.item, 'category_name'):
+            category = event.item.category_name
+            self.current_category = category
+            self.post_message(CategorySelected(category))
             
-            # Find matching category (case insensitive)
-            for category in self.categories:
-                if category.lower().replace(' ', '-') == category_id:
-                    self.current_category = category
-                    self.post_message(CategorySelected(category))
-                    break
     
     def on_key(self, event) -> None:
         """Handle keyboard navigation."""

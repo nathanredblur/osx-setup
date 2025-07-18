@@ -4,7 +4,21 @@ description: "Learn how to play the piano using falling notes."
 type: "brew_cask"
 category: "Media"
 selected_by_default: false
-dependencies: [] # Assuming 'homebrew_setup' is the ID for your Homebrew core installation
+requires_license: true
+tags:
+  - music
+  - learning
+  - piano
+  - education
+  - games
+url: "https://www.synthesiagame.com/"
+notes: |
+  - Interactive piano learning game with falling notes
+  - Supports MIDI keyboards for realistic playing experience
+  - Premium features require license purchase
+  - Large library of songs and lessons available
+  - Suitable for beginners and advanced players
+dependencies: []
 install:
   script: |
     echo "Installing Synthesia..."

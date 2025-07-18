@@ -2,7 +2,7 @@ id: "iterm2"
 name: "iTerm2"
 description: "A replacement for Terminal and the successor to iTerm."
 type: "brew_cask"
-category: "Terminal"
+category: "Development"
 selected_by_default: true
 dependencies: []
 install:

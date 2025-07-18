@@ -1,0 +1,37 @@
+id: "rectangle-pro"
+name: "Rectangle Pro"
+description: "Superior window management with advanced features, scripting support, and enhanced customization options"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: true
+tags:
+  - window-management
+  - productivity
+  - premium
+  - advanced
+  - scripting
+url: "https://rectangleapp.com/pro"
+notes: |
+  - Advanced window management with scripting capabilities
+  - Enhanced customization options and advanced features
+  - Premium version with one-time purchase ($9.99)
+  - Includes all Rectangle features plus advanced functionality
+  - Supports AppleScript and custom actions
+dependencies: []
+install:
+  script: |
+    echo "Installing Rectangle Pro..."
+    brew install --cask rectangle-pro
+validate:
+  script: |
+    brew list --cask | grep -q "rectangle-pro" || ls /Applications/ | grep -q "Rectangle Pro.app"
+configure:
+  script: |
+    echo "Rectangle Pro configuration complete"
+    echo "Launch Rectangle Pro and grant accessibility permissions when prompted"
+    echo "Note: Rectangle Pro requires a license purchase for full functionality"
+uninstall:
+  script: |
+    echo "Uninstalling Rectangle Pro..."
+    brew uninstall --cask rectangle-pro

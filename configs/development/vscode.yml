@@ -3,6 +3,21 @@ name: "Visual Studio Code"
 description: "Free source-code editor made by Microsoft"
 type: "brew_cask"
 category: "Development"
+selected_by_default: true
+requires_license: false
+tags:
+  - editor
+  - development
+  - microsoft
+  - free
+  - extensions
+url: "https://code.visualstudio.com/"
+notes: |
+  - Free and open-source code editor with extensive extension ecosystem
+  - Built-in Git integration and debugging support
+  - IntelliSense code completion and syntax highlighting
+  - Integrated terminal and command palette
+  - Supports multiple programming languages
 dependencies: []
 install:
   script: |
@@ -20,3 +35,7 @@ configure:
     else
       echo "You may need to install 'code' command from VS Code Command Palette: Shell Command: Install 'code' command in PATH"
     fi
+uninstall:
+  script: |
+    echo "Uninstalling Visual Studio Code..."
+    brew uninstall --cask visual-studio-code

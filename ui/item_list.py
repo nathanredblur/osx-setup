@@ -137,8 +137,12 @@ class ItemButtonList(ListView):
         type_icon = self._get_type_icon(item.config.type)
         status_emoji = self._get_status_emoji(item.status)
         selection_checkbox = "☑️" if item.selected else "☐"
+        license_icon = "💰" if getattr(item.config, 'requires_license', False) else ""
         
-        return f"{type_icon} {status_emoji} {selection_checkbox} {item.config.name}"
+        # Add license icon if required
+        license_part = f" {license_icon}" if license_icon else ""
+        
+        return f"{type_icon} {status_emoji} {selection_checkbox} {item.config.name}{license_part}"
     
     def _get_item_classes(self, item: UIItem) -> str:
         """Get CSS classes for an item based on its state."""
@@ -158,7 +162,7 @@ class ItemButtonList(ListView):
             "brew": "🍺",
             "brew_cask": "📦",
             "mas": "🏪",
-            "system_config": "⚙️",
+            "system_config": "⚙️ ",
             "app": "📱",
             "file": "📄",
             "script": "📜",

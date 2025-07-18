@@ -3,6 +3,20 @@ name: "Trackpad Settings"
 description: "Configure trackpad with tap to click and other improvements"
 type: "system_config"
 category: "System Tweaks"
+selected_by_default: true
+requires_license: false
+tags:
+  - system-config
+  - trackpad
+  - productivity
+  - input
+url: "https://support.apple.com/en-us/HT204895"
+notes: |
+  - Enables tap to click for easier trackpad interaction
+  - Improves trackpad responsiveness and usability
+  - Applies system-wide trackpad preferences
+  - No additional software required
+dependencies: []
 install:
   script: |
     echo "This item only configures existing system settings"

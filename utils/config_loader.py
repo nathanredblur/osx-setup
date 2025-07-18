@@ -24,6 +24,10 @@ class ConfigItem:
     type: str
     category: str
     selected_by_default: bool = False
+    requires_license: bool = False
+    tags: List[str] = None
+    url: Optional[str] = None
+    notes: Optional[str] = None
     dependencies: List[str] = None
     install_script: Optional[str] = None
     validate_script: Optional[str] = None
@@ -33,9 +37,11 @@ class ConfigItem:
     config_dir: str = ""  # Directory containing the YAML file
     
     def __post_init__(self):
-        """Initialize dependencies as empty list if None."""
+        """Initialize dependencies and tags as empty lists if None."""
         if self.dependencies is None:
             self.dependencies = []
+        if self.tags is None:
+            self.tags = []
 
 
 class ConfigLoader:
@@ -124,6 +130,10 @@ class ConfigLoader:
                     category=data['category'],
                     description=data.get('description', ''),
                     selected_by_default=data.get('selected_by_default', False),
+                    requires_license=data.get('requires_license', False),
+                    tags=data.get('tags', []),
+                    url=data.get('url'),
+                    notes=data.get('notes'),
                     dependencies=data.get('dependencies', []),
                     file_path=str(yml_file),
                     config_dir=str(self.configs_dir)
@@ -147,6 +157,12 @@ class ConfigLoader:
             except KeyError as e:
                 print(f"Missing required field {e} in {yml_file}")
                 return None
+                
+        except Exception as e:
+            print(f"Error loading {yml_file}: {e}")
+            return None
+    
+
                 
         except yaml.YAMLError as e:
             print(f"YAML parsing error in {yml_file}: {e}")

@@ -1,0 +1,37 @@
+id: "bartender"
+name: "Bartender"
+description: "Popular menu bar organizer that helps control and organize your menu bar icons with advanced features and customization"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: true
+tags:
+  - menubar
+  - organization
+  - productivity
+  - premium
+  - system-enhancement
+url: "https://www.macbartender.com/"
+notes: |
+  - Industry-standard menu bar manager with advanced features
+  - Hide, show, and organize menu bar icons with extensive customization
+  - Supports custom keyboard shortcuts and triggers
+  - Premium software with 4-week free trial ($16 one-time purchase)
+  - Regular updates and excellent customer support
+dependencies: []
+install:
+  script: |
+    echo "Installing Bartender..."
+    brew install --cask bartender
+validate:
+  script: |
+    brew list --cask | grep -q "bartender" || ls /Applications/ | grep -q "Bartender.app"
+configure:
+  script: |
+    echo "Bartender configuration complete"
+    echo "Launch Bartender and grant accessibility permissions when prompted"
+    echo "Note: Bartender offers a 4-week free trial, then requires license purchase"
+uninstall:
+  script: |
+    echo "Uninstalling Bartender..."
+    brew uninstall --cask bartender

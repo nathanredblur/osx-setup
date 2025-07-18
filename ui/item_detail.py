@@ -43,8 +43,11 @@ class ItemDetailPanel(Static):
         type_icon = self._get_type_icon(item.config.type)
         status_display = self._get_status_display(item.status)
         
-        # Create compact display
-        header = f"{type_icon} [bold]{item.config.name}[/bold]"
+        # Create header with license indicator
+        license_indicator = " 💰" if getattr(item.config, 'requires_license', False) else ""
+        header = f"{type_icon} [bold]{item.config.name}[/bold]{license_indicator}"
+        
+        # Status and type line
         status_line = f"{status_display} • {item.config.type}"
         
         # Format description with word wrapping
@@ -56,13 +59,54 @@ class ItemDetailPanel(Static):
             subsequent_indent=""
         )
         
-        # Combine all parts
+        # Build content parts
         content_parts = [
             header,
             status_line,
             "",  # Empty line for spacing
             wrapped_description
         ]
+        
+        # Add tags if available
+        if hasattr(item.config, 'tags') and item.config.tags:
+            tags_text = " ".join([f"#{tag}" for tag in item.config.tags])
+            content_parts.extend([
+                "",
+                f"[dim]Tags:[/dim] {tags_text}"
+            ])
+        
+        # Add URL if available
+        if hasattr(item.config, 'url') and item.config.url:
+            content_parts.extend([
+                "",
+                f"[dim]URL:[/dim] {item.config.url}"
+            ])
+        
+        # Add notes if available
+        if hasattr(item.config, 'notes') and item.config.notes:
+            content_parts.extend([
+                "",
+                "[dim]Notes:[/dim]"
+            ])
+            
+            # Format notes with proper indentation
+            notes_lines = item.config.notes.strip().split('\n')
+            for line in notes_lines:
+                if line.strip():  # Skip empty lines
+                    wrapped_line = textwrap.fill(
+                        line.strip(), 
+                        width=68, 
+                        initial_indent="  ", 
+                        subsequent_indent="  "
+                    )
+                    content_parts.append(wrapped_line)
+        
+        # Add license requirement notice
+        if getattr(item.config, 'requires_license', False):
+            content_parts.extend([
+                "",
+                "[yellow]⚠️  This software requires a license purchase[/yellow]"
+            ])
         
         content = "\n".join(content_parts)
         self.update(content)

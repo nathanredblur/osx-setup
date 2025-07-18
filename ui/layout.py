@@ -19,6 +19,7 @@ from .category_list import CategoryList, CategorySelected, FocusItemTable
 from .item_list import ItemButtonList, ItemSelected, ItemToggled, FocusCategoryList
 from .item_detail import ItemDetailPanel
 from .action_buttons import ActionButtons
+from .search_bar import SearchBar, SearchChanged
 
 
 # Import shared UI models
@@ -43,6 +44,8 @@ class MacSnapApp(App):
         Binding("space", "toggle_item_selection", "Toggle Selection", show=False),
         Binding("ctrl+a", "select_all", "Select All"),
         Binding("ctrl+d", "deselect_all", "Deselect All"),
+        Binding("ctrl+f", "focus_search", "Search"),
+        Binding("ctrl+x", "clear_search", "Clear Search"),
         Binding("tab", "focus_next", "Focus Next"),
         Binding("shift+tab", "focus_previous", "Focus Previous"),
         Binding("escape", "focus_categories", "Focus Categories"),
@@ -62,6 +65,7 @@ class MacSnapApp(App):
         self.ui_items: Dict[str, List[UIItem]] = {}
         self.current_category = self.categories[0] if self.categories else ""
         self.selected_items: Set[str] = set()
+        self.search_query: str = ""
         
         # Pending operations (executed after UI closes)
         self._pending_installation = None
@@ -107,7 +111,8 @@ class MacSnapApp(App):
             if category == "All":
                 continue
             
-            for ui_item in self.ui_items[category]:
+            category_items = self.ui_items.get(category, [])
+            for ui_item in category_items:
                 # Only add if we haven't seen this item ID before
                 if ui_item.config.id not in seen_ids:
                     all_items.append(ui_item)
@@ -129,6 +134,9 @@ class MacSnapApp(App):
             
             # Main content area
             with Vertical(id="content-area"):
+                # Search bar
+                yield SearchBar(id="search-bar")
+                
                 # Item table
                 yield ItemButtonList(id="item-table")
                 
@@ -211,6 +219,17 @@ class MacSnapApp(App):
         except Exception as e:
             self.logger.error(f"Failed to handle item toggle: {e}")
     
+    def on_search_changed(self, event: SearchChanged) -> None:
+        """Handle search query changes."""
+        try:
+            self.search_query = event.query.strip().lower()
+            self.logger.debug(f"Search query changed: '{self.search_query}'")
+            
+            # Reload current category with search filter
+            self.run_worker(self._load_category_data(self.current_category))
+        except Exception as e:
+            self.logger.error(f"Failed to handle search change: {e}")
+    
     def on_button_pressed(self, event) -> None:
         """Handle button presses."""
         try:
@@ -234,6 +253,11 @@ class MacSnapApp(App):
     async def _load_category_data(self, category: str):
         """Load data for a specific category."""
         items = self.ui_items.get(category, [])
+        
+        # Apply search filter if query is provided
+        if self.search_query:
+            items = self._filter_items_by_search(items, self.search_query)
+        
         item_table = self.query_one("#item-table", ItemButtonList)
         
         # Show category names when in "All" view
@@ -241,9 +265,19 @@ class MacSnapApp(App):
         await item_table.add_items(items, show_category=show_category)
         
         # Show details for first item if available
-        if items:
+        try:
             detail_panel = self.query_one("#item-detail", ItemDetailPanel)
-            detail_panel.item = items[0]
+            if items:
+                detail_panel.item = items[0]
+            else:
+                # Clear detail panel if no items
+                detail_panel.item = None
+                if self.search_query:
+                    detail_panel.update(f"No items found for '{self.search_query}'")
+                else:
+                    detail_panel.update("No items available")
+        except Exception as e:
+            self.logger.debug(f"Could not update detail panel: {e}")
         
         # Update selected items count
         self._update_selection_count()
@@ -252,6 +286,34 @@ class MacSnapApp(App):
         """Update the selection count display."""
         selected_count = len(self.selected_items)
         self.logger.debug(f"Selected items: {selected_count}")
+    
+    def _filter_items_by_search(self, items: List[UIItem], query: str) -> List[UIItem]:
+        """Filter items based on search query (name and tags)."""
+        if not query:
+            return items
+        
+        filtered_items = []
+        query_lower = query.lower()
+        
+        for item in items:
+            # Check if query matches item name
+            if query_lower in item.config.name.lower():
+                filtered_items.append(item)
+                continue
+            
+            # Check if query matches item description
+            if item.config.description and query_lower in item.config.description.lower():
+                filtered_items.append(item)
+                continue
+            
+            # Check if query matches any tag
+            if hasattr(item.config, 'tags') and item.config.tags:
+                for tag in item.config.tags:
+                    if query_lower in tag.lower():
+                        filtered_items.append(item)
+                        break
+        
+        return filtered_items
     
     async def _switch_category(self, category: str):
         """Switch to a different category."""
@@ -351,6 +413,25 @@ class MacSnapApp(App):
             category_list.focus()
         except Exception as e:
             self.logger.debug(f"Could not focus categories: {e}")
+    
+    def action_focus_search(self) -> None:
+        """Focus the search bar."""
+        try:
+            search_bar = self.query_one("#search-bar", SearchBar)
+            search_bar.focus()
+        except Exception as e:
+            self.logger.debug(f"Could not focus search bar: {e}")
+    
+    def action_clear_search(self) -> None:
+        """Clear the search query."""
+        try:
+            search_bar = self.query_one("#search-bar", SearchBar)
+            search_bar.clear_search()
+            self.search_query = ""
+            # Reload current category without search filter
+            self.run_worker(self._load_category_data(self.current_category))
+        except Exception as e:
+            self.logger.debug(f"Could not clear search: {e}")
     
     def action_toggle_item_selection(self) -> None:
         """Toggle selection of the currently highlighted item."""

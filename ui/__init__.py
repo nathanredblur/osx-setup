@@ -11,6 +11,7 @@ from .category_list import CategoryList, CategorySelected, FocusItemTable
 from .item_list import ItemButtonList, ItemSelected, ItemToggled, FocusCategoryList
 from .item_detail import ItemDetailPanel
 from .action_buttons import ActionButtons
+from .search_bar import SearchBar, SearchChanged
 
 # Import shared data classes
 from .models import UIItem, ItemStatus
@@ -25,6 +26,7 @@ __all__ = [
     "ItemButtonList", 
     "ItemDetailPanel",
     "ActionButtons",
+    "SearchBar",
     
     # Messages
     "CategorySelected",
@@ -32,6 +34,7 @@ __all__ = [
     "ItemSelected",
     "ItemToggled", 
     "FocusCategoryList",
+    "SearchChanged",
     
     # Data classes
     "UIItem",

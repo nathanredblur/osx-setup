@@ -27,6 +27,14 @@ LAYOUT_CSS = """
     width: 75%;
 }
 
+/* Search bar */
+#search-bar {
+    height: 3;
+    margin-bottom: 1;
+    border: round;
+    padding: 0 1;
+}
+
 /* Item table - takes most of the space */
 #item-table {
     height: 3fr;

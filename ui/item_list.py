@@ -2,6 +2,7 @@
 Item List Component for MacSnap UI
 """
 
+import time
 from typing import List, Optional
 from textual.widgets import ListView, ListItem, Static
 from textual.message import Message
@@ -81,31 +82,29 @@ class ItemButtonList(ListView):
         self.ui_items = items
         self.show_category = show_category
         
-        # Properly await the clear operation to complete
-        try:
-            await self.clear()
-        except Exception:
-            # If clear fails, try manual cleanup as fallback
-            self._debug_forced_cleanup()
+        # Force clear all children first
+        await self._force_clear_all_children()
         
         if not items:
+            timestamp = int(time.time() * 1000)  # Milliseconds timestamp
             empty_item = ListItem(
                 Static("No items available", classes="empty-message"),
-                id="empty-list-message"
+                id=f"empty-list-message-{timestamp}"
             )
             await self.mount(empty_item)
             return
         
         # Create all items at once using mount instead of append
         list_items = []
+        timestamp = int(time.time() * 1000)  # Milliseconds timestamp
         for i, item in enumerate(items):
             item_text = self._create_item_text(item)
             if show_category:
                 item_text += f" ({item.config.category})"
             
             classes = self._get_item_classes(item)
-            # Simple unique IDs - no complex timestamp needed
-            unique_id = f"item-{item.config.id}-{i}"
+            # Create truly unique IDs using timestamp to avoid any possibility of duplicates
+            unique_id = f"item-{item.config.id}-{timestamp}-{i}"
             list_item = ListItem(
                 Static(item_text, classes=classes),
                 id=unique_id
@@ -116,6 +115,36 @@ class ItemButtonList(ListView):
         # Mount all items at once
         if list_items:
             await self.mount(*list_items)
+    
+    async def _force_clear_all_children(self):
+        """
+        Force clear all children from the ListView.
+        """
+        try:
+            # First try the standard clear method
+            await self.clear()
+        except Exception:
+            pass
+            
+        # Always do a manual check and cleanup as well
+        max_attempts = 3
+        for attempt in range(max_attempts):
+            try:
+                if not self.children:
+                    break  # No more children to remove
+                    
+                children_to_remove = list(self.children)
+                for child in children_to_remove:
+                    try:
+                        child.remove()
+                    except Exception:
+                        pass
+                        
+                # Small delay between attempts
+                if attempt < max_attempts - 1:
+                    await self.app.sleep(0.01)
+            except Exception:
+                pass
     
     def _debug_forced_cleanup(self):
         """
@@ -275,18 +304,22 @@ class ItemButtonList(ListView):
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
         """Handle item highlighting."""
         if event.item and hasattr(event.item, 'id'):
-            # Extract the index from the ID (format: item-{config_id}-{index})
+            # Try to use the stored item_data first
+            if hasattr(event.item, 'item_data') and event.item.item_data:
+                self.post_message(ItemSelected(event.item.item_data))
+                return
+            
+            # Fallback: Extract the index from the ID (format: item-{config_id}-{timestamp}-{index})
             try:
                 parts = event.item.id.split('-')
-                if len(parts) >= 2:
+                if len(parts) >= 3:
                     index = int(parts[-1])  # Last part is the index
                     if 0 <= index < len(self.ui_items):
                         item = self.ui_items[index]
                         self.post_message(ItemSelected(item))
             except (ValueError, IndexError):
-                # If parsing fails, try to find by item_data directly
-                if hasattr(event.item, 'item_data'):
-                    self.post_message(ItemSelected(event.item.item_data))
+                # If all else fails, try to find by searching
+                pass
     
     def on_key(self, event) -> None:
         """Handle keyboard input."""

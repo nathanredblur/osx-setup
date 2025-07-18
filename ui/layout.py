@@ -141,7 +141,7 @@ class MacSnapApp(App):
                 yield ItemButtonList(id="item-table")
                 
                 # Item detail panel
-                yield ItemDetailPanel("Select an item to view details", id="item-detail")
+                yield ItemDetailPanel(id="item-detail")
         
         # Control panel
         with Container(id="control-panel"):

@@ -4,6 +4,7 @@ Item Detail Panel Component for MacSnap UI
 
 from typing import Optional
 from textual.widgets import Static
+from textual.containers import ScrollableContainer
 from textual.reactive import reactive
 import textwrap
 
@@ -11,7 +12,7 @@ from utils.config_loader import ConfigItem
 from .models import UIItem, ItemStatus
 
 
-class ItemDetailPanel(Static):
+class ItemDetailPanel(ScrollableContainer):
     """Panel showing detailed information about selected item."""
     
     # Component-specific CSS - structure only, theme handles colors
@@ -19,6 +20,14 @@ class ItemDetailPanel(Static):
     ItemDetailPanel {
         padding: 1;
         border: round;
+        scrollbar-background: $surface;
+        scrollbar-color: $primary;
+        scrollbar-corner-color: $surface;
+        scrollbar-size: 1 1;
+    }
+    
+    ItemDetailPanel Static {
+        width: 100%;
     }
     
     /* Rich text styling for item details */
@@ -33,10 +42,18 @@ class ItemDetailPanel(Static):
     
     item: reactive[Optional[UIItem]] = reactive(None)
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.content_widget = Static("Select an item to view details")
+        
+    def compose(self):
+        yield self.content_widget
+    
     def watch_item(self, item: Optional[UIItem]) -> None:
         """Update display when item changes."""
         if item is None:
-            self.update("Select an item to view details")
+            self.content_widget.update("Select an item to view details")
+            self.scroll_home()
             return
         
         # Get type icon and format type display
@@ -109,7 +126,10 @@ class ItemDetailPanel(Static):
             ])
         
         content = "\n".join(content_parts)
-        self.update(content)
+        self.content_widget.update(content)
+        
+        # Scroll to top when content changes
+        self.scroll_home()
     
     def _get_type_icon(self, item_type: str) -> str:
         """Get icon for item type."""

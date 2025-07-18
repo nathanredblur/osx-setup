@@ -36,7 +36,8 @@ class ConfigValidator:
         'proto_tool',
         'system_config',
         'launch_agent',
-        'shell_script'
+        'shell_script',
+        'custom'
     }
     
     # Required fields for all configurations

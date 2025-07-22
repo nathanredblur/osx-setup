@@ -19,32 +19,28 @@ notes: |
   - Supports hundreds of common command-line tools
   - Available in multiple languages
 dependencies: []
-install:
-  script: |
-    echo "Installing tldr..."
-    brew install tldr
-validate:
-  script: |
-    command -v tldr &> /dev/null
-configure:
-  script: |
-    echo "Configuring tldr..."
+install: |
+  echo "Installing tldr..."
+  brew install tldr
+validate: |
+  command -v tldr &> /dev/null
+configure: |
+  echo "Configuring tldr..."
 
-    # Update the tldr database
-    echo "Updating tldr database..."
-    tldr --update
+  # Update the tldr database
+  echo "Updating tldr database..."
+  tldr --update
 
-    echo "tldr configuration complete"
-    echo "Usage examples:"
-    echo "  tldr tar    - Get examples for tar command"
-    echo "  tldr git    - Get examples for git command"
-    echo "  tldr curl   - Get examples for curl command"
+  echo "tldr configuration complete"
+  echo "Usage examples:"
+  echo "  tldr tar    - Get examples for tar command"
+  echo "  tldr git    - Get examples for git command"
+  echo "  tldr curl   - Get examples for curl command"
 
-    # Show a sample
-    echo ""
-    echo "Sample usage:"
-    tldr tldr 2>/dev/null || echo "tldr database updating in background..."
-uninstall:
-  script: |
-    echo "Uninstalling tldr..."
-    brew uninstall tldr
+  # Show a sample
+  echo ""
+  echo "Sample usage:"
+  tldr tldr 2>/dev/null || echo "tldr database updating in background..."
+uninstall: |
+  echo "Uninstalling tldr..."
+  brew uninstall tldr

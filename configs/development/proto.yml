@@ -26,50 +26,46 @@ notes: |
   - 3. Set global version: proto global node latest
   - 4. Create .prototools file in project: proto local node 18
 dependencies: []
-install:
-  script: |
-    echo "Installing Proto..."
-    brew install proto
-validate:
-  script: |
-    command -v proto &> /dev/null
-configure:
-  script: |
-    echo "Configuring Proto..."
-    proto setup
+install: |
+  echo "Installing Proto..."
+  brew install proto
+validate: |
+  command -v proto &> /dev/null
+configure: |
+  echo "Configuring Proto..."
+  proto setup
 
-    
-    echo "Installing Node.js..."
-    proto install node
-    proto global node lts/iron
-    proto pin node lts/iron
+  
+  echo "Installing Node.js..."
+  proto install node
+  proto global node lts/iron
+  proto pin node lts/iron
 
-    echo "Installing npm..."
-    proto install npm
-    proto global npm latest
+  echo "Installing npm..."
+  proto install npm
+  proto global npm latest
 
-    echo "Installing pnpm..."
-    proto install pnpm
-    proto global pnpm latest
+  echo "Installing pnpm..."
+  proto install pnpm
+  proto global pnpm latest
 
-    echo "Installing Yarn..."
-    proto install yarn
-    proto global yarn latest
+  echo "Installing Yarn..."
+  proto install yarn
+  proto global yarn latest
 
-    echo "Installing uv..."
-    proto install uv
-    proto global uv latest
+  echo "Installing uv..."
+  proto install uv
+  proto global uv latest
 
-    echo "Installing Python..."
-    proto install python
-    proto global python latest
+  echo "Installing Python..."
+  proto install python
+  proto global python latest
 
 
-    echo "Add to shell profile: eval \"\$(proto activate zsh)\""
-    echo "Install a tool: proto install node"
-    echo "Set global version: proto global node latest"
-    echo "Create .prototools file in projects: proto local node 18"
-uninstall:
-  script: |
-    echo "Uninstalling Proto..."
-    brew uninstall proto
+  echo "Add to shell profile: eval \"\$(proto activate zsh)\""
+  echo "Install a tool: proto install node"
+  echo "Set global version: proto global node latest"
+  echo "Create .prototools file in projects: proto local node 18"
+uninstall: |
+  echo "Uninstalling Proto..."
+  brew uninstall proto

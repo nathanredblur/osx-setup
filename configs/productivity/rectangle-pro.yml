@@ -19,19 +19,15 @@ notes: |
   - Includes all Rectangle features plus advanced functionality
   - Supports AppleScript and custom actions
 dependencies: []
-install:
-  script: |
-    echo "Installing Rectangle Pro..."
-    brew install --cask rectangle-pro
-validate:
-  script: |
-    brew list --cask | grep -q "rectangle-pro" || ls /Applications/ | grep -q "Rectangle Pro.app"
-configure:
-  script: |
-    echo "Rectangle Pro configuration complete"
-    echo "Launch Rectangle Pro and grant accessibility permissions when prompted"
-    echo "Note: Rectangle Pro requires a license purchase for full functionality"
-uninstall:
-  script: |
-    echo "Uninstalling Rectangle Pro..."
-    brew uninstall --cask rectangle-pro
+install: |
+  echo "Installing Rectangle Pro..."
+  brew install --cask rectangle-pro
+validate: |
+  brew list --cask | grep -q "rectangle-pro" || ls /Applications/ | grep -q "Rectangle Pro.app"
+configure: |
+  echo "Rectangle Pro configuration complete"
+  echo "Launch Rectangle Pro and grant accessibility permissions when prompted"
+  echo "Note: Rectangle Pro requires a license purchase for full functionality"
+uninstall: |
+  echo "Uninstalling Rectangle Pro..."
+  brew uninstall --cask rectangle-pro

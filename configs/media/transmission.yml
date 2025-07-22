@@ -20,48 +20,44 @@ notes: |
   - Support for magnet links and torrent files
   - Open source and completely free
 dependencies: []
-install:
-  script: |
-    echo "Installing Transmission..."
-    brew install --cask transmission
-validate:
-  script: |
-    brew list --cask | grep -q "transmission" || ls /Applications/ | grep -q "Transmission.app"
-configure:
-  script: |
-    echo "Transmission configuration complete"
-    echo "Launch Transmission to start downloading torrents"
-    echo ""
-    echo "Key features:"
-    echo "- Fast and efficient BitTorrent downloading"
-    echo "- Low CPU and memory usage"
-    echo "- Built-in web interface for remote access"
-    echo "- Support for magnet links and .torrent files"
-    echo "- Bandwidth management and scheduling"
-    echo "- Encryption support for privacy"
-    echo ""
-    echo "Getting started:"
-    echo "1. Launch Transmission application"
-    echo "2. Configure download and upload preferences"
-    echo "3. Set download location and bandwidth limits"
-    echo "4. Add torrents via drag-and-drop or File menu"
-    echo "5. Monitor downloads in the main interface"
-    echo ""
-    echo "Configuration tips:"
-    echo "- Set reasonable upload/download speed limits"
-    echo "- Choose a secure download directory"
-    echo "- Enable encryption for privacy"
-    echo "- Consider using a VPN for additional security"
-    echo "- Configure port forwarding for better performance"
-    echo ""
-    echo "Remote access:"
-    echo "- Enable web interface in Preferences"
-    echo "- Access via http://localhost:9091 when enabled"
-    echo "- Control downloads from any web browser"
-    echo ""
-    echo "Note: Use BitTorrent responsibly and legally"
-    echo "Only download content you have rights to access"
-uninstall:
-  script: |
-    echo "Uninstalling Transmission..."
-    brew uninstall --cask transmission
+install: |
+  echo "Installing Transmission..."
+  brew install --cask transmission
+validate: |
+  brew list --cask | grep -q "transmission" || ls /Applications/ | grep -q "Transmission.app"
+configure: |
+  echo "Transmission configuration complete"
+  echo "Launch Transmission to start downloading torrents"
+  echo ""
+  echo "Key features:"
+  echo "- Fast and efficient BitTorrent downloading"
+  echo "- Low CPU and memory usage"
+  echo "- Built-in web interface for remote access"
+  echo "- Support for magnet links and .torrent files"
+  echo "- Bandwidth management and scheduling"
+  echo "- Encryption support for privacy"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Transmission application"
+  echo "2. Configure download and upload preferences"
+  echo "3. Set download location and bandwidth limits"
+  echo "4. Add torrents via drag-and-drop or File menu"
+  echo "5. Monitor downloads in the main interface"
+  echo ""
+  echo "Configuration tips:"
+  echo "- Set reasonable upload/download speed limits"
+  echo "- Choose a secure download directory"
+  echo "- Enable encryption for privacy"
+  echo "- Consider using a VPN for additional security"
+  echo "- Configure port forwarding for better performance"
+  echo ""
+  echo "Remote access:"
+  echo "- Enable web interface in Preferences"
+  echo "- Access via http://localhost:9091 when enabled"
+  echo "- Control downloads from any web browser"
+  echo ""
+  echo "Note: Use BitTorrent responsibly and legally"
+  echo "Only download content you have rights to access"
+uninstall: |
+  echo "Uninstalling Transmission..."
+  brew uninstall --cask transmission

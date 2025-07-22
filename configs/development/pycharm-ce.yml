@@ -20,31 +20,27 @@ notes: |
   - Plugin ecosystem for extended functionality
   - Free Community Edition with core features
 dependencies: []
-install:
-  script: |
-    echo "Installing PyCharm Community Edition..."
-    brew install --cask pycharm-ce
-validate:
-  script: |
-    brew list --cask | grep -q "pycharm-ce" || ls /Applications/ | grep -q "PyCharm CE.app"
-configure:
-  script: |
-    echo "PyCharm Community Edition configuration complete"
-    echo "Launch PyCharm and complete the initial setup"
-    echo "Key features:"
-    echo "- Intelligent Python code completion"
-    echo "- Integrated debugger and test runner"
-    echo "- Git and other VCS integration"
-    echo "- Code refactoring and inspection tools"
-    echo "- Virtual environment support"
-    echo "- Django and web development support"
-    echo ""
-    echo "Recommended setup:"
-    echo "1. Configure Python interpreter"
-    echo "2. Set up virtual environments"
-    echo "3. Install useful plugins from the marketplace"
-    echo "4. Configure code style and formatting"
-uninstall:
-  script: |
-    echo "Uninstalling PyCharm Community Edition..."
-    brew uninstall --cask pycharm-ce
+install: |
+  echo "Installing PyCharm Community Edition..."
+  brew install --cask pycharm-ce
+validate: |
+  brew list --cask | grep -q "pycharm-ce" || ls /Applications/ | grep -q "PyCharm CE.app"
+configure: |
+  echo "PyCharm Community Edition configuration complete"
+  echo "Launch PyCharm and complete the initial setup"
+  echo "Key features:"
+  echo "- Intelligent Python code completion"
+  echo "- Integrated debugger and test runner"
+  echo "- Git and other VCS integration"
+  echo "- Code refactoring and inspection tools"
+  echo "- Virtual environment support"
+  echo "- Django and web development support"
+  echo ""
+  echo "Recommended setup:"
+  echo "1. Configure Python interpreter"
+  echo "2. Set up virtual environments"
+  echo "3. Install useful plugins from the marketplace"
+  echo "4. Configure code style and formatting"
+uninstall: |
+  echo "Uninstalling PyCharm Community Edition..."
+  brew uninstall --cask pycharm-ce

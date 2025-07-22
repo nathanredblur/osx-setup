@@ -21,111 +21,107 @@ notes: |
   - Extensible with custom patterns and modules
   - Free and open source with community support
 dependencies: []
-install:
-  script: |
-    echo "Installing Fabric..."
-    echo "Note: Fabric is an open-source AI productivity framework"
+install: |
+  echo "Installing Fabric..."
+  echo "Note: Fabric is an open-source AI productivity framework"
+  echo ""
+  echo "Installation options:"
+  echo "1. Install via Python pip"
+  echo "2. Download from GitHub releases"
+  echo "3. Build from source code"
+  echo ""
+  # Check if Python and pip are available
+  if command -v python3 >/dev/null 2>&1 && command -v pip3 >/dev/null 2>&1; then
+    echo "Installing Fabric via pip..."
+    pip3 install fabric-ai
+  else
+    echo "Python 3 and pip required for installation"
     echo ""
-    echo "Installation options:"
-    echo "1. Install via Python pip"
-    echo "2. Download from GitHub releases"
-    echo "3. Build from source code"
-    echo ""
-    # Check if Python and pip are available
-    if command -v python3 >/dev/null 2>&1 && command -v pip3 >/dev/null 2>&1; then
-      echo "Installing Fabric via pip..."
-      pip3 install fabric-ai
-    else
-      echo "Python 3 and pip required for installation"
-      echo ""
-      echo "Manual installation steps:"
-      echo "1. Install Python 3 if not available"
-      echo "2. Visit https://github.com/danielmiessler/fabric"
-      echo "3. Follow installation instructions"
-      echo "4. Configure API keys and settings"
-    fi
-    echo ""
-    echo "Alternative installation methods:"
-    echo "- Clone from GitHub: git clone https://github.com/danielmiessler/fabric"
-    echo "- Download releases from GitHub"
-    echo "- Use package manager if available"
-validate:
-  script: |
-    # Check if Fabric is installed via pip
-    if command -v python3 >/dev/null 2>&1; then
-      if python3 -c "import fabric" 2>/dev/null; then
-        exit 0
-      fi
-    fi
-
-    # Check for Fabric command-line tool
-    if command -v fabric >/dev/null 2>&1; then
+    echo "Manual installation steps:"
+    echo "1. Install Python 3 if not available"
+    echo "2. Visit https://github.com/danielmiessler/fabric"
+    echo "3. Follow installation instructions"
+    echo "4. Configure API keys and settings"
+  fi
+  echo ""
+  echo "Alternative installation methods:"
+  echo "- Clone from GitHub: git clone https://github.com/danielmiessler/fabric"
+  echo "- Download releases from GitHub"
+  echo "- Use package manager if available"
+validate: |
+  # Check if Fabric is installed via pip
+  if command -v python3 >/dev/null 2>&1; then
+    if python3 -c "import fabric" 2>/dev/null; then
       exit 0
     fi
+  fi
 
-    # Check for local installation
-    if [ -d "$HOME/.fabric" ] || [ -f "$HOME/.fabric/config" ]; then
-      exit 0
-    fi
+  # Check for Fabric command-line tool
+  if command -v fabric >/dev/null 2>&1; then
+    exit 0
+  fi
 
-    echo "Fabric not detected"
-    exit 1
-configure:
-  script: |
-    echo "Fabric configuration complete"
-    echo "Set up Fabric for AI-powered productivity workflows"
-    echo ""
-    echo "Key features:"
-    echo "- AI-powered productivity patterns and workflows"
-    echo "- Modular framework for custom automation"
-    echo "- Integration with various AI models and services"
-    echo "- Command-line and programmatic interfaces"
-    echo "- Extensible pattern system"
-    echo "- Community-driven pattern library"
-    echo ""
-    echo "Getting started:"
-    echo "1. Configure API keys for AI services"
-    echo "2. Explore available productivity patterns"
-    echo "3. Create custom patterns for your workflows"
-    echo "4. Integrate with your existing tools"
-    echo "5. Automate repetitive tasks with AI assistance"
-    echo ""
-    echo "Core concepts:"
-    echo "- Patterns: Reusable AI-powered workflows"
-    echo "- Modules: Functional components for specific tasks"
-    echo "- Pipelines: Chained operations for complex workflows"
-    echo "- Templates: Pre-configured setups for common use cases"
-    echo "- Extensions: Custom integrations and functionality"
-    echo ""
-    echo "Common use cases:"
-    echo "- Content creation and editing assistance"
-    echo "- Data analysis and reporting automation"
-    echo "- Code generation and documentation"
-    echo "- Research and information synthesis"
-    echo "- Workflow optimization and automation"
-    echo ""
-    echo "AI integrations:"
-    echo "- OpenAI GPT models for text generation"
-    echo "- Local AI models for privacy-focused tasks"
-    echo "- Multiple AI service providers"
-    echo "- Custom model integration capabilities"
-    echo ""
-    echo "Setup requirements:"
-    echo "- Python 3.8+ environment"
-    echo "- API keys for desired AI services"
-    echo "- Configuration file setup"
-    echo "- Pattern library initialization"
-    echo ""
-    echo "Next steps:"
-    echo "1. Visit https://github.com/danielmiessler/fabric for documentation"
-    echo "2. Configure your preferred AI service API keys"
-    echo "3. Explore the pattern library for workflow ideas"
-    echo "4. Create your first custom productivity pattern"
-    echo "5. Join the community for support and pattern sharing"
-uninstall:
-  script: |
-    echo "Uninstalling Fabric..."
-    if command -v pip3 >/dev/null 2>&1; then
-      pip3 uninstall fabric-ai -y
-    fi
-    echo "Note: Configuration files may remain in ~/.fabric"
+  # Check for local installation
+  if [ -d "$HOME/.fabric" ] || [ -f "$HOME/.fabric/config" ]; then
+    exit 0
+  fi
+
+  echo "Fabric not detected"
+  exit 1
+configure: |
+  echo "Fabric configuration complete"
+  echo "Set up Fabric for AI-powered productivity workflows"
+  echo ""
+  echo "Key features:"
+  echo "- AI-powered productivity patterns and workflows"
+  echo "- Modular framework for custom automation"
+  echo "- Integration with various AI models and services"
+  echo "- Command-line and programmatic interfaces"
+  echo "- Extensible pattern system"
+  echo "- Community-driven pattern library"
+  echo ""
+  echo "Getting started:"
+  echo "1. Configure API keys for AI services"
+  echo "2. Explore available productivity patterns"
+  echo "3. Create custom patterns for your workflows"
+  echo "4. Integrate with your existing tools"
+  echo "5. Automate repetitive tasks with AI assistance"
+  echo ""
+  echo "Core concepts:"
+  echo "- Patterns: Reusable AI-powered workflows"
+  echo "- Modules: Functional components for specific tasks"
+  echo "- Pipelines: Chained operations for complex workflows"
+  echo "- Templates: Pre-configured setups for common use cases"
+  echo "- Extensions: Custom integrations and functionality"
+  echo ""
+  echo "Common use cases:"
+  echo "- Content creation and editing assistance"
+  echo "- Data analysis and reporting automation"
+  echo "- Code generation and documentation"
+  echo "- Research and information synthesis"
+  echo "- Workflow optimization and automation"
+  echo ""
+  echo "AI integrations:"
+  echo "- OpenAI GPT models for text generation"
+  echo "- Local AI models for privacy-focused tasks"
+  echo "- Multiple AI service providers"
+  echo "- Custom model integration capabilities"
+  echo ""
+  echo "Setup requirements:"
+  echo "- Python 3.8+ environment"
+  echo "- API keys for desired AI services"
+  echo "- Configuration file setup"
+  echo "- Pattern library initialization"
+  echo ""
+  echo "Next steps:"
+  echo "1. Visit https://github.com/danielmiessler/fabric for documentation"
+  echo "2. Configure your preferred AI service API keys"
+  echo "3. Explore the pattern library for workflow ideas"
+  echo "4. Create your first custom productivity pattern"
+  echo "5. Join the community for support and pattern sharing"
+uninstall: |
+  echo "Uninstalling Fabric..."
+  if command -v pip3 >/dev/null 2>&1; then
+    pip3 uninstall fabric-ai -y
+  fi
+  echo "Note: Configuration files may remain in ~/.fabric"

@@ -27,23 +27,19 @@ notes: |
   -    • Alt-C: Change directory
   - 3. Restart terminal to use new key bindings
 dependencies: []
-install:
-  script: |
-    echo "Installing FZF..."
-    brew install fzf
-validate:
-  script: |
-    command -v fzf &> /dev/null
-configure:
-  script: |
-    echo "FZF configuration complete"
-    echo "Run: \$(brew --prefix)/opt/fzf/install"
-    echo "This enables key bindings:"
-    echo "  • Ctrl-T: Search files and directories"
-    echo "  • Ctrl-R: Search command history"
-    echo "  • Alt-C: Change directory"
-    echo "Restart terminal to use new key bindings"
-uninstall:
-  script: |
-    echo "Uninstalling FZF..."
-    brew uninstall fzf
+install: |
+  echo "Installing FZF..."
+  brew install fzf
+validate: |
+  command -v fzf &> /dev/null
+configure: |
+  echo "FZF configuration complete"
+  echo "Run: \$(brew --prefix)/opt/fzf/install"
+  echo "This enables key bindings:"
+  echo "  • Ctrl-T: Search files and directories"
+  echo "  • Ctrl-R: Search command history"
+  echo "  • Alt-C: Change directory"
+  echo "Restart terminal to use new key bindings"
+uninstall: |
+  echo "Uninstalling FZF..."
+  brew uninstall fzf

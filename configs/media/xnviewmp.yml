@@ -20,19 +20,15 @@ notes: |
   - Contact sheet creation and slideshow capabilities
   - Free for personal use, commercial license available
 dependencies: []
-install:
-  script: |
-    echo "Installing XnViewMP..."
-    brew install --cask xnviewmp
-validate:
-  script: |
-    brew list --cask | grep -q "xnviewmp" || ls /Applications/ | grep -q "XnViewMP.app"
-configure:
-  script: |
-    echo "XnViewMP configuration complete"
-    echo "Launch XnViewMP and configure your preferred file associations"
-    echo "Consider setting as default image viewer in System Preferences"
-uninstall:
-  script: |
-    echo "Uninstalling XnViewMP..."
-    brew uninstall --cask xnviewmp
+install: |
+  echo "Installing XnViewMP..."
+  brew install --cask xnviewmp
+validate: |
+  brew list --cask | grep -q "xnviewmp" || ls /Applications/ | grep -q "XnViewMP.app"
+configure: |
+  echo "XnViewMP configuration complete"
+  echo "Launch XnViewMP and configure your preferred file associations"
+  echo "Consider setting as default image viewer in System Preferences"
+uninstall: |
+  echo "Uninstalling XnViewMP..."
+  brew uninstall --cask xnviewmp

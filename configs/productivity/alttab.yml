@@ -20,25 +20,21 @@ notes: |
   - Open source and lightweight
   - Alternative to macOS default Cmd+Tab behavior
 dependencies: []
-install:
-  script: |
-    echo "Installing AltTab..."
-    brew install --cask alt-tab
-validate:
-  script: |
-    brew list --cask | grep -q "alt-tab" || ls /Applications/ | grep -q "AltTab.app"
-configure:
-  script: |
-    echo "AltTab configuration complete"
-    echo "Launch AltTab and grant necessary permissions"
-    echo "Configuration options:"
-    echo "- Customize keyboard shortcuts (default: Alt+Tab)"
-    echo "- Adjust thumbnail size and layout"
-    echo "- Set window preview behavior"
-    echo "- Configure mouse interaction"
-    echo ""
-    echo "Note: You may need to grant Accessibility permissions in System Preferences"
-uninstall:
-  script: |
-    echo "Uninstalling AltTab..."
-    brew uninstall --cask alt-tab
+install: |
+  echo "Installing AltTab..."
+  brew install --cask alt-tab
+validate: |
+  brew list --cask | grep -q "alt-tab" || ls /Applications/ | grep -q "AltTab.app"
+configure: |
+  echo "AltTab configuration complete"
+  echo "Launch AltTab and grant necessary permissions"
+  echo "Configuration options:"
+  echo "- Customize keyboard shortcuts (default: Alt+Tab)"
+  echo "- Adjust thumbnail size and layout"
+  echo "- Set window preview behavior"
+  echo "- Configure mouse interaction"
+  echo ""
+  echo "Note: You may need to grant Accessibility permissions in System Preferences"
+uninstall: |
+  echo "Uninstalling AltTab..."
+  brew uninstall --cask alt-tab

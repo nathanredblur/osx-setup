@@ -19,25 +19,21 @@ notes: |
   - File sharing and collaborative editing
   - Free tier available with paid plans for advanced features
 dependencies: []
-install:
-  script: |
-    echo "Installing Slack..."
-    brew install --cask slack
-validate:
-  script: |
-    brew list --cask | grep -q "slack" || ls /Applications/ | grep -q "Slack.app"
-configure:
-  script: |
-    echo "Slack configuration complete"
-    echo "Launch Slack and sign in to your workspace"
-    echo "Key features to explore:"
-    echo "- Organize conversations in channels"
-    echo "- Direct messaging and group chats"
-    echo "- Voice and video calls"
-    echo "- File sharing and collaboration"
-    echo "- App integrations and workflows"
-    echo "- Custom notifications and status"
-uninstall:
-  script: |
-    echo "Uninstalling Slack..."
-    brew uninstall --cask slack
+install: |
+  echo "Installing Slack..."
+  brew install --cask slack
+validate: |
+  brew list --cask | grep -q "slack" || ls /Applications/ | grep -q "Slack.app"
+configure: |
+  echo "Slack configuration complete"
+  echo "Launch Slack and sign in to your workspace"
+  echo "Key features to explore:"
+  echo "- Organize conversations in channels"
+  echo "- Direct messaging and group chats"
+  echo "- Voice and video calls"
+  echo "- File sharing and collaboration"
+  echo "- App integrations and workflows"
+  echo "- Custom notifications and status"
+uninstall: |
+  echo "Uninstalling Slack..."
+  brew uninstall --cask slack

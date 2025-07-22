@@ -18,20 +18,16 @@ notes: |
   - Command-line utility for automated compression
   - Essential for handling compressed files
 dependencies: []
-install:
-  script: |
-    echo "Installing Gzip..."
-    brew install gzip
-validate:
-  script: |
-    command -v gzip &> /dev/null
-configure:
-  script: |
-    echo "Gzip configuration complete"
-    echo "Use: gzip filename (to compress)"
-    echo "Use: gunzip filename.gz (to decompress)"
-    echo "Use: gzip -d filename.gz (alternative decompression)"
-uninstall:
-  script: |
-    echo "Uninstalling Gzip..."
-    brew uninstall gzip
+install: |
+  echo "Installing Gzip..."
+  brew install gzip
+validate: |
+  command -v gzip &> /dev/null
+configure: |
+  echo "Gzip configuration complete"
+  echo "Use: gzip filename (to compress)"
+  echo "Use: gunzip filename.gz (to decompress)"
+  echo "Use: gzip -d filename.gz (alternative decompression)"
+uninstall: |
+  echo "Uninstalling Gzip..."
+  brew uninstall gzip

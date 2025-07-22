@@ -21,121 +21,117 @@ notes: |
   - Support for custom wallpaper categories
   - Local storage and privacy-focused
 dependencies: []
-install:
-  script: |
-    echo "Setting up My Wallpaper management system..."
-    
-    # Create wallpaper directories
-    echo "Creating wallpaper organization directories..."
-    mkdir -p "$HOME/Pictures/My Wallpapers/Personal"
-    mkdir -p "$HOME/Pictures/My Wallpapers/Work"
-    mkdir -p "$HOME/Pictures/My Wallpapers/Seasonal"
-    mkdir -p "$HOME/Pictures/My Wallpapers/Minimalist"
-    mkdir -p "$HOME/Pictures/My Wallpapers/Photography"
-    mkdir -p "$HOME/Pictures/My Wallpapers/Abstract"
-    
-    # Create a simple wallpaper management script
-    cat > "$HOME/.local/bin/my-wallpaper" << 'EOF'
+install: |
+  echo "Setting up My Wallpaper management system..."
+  
+  # Create wallpaper directories
+  echo "Creating wallpaper organization directories..."
+  mkdir -p "$HOME/Pictures/My Wallpapers/Personal"
+  mkdir -p "$HOME/Pictures/My Wallpapers/Work"
+  mkdir -p "$HOME/Pictures/My Wallpapers/Seasonal"
+  mkdir -p "$HOME/Pictures/My Wallpapers/Minimalist"
+  mkdir -p "$HOME/Pictures/My Wallpapers/Photography"
+  mkdir -p "$HOME/Pictures/My Wallpapers/Abstract"
+  
+  # Create a simple wallpaper management script
+  cat > "$HOME/.local/bin/my-wallpaper" << 'EOF'
 #!/bin/bash
 # My Wallpaper Management Script
 
 WALLPAPER_DIR="$HOME/Pictures/My Wallpapers"
 
 case "$1" in
-    "list")
-        echo "Available wallpaper categories:"
-        find "$WALLPAPER_DIR" -type d -mindepth 1 -maxdepth 1 | sed 's|.*/||' | sort
-        ;;
-    "set")
-        if [ -n "$2" ]; then
-            if [ -f "$2" ]; then
-                osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$2\""
-                echo "Wallpaper set to: $(basename "$2")"
-            else
-                echo "File not found: $2"
-            fi
-        else
-            echo "Usage: my-wallpaper set <path-to-image>"
-        fi
-        ;;
-    "random")
-        CATEGORY="${2:-Personal}"
-        WALLPAPER_PATH="$WALLPAPER_DIR/$CATEGORY"
-        if [ -d "$WALLPAPER_PATH" ]; then
-            RANDOM_WALLPAPER=$(find "$WALLPAPER_PATH" -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" | shuf -n 1)
-            if [ -n "$RANDOM_WALLPAPER" ]; then
-                osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$RANDOM_WALLPAPER\""
-                echo "Random wallpaper set from $CATEGORY: $(basename "$RANDOM_WALLPAPER")"
-            else
-                echo "No wallpapers found in $CATEGORY category"
-            fi
-        else
-            echo "Category not found: $CATEGORY"
-        fi
-        ;;
-    "browse")
-        open "$WALLPAPER_DIR"
-        ;;
-    *)
-        echo "My Wallpaper Manager"
-        echo "Usage:"
-        echo "  my-wallpaper list            - List available categories"
-        echo "  my-wallpaper set <file>      - Set specific wallpaper"
-        echo "  my-wallpaper random [cat]    - Set random wallpaper from category"
-        echo "  my-wallpaper browse          - Open wallpaper folder in Finder"
-        ;;
+  "list")
+      echo "Available wallpaper categories:"
+      find "$WALLPAPER_DIR" -type d -mindepth 1 -maxdepth 1 | sed 's|.*/||' | sort
+      ;;
+  "set")
+      if [ -n "$2" ]; then
+          if [ -f "$2" ]; then
+              osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$2\""
+              echo "Wallpaper set to: $(basename "$2")"
+          else
+              echo "File not found: $2"
+          fi
+      else
+          echo "Usage: my-wallpaper set <path-to-image>"
+      fi
+      ;;
+  "random")
+      CATEGORY="${2:-Personal}"
+      WALLPAPER_PATH="$WALLPAPER_DIR/$CATEGORY"
+      if [ -d "$WALLPAPER_PATH" ]; then
+          RANDOM_WALLPAPER=$(find "$WALLPAPER_PATH" -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" | shuf -n 1)
+          if [ -n "$RANDOM_WALLPAPER" ]; then
+              osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$RANDOM_WALLPAPER\""
+              echo "Random wallpaper set from $CATEGORY: $(basename "$RANDOM_WALLPAPER")"
+          else
+              echo "No wallpapers found in $CATEGORY category"
+          fi
+      else
+          echo "Category not found: $CATEGORY"
+      fi
+      ;;
+  "browse")
+      open "$WALLPAPER_DIR"
+      ;;
+  *)
+      echo "My Wallpaper Manager"
+      echo "Usage:"
+      echo "  my-wallpaper list            - List available categories"
+      echo "  my-wallpaper set <file>      - Set specific wallpaper"
+      echo "  my-wallpaper random [cat]    - Set random wallpaper from category"
+      echo "  my-wallpaper browse          - Open wallpaper folder in Finder"
+      ;;
 esac
 EOF
-    
-    # Make script executable
-    chmod +x "$HOME/.local/bin/my-wallpaper"
-    
-    # Create local bin directory if it doesn't exist
-    mkdir -p "$HOME/.local/bin"
-    
-    echo "My Wallpaper management system installed"
-    echo "Directory structure created in ~/Pictures/My Wallpapers/"
-validate:
-  script: |
-    [ -d "$HOME/Pictures/My Wallpapers" ] && [ -f "$HOME/.local/bin/my-wallpaper" ]
-configure:
-  script: |
-    echo "My Wallpaper configuration complete"
-    echo "Personal wallpaper management system is ready"
-    echo ""
-    echo "Directory structure created:"
-    echo "~/Pictures/My Wallpapers/"
-    echo "  ├── Personal/     - Personal photos and images"
-    echo "  ├── Work/         - Professional and work-appropriate wallpapers"
-    echo "  ├── Seasonal/     - Holiday and seasonal wallpapers"
-    echo "  ├── Minimalist/   - Clean and simple designs"
-    echo "  ├── Photography/  - Artistic and nature photography"
-    echo "  └── Abstract/     - Abstract art and designs"
-    echo ""
-    echo "Management commands (add to your shell PATH):"
-    echo "  my-wallpaper list            - List categories"
-    echo "  my-wallpaper set <file>      - Set specific wallpaper"
-    echo "  my-wallpaper random [cat]    - Random wallpaper from category"
-    echo "  my-wallpaper browse          - Open folder in Finder"
-    echo ""
-    echo "Getting started:"
-    echo "1. Add wallpapers to the organized folders"
-    echo "2. Use 'my-wallpaper browse' to open folder in Finder"
-    echo "3. Use 'my-wallpaper random Personal' for random personal wallpaper"
-    echo "4. Use 'my-wallpaper random Work' for professional wallpapers"
-    echo ""
-    echo "Adding to PATH (add to ~/.zshrc or ~/.bash_profile):"
-    echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
-    echo ""
-    echo "Benefits:"
-    echo "- Organized wallpaper collection"
-    echo "- Quick category switching"
-    echo "- Random wallpaper selection"
-    echo "- Personal privacy and control"
-    echo "- Integration with macOS wallpaper system"
-uninstall:
-  script: |
-    echo "Uninstalling My Wallpaper system..."
-    rm -f "$HOME/.local/bin/my-wallpaper"
-    echo "Note: Wallpaper directories and images preserved"
-    echo "Remove ~/Pictures/My Wallpapers manually if desired" 
+  
+  # Make script executable
+  chmod +x "$HOME/.local/bin/my-wallpaper"
+  
+  # Create local bin directory if it doesn't exist
+  mkdir -p "$HOME/.local/bin"
+  
+  echo "My Wallpaper management system installed"
+  echo "Directory structure created in ~/Pictures/My Wallpapers/"
+validate: |
+  [ -d "$HOME/Pictures/My Wallpapers" ] && [ -f "$HOME/.local/bin/my-wallpaper" ]
+configure: |
+  echo "My Wallpaper configuration complete"
+  echo "Personal wallpaper management system is ready"
+  echo ""
+  echo "Directory structure created:"
+  echo "~/Pictures/My Wallpapers/"
+  echo "  ├── Personal/     - Personal photos and images"
+  echo "  ├── Work/         - Professional and work-appropriate wallpapers"
+  echo "  ├── Seasonal/     - Holiday and seasonal wallpapers"
+  echo "  ├── Minimalist/   - Clean and simple designs"
+  echo "  ├── Photography/  - Artistic and nature photography"
+  echo "  └── Abstract/     - Abstract art and designs"
+  echo ""
+  echo "Management commands (add to your shell PATH):"
+  echo "  my-wallpaper list            - List categories"
+  echo "  my-wallpaper set <file>      - Set specific wallpaper"
+  echo "  my-wallpaper random [cat]    - Random wallpaper from category"
+  echo "  my-wallpaper browse          - Open folder in Finder"
+  echo ""
+  echo "Getting started:"
+  echo "1. Add wallpapers to the organized folders"
+  echo "2. Use 'my-wallpaper browse' to open folder in Finder"
+  echo "3. Use 'my-wallpaper random Personal' for random personal wallpaper"
+  echo "4. Use 'my-wallpaper random Work' for professional wallpapers"
+  echo ""
+  echo "Adding to PATH (add to ~/.zshrc or ~/.bash_profile):"
+  echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+  echo ""
+  echo "Benefits:"
+  echo "- Organized wallpaper collection"
+  echo "- Quick category switching"
+  echo "- Random wallpaper selection"
+  echo "- Personal privacy and control"
+  echo "- Integration with macOS wallpaper system"
+uninstall: |
+  echo "Uninstalling My Wallpaper system..."
+  rm -f "$HOME/.local/bin/my-wallpaper"
+  echo "Note: Wallpaper directories and images preserved"
+  echo "Remove ~/Pictures/My Wallpapers manually if desired" 

@@ -20,19 +20,15 @@ notes: |
   - Multi-file editing and context-aware suggestions
   - Background processing and intelligent code analysis
 dependencies: []
-install:
-  script: |
-    echo "Installing Cursor..."
-    brew install --cask cursor
-validate:
-  script: |
-    brew list --cask | grep -q "cursor" || ls /Applications/ | grep -q "Cursor.app"
-configure:
-  script: |
-    echo "Cursor configuration complete"
-    echo "Launch Cursor and sign up for an account to access AI features"
-    echo "Note: Free plan available with premium features requiring subscription"
-uninstall:
-  script: |
-    echo "Uninstalling Cursor..."
-    brew uninstall --cask cursor
+install: |
+  echo "Installing Cursor..."
+  brew install --cask cursor
+validate: |
+  brew list --cask | grep -q "cursor" || ls /Applications/ | grep -q "Cursor.app"
+configure: |
+  echo "Cursor configuration complete"
+  echo "Launch Cursor and sign up for an account to access AI features"
+  echo "Note: Free plan available with premium features requiring subscription"
+uninstall: |
+  echo "Uninstalling Cursor..."
+  brew uninstall --cask cursor

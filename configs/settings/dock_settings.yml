@@ -17,33 +17,30 @@ notes: |
   - Applies system-wide dock settings
   - No additional software required
 dependencies: []
-install:
-  script: |
-    echo "This item only configures existing system settings"
-validate:
-  script: |
-    # Always return 1 (not configured) so configure script runs
-    exit 1
-configure:
-  script: |
-    echo "Applying Dock settings..."
+install: |
+  echo "This item only configures existing system settings"
+validate: |
+  # Always return 1 (not configured) so configure script runs
+  exit 1
+configure: |
+  echo "Applying Dock settings..."
 
-    # Auto-hide the Dock
-    defaults write com.apple.dock autohide -bool true
+  # Auto-hide the Dock
+  defaults write com.apple.dock autohide -bool true
 
-    # Set Dock size (0.0 = smallest, 1.0 = largest)
-    defaults write com.apple.dock tilesize -int 48
+  # Set Dock size (0.0 = smallest, 1.0 = largest)
+  defaults write com.apple.dock tilesize -int 48
 
-    # Don't show recent applications in Dock
-    defaults write com.apple.dock show-recents -bool false
+  # Don't show recent applications in Dock
+  defaults write com.apple.dock show-recents -bool false
 
-    # Speed up Dock auto-hide animation
-    defaults write com.apple.dock autohide-time-modifier -float 0.3
+  # Speed up Dock auto-hide animation
+  defaults write com.apple.dock autohide-time-modifier -float 0.3
 
-    # Remove delay for auto-hide
-    defaults write com.apple.dock autohide-delay -float 0
+  # Remove delay for auto-hide
+  defaults write com.apple.dock autohide-delay -float 0
 
-    # Restart Dock to apply changes
-    killall Dock
+  # Restart Dock to apply changes
+  killall Dock
 
-    echo "Dock settings applied successfully"
+  echo "Dock settings applied successfully"

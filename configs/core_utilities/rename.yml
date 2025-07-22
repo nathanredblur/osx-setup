@@ -19,30 +19,26 @@ notes: |
   - Dry-run mode to preview changes before applying
   - Case conversion and text manipulation features
 dependencies: []
-install:
-  script: |
-    echo "Installing rename..."
-    brew install rename
-validate:
-  script: |
-    command -v rename &> /dev/null
-configure:
-  script: |
-    echo "rename configuration complete"
-    echo "Usage examples:"
-    echo "  rename 's/old/new/' *.txt                # Replace 'old' with 'new' in .txt files"
-    echo "  rename 'y/A-Z/a-z/' *                    # Convert filenames to lowercase"
-    echo "  rename 's/ /_/g' *                       # Replace spaces with underscores"
-    echo "  rename -n 's/old/new/' *.txt             # Dry-run (preview changes)"
-    echo "  rename 's/^/prefix_/' *                   # Add prefix to all files"
-    echo "  rename 's/\\.jpeg$/.jpg/' *               # Change .jpeg to .jpg"
-    echo ""
-    echo "Options:"
-    echo "  -n    Dry-run (show what would be renamed without doing it)"
-    echo "  -v    Verbose (show all renames as they happen)"
-    echo ""
-    echo "rename is now ready for batch file operations!"
-uninstall:
-  script: |
-    echo "Uninstalling rename..."
-    brew uninstall rename
+install: |
+  echo "Installing rename..."
+  brew install rename
+validate: |
+  command -v rename &> /dev/null
+configure: |
+  echo "rename configuration complete"
+  echo "Usage examples:"
+  echo "  rename 's/old/new/' *.txt                # Replace 'old' with 'new' in .txt files"
+  echo "  rename 'y/A-Z/a-z/' *                    # Convert filenames to lowercase"
+  echo "  rename 's/ /_/g' *                       # Replace spaces with underscores"
+  echo "  rename -n 's/old/new/' *.txt             # Dry-run (preview changes)"
+  echo "  rename 's/^/prefix_/' *                   # Add prefix to all files"
+  echo "  rename 's/\\.jpeg$/.jpg/' *               # Change .jpeg to .jpg"
+  echo ""
+  echo "Options:"
+  echo "  -n    Dry-run (show what would be renamed without doing it)"
+  echo "  -v    Verbose (show all renames as they happen)"
+  echo ""
+  echo "rename is now ready for batch file operations!"
+uninstall: |
+  echo "Uninstalling rename..."
+  brew uninstall rename

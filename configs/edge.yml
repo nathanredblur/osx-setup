@@ -19,23 +19,19 @@ notes: |
   - Vertical tabs and productivity features
   - Enterprise-grade security and management capabilities
 dependencies: []
-install:
-  script: |
-    echo "Installing Microsoft Edge..."
-    brew install --cask microsoft-edge
-validate:
-  script: |
-    brew list --cask | grep -q "microsoft-edge" || ls /Applications/ | grep -q "Microsoft Edge.app"
-configure:
-  script: |
-    echo "Microsoft Edge configuration complete"
-    echo "Launch Edge and sign in with your Microsoft account for sync"
-    echo "Key features to explore:"
-    echo "- Vertical tabs for better organization"
-    echo "- Collections for research and planning"
-    echo "- Microsoft 365 integration"
-    echo "- Enterprise security features"
-uninstall:
-  script: |
-    echo "Uninstalling Microsoft Edge..."
-    brew uninstall --cask microsoft-edge
+install: |
+  echo "Installing Microsoft Edge..."
+  brew install --cask microsoft-edge
+validate: |
+  brew list --cask | grep -q "microsoft-edge" || ls /Applications/ | grep -q "Microsoft Edge.app"
+configure: |
+  echo "Microsoft Edge configuration complete"
+  echo "Launch Edge and sign in with your Microsoft account for sync"
+  echo "Key features to explore:"
+  echo "- Vertical tabs for better organization"
+  echo "- Collections for research and planning"
+  echo "- Microsoft 365 integration"
+  echo "- Enterprise security features"
+uninstall: |
+  echo "Uninstalling Microsoft Edge..."
+  brew uninstall --cask microsoft-edge

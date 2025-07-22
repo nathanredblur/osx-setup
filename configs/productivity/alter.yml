@@ -13,122 +13,119 @@ notes: |
   - Revolutionary AI-powered Mac assistant
 requires_license: false
 selected_by_default: false
-install:
-  script: |
-    #!/bin/bash
-    set -e
+install: |
+  #!/bin/bash
+  set -e
 
-    echo "🔍 Finding latest Alter beta download URL..."
+  echo "🔍 Finding latest Alter beta download URL..."
 
-    # Use Python to scrape the beta page and find the DMG URL
-    DOWNLOAD_URL=$(python3 -c "
-    import requests
-    import re
-    from urllib.parse import urljoin
+  # Use Python to scrape the beta page and find the DMG URL
+  DOWNLOAD_URL=$(python3 -c "
+  import requests
+  import re
+  from urllib.parse import urljoin
 
-    try:
-        response = requests.get('https://alterhq.com/beta', timeout=30)
-        response.raise_for_status()
-        
-        # Look for .dmg URLs in the HTML
-        dmg_pattern = r'https://[^\"\'>\s]*\.dmg[^\"\'>\s]*'
-        matches = re.findall(dmg_pattern, response.text, re.IGNORECASE)
-        
-        if matches:
-            # Get the first (presumably latest) DMG URL
-            print(matches[0])
-        else:
-            # Fallback: look for relative URLs and construct full URLs
-            relative_pattern = r'[\"\'](/[^\"\'>\s]*\.dmg[^\"\'>\s]*)[\"\'>\s]'
-            relative_matches = re.findall(relative_pattern, response.text, re.IGNORECASE)
-            if relative_matches:
-                full_url = urljoin('https://alterhq.com', relative_matches[0])
-                print(full_url)
-            else:
-                raise Exception('No DMG download URL found')
-    except Exception as e:
-        print(f'Error: {e}', file=sys.stderr)
-        exit(1)
-    ")
+  try:
+      response = requests.get('https://alterhq.com/beta', timeout=30)
+      response.raise_for_status()
+      
+      # Look for .dmg URLs in the HTML
+      dmg_pattern = r'https://[^\"\'>\s]*\.dmg[^\"\'>\s]*'
+      matches = re.findall(dmg_pattern, response.text, re.IGNORECASE)
+      
+      if matches:
+          # Get the first (presumably latest) DMG URL
+          print(matches[0])
+      else:
+          # Fallback: look for relative URLs and construct full URLs
+          relative_pattern = r'[\"\'](/[^\"\'>\s]*\.dmg[^\"\'>\s]*)[\"\'>\s]'
+          relative_matches = re.findall(relative_pattern, response.text, re.IGNORECASE)
+          if relative_matches:
+              full_url = urljoin('https://alterhq.com', relative_matches[0])
+              print(full_url)
+          else:
+              raise Exception('No DMG download URL found')
+  except Exception as e:
+      print(f'Error: {e}', file=sys.stderr)
+      exit(1)
+  ")
 
-    if [ -z "$DOWNLOAD_URL" ]; then
-        echo "❌ Could not find Alter download URL"
-        exit 1
-    fi
+  if [ -z "$DOWNLOAD_URL" ]; then
+      echo "❌ Could not find Alter download URL"
+      exit 1
+  fi
 
-    echo "📥 Downloading Alter from: $DOWNLOAD_URL"
+  echo "📥 Downloading Alter from: $DOWNLOAD_URL"
 
-    # Create temporary directory
-    TEMP_DIR=$(mktemp -d)
-    DMG_FILE="$TEMP_DIR/alter.dmg"
+  # Create temporary directory
+  TEMP_DIR=$(mktemp -d)
+  DMG_FILE="$TEMP_DIR/alter.dmg"
 
-    # Download the DMG file
-    curl -L -o "$DMG_FILE" "$DOWNLOAD_URL"
+  # Download the DMG file
+  curl -L -o "$DMG_FILE" "$DOWNLOAD_URL"
 
-    if [ ! -f "$DMG_FILE" ]; then
-        echo "❌ Failed to download Alter DMG"
-        rm -rf "$TEMP_DIR"
-        exit 1
-    fi
+  if [ ! -f "$DMG_FILE" ]; then
+      echo "❌ Failed to download Alter DMG"
+      rm -rf "$TEMP_DIR"
+      exit 1
+  fi
 
-    echo "💿 Mounting DMG..."
+  echo "💿 Mounting DMG..."
 
-    # Mount the DMG
-    MOUNT_POINT=$(hdiutil attach "$DMG_FILE" | grep "/Volumes/" | awk '{print $3}')
+  # Mount the DMG
+  MOUNT_POINT=$(hdiutil attach "$DMG_FILE" | grep "/Volumes/" | awk '{print $3}')
 
-    if [ -z "$MOUNT_POINT" ]; then
-        echo "❌ Failed to mount Alter DMG"
-        rm -rf "$TEMP_DIR"
-        exit 1
-    fi
+  if [ -z "$MOUNT_POINT" ]; then
+      echo "❌ Failed to mount Alter DMG"
+      rm -rf "$TEMP_DIR"
+      exit 1
+  fi
 
-    echo "📱 Installing Alter to /Applications..."
+  echo "📱 Installing Alter to /Applications..."
 
-    # Find the .app file in the mounted volume
-    APP_FILE=$(find "$MOUNT_POINT" -name "*.app" -type d | head -1)
+  # Find the .app file in the mounted volume
+  APP_FILE=$(find "$MOUNT_POINT" -name "*.app" -type d | head -1)
 
-    if [ -z "$APP_FILE" ]; then
-        echo "❌ Could not find Alter.app in DMG"
-        hdiutil detach "$MOUNT_POINT"
-        rm -rf "$TEMP_DIR"
-        exit 1
-    fi
+  if [ -z "$APP_FILE" ]; then
+      echo "❌ Could not find Alter.app in DMG"
+      hdiutil detach "$MOUNT_POINT"
+      rm -rf "$TEMP_DIR"
+      exit 1
+  fi
 
-    # Copy to Applications
-    sudo cp -R "$APP_FILE" /Applications/
+  # Copy to Applications
+  sudo cp -R "$APP_FILE" /Applications/
 
-    echo "🧹 Cleaning up..."
+  echo "🧹 Cleaning up..."
 
-    # Unmount DMG
-    hdiutil detach "$MOUNT_POINT"
+  # Unmount DMG
+  hdiutil detach "$MOUNT_POINT"
 
-    # Clean up temporary files
-    rm -rf "$TEMP_DIR"
+  # Clean up temporary files
+  rm -rf "$TEMP_DIR"
 
-    echo "✅ Alter installed successfully to /Applications"
-    echo "🚀 You can now launch Alter from your Applications folder"
+  echo "✅ Alter installed successfully to /Applications"
+  echo "🚀 You can now launch Alter from your Applications folder"
 
-validate:
-  script: |
-    #!/bin/bash
-    if [ -d "/Applications/Alter.app" ]; then
-        echo "✅ Alter is installed"
-        exit 0
-    else
-        echo "❌ Alter is not installed"
-        exit 1
-    fi
+validate: |
+  #!/bin/bash
+  if [ -d "/Applications/Alter.app" ]; then
+      echo "✅ Alter is installed"
+      exit 0
+  else
+      echo "❌ Alter is not installed"
+      exit 1
+  fi
 
-uninstall:
-  script: |
-    #!/bin/bash
-    set -e
+uninstall: |
+  #!/bin/bash
+  set -e
 
-    echo "🗑️  Uninstalling Alter..."
+  echo "🗑️  Uninstalling Alter..."
 
-    if [ -d "/Applications/Alter.app" ]; then
-        sudo rm -rf "/Applications/Alter.app"
-        echo "✅ Alter uninstalled successfully"
-    else
-        echo "ℹ️  Alter is not installed"
-    fi
+  if [ -d "/Applications/Alter.app" ]; then
+      sudo rm -rf "/Applications/Alter.app"
+      echo "✅ Alter uninstalled successfully"
+  else
+      echo "ℹ️  Alter is not installed"
+  fi

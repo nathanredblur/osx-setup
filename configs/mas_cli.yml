@@ -17,18 +17,14 @@ notes: |
   - Useful for automation and scripting
   - Can list, install, upgrade, and search for apps
 dependencies: []
-install:
-  script: |
-    echo "Installing mas-cli..."
-    brew install mas
-validate:
-  script: |
-    command -v mas &> /dev/null
-configure:
-  script: |
-    echo "mas-cli configuration complete"
-    mas version
-uninstall:
-  script: |
-    echo "Uninstalling mas-cli..."
-    brew uninstall mas
+install: |
+  echo "Installing mas-cli..."
+  brew install mas
+validate: |
+  command -v mas &> /dev/null
+configure: |
+  echo "mas-cli configuration complete"
+  mas version
+uninstall: |
+  echo "Uninstalling mas-cli..."
+  brew uninstall mas

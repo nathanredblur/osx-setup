@@ -21,94 +21,90 @@ notes: |
   - Customizable display and behavior
   - Premium software with enhanced productivity focus
 dependencies: []
-install:
-  script: |
-    echo "Installing Keyclu..."
-    echo "Note: Keyclu is a premium application"
-    echo ""
-    echo "Installation options:"
-    echo "1. Download from developer website"
-    echo "2. Check Mac App Store availability"
-    echo "3. Free trial may be available"
-    echo ""
-    echo "Manual installation steps:"
-    echo "1. Visit developer website for download"
-    echo "2. Download Keyclu for macOS"
-    echo "3. Open the downloaded DMG file"
-    echo "4. Move Keyclu to Applications folder"
-    echo "5. Launch and complete setup"
-    echo ""
-    # Check if available via mas or brew
-    if command -v mas >/dev/null 2>&1; then
-      echo "Checking Mac App Store for Keyclu..."
-      # mas search keyclu
-    fi
+install: |
+  echo "Installing Keyclu..."
+  echo "Note: Keyclu is a premium application"
+  echo ""
+  echo "Installation options:"
+  echo "1. Download from developer website"
+  echo "2. Check Mac App Store availability"
+  echo "3. Free trial may be available"
+  echo ""
+  echo "Manual installation steps:"
+  echo "1. Visit developer website for download"
+  echo "2. Download Keyclu for macOS"
+  echo "3. Open the downloaded DMG file"
+  echo "4. Move Keyclu to Applications folder"
+  echo "5. Launch and complete setup"
+  echo ""
+  # Check if available via mas or brew
+  if command -v mas >/dev/null 2>&1; then
+    echo "Checking Mac App Store for Keyclu..."
+    # mas search keyclu
+  fi
 
-    echo "Note: Manual installation required from developer website"
-validate:
-  script: |
-    # Check for Keyclu in Applications
-    if ls /Applications/ | grep -q "Keyclu.app"; then
-      exit 0
-    fi
+  echo "Note: Manual installation required from developer website"
+validate: |
+  # Check for Keyclu in Applications
+  if ls /Applications/ | grep -q "Keyclu.app"; then
+    exit 0
+  fi
 
-    # Check for variations
-    if ls /Applications/ | grep -i "keyclu" >/dev/null 2>&1; then
-      exit 0
-    fi
+  # Check for variations
+  if ls /Applications/ | grep -i "keyclu" >/dev/null 2>&1; then
+    exit 0
+  fi
 
-    echo "Keyclu not detected"
-    exit 1
-configure:
-  script: |
-    echo "Keyclu configuration complete"
-    echo "Launch Keyclu to start learning keyboard shortcuts"
-    echo ""
-    echo "Key features:"
-    echo "- Visual display of available keyboard shortcuts"
-    echo "- Context-sensitive help for active applications"
-    echo "- Real-time shortcut discovery and learning"
-    echo "- Customizable display preferences"
-    echo "- Learning mode with progress tracking"
-    echo "- Support for system and application shortcuts"
-    echo ""
-    echo "Getting started:"
-    echo "1. Launch Keyclu from Applications"
-    echo "2. Grant necessary accessibility permissions"
-    echo "3. Configure display preferences and triggers"
-    echo "4. Set up learning mode if desired"
-    echo "5. Start exploring shortcuts in your favorite apps"
-    echo ""
-    echo "How it works:"
-    echo "- Detects active application and available shortcuts"
-    echo "- Displays shortcuts in an easy-to-read overlay"
-    echo "- Updates in real-time as you switch applications"
-    echo "- Helps discover hidden productivity features"
-    echo "- Tracks your learning progress over time"
-    echo ""
-    echo "Customization options:"
-    echo "- Display timing and duration settings"
-    echo "- Visual appearance and positioning"
-    echo "- Filter shortcuts by category or frequency"
-    echo "- Keyboard trigger configuration"
-    echo "- Learning mode preferences"
-    echo ""
-    echo "Benefits:"
-    echo "- Accelerate keyboard shortcut mastery"
-    echo "- Discover hidden application features"
-    echo "- Improve overall productivity and workflow"
-    echo "- Reduce reliance on mouse interactions"
-    echo "- Learn efficiently with visual guidance"
-    echo ""
-    echo "Learning strategies:"
-    echo "- Focus on shortcuts for frequently used apps"
-    echo "- Practice new shortcuts in learning mode"
-    echo "- Gradually expand your shortcut vocabulary"
-    echo "- Use contextual help during regular work"
-    echo "- Track progress to stay motivated"
-    echo ""
-    echo "Keyclu will help you become a keyboard efficiency expert!"
-uninstall:
-  script: |
-    echo "Uninstalling Keyclu..."
-    find /Applications -name "*Keyclu*" -delete 2>/dev/null || true
+  echo "Keyclu not detected"
+  exit 1
+configure: |
+  echo "Keyclu configuration complete"
+  echo "Launch Keyclu to start learning keyboard shortcuts"
+  echo ""
+  echo "Key features:"
+  echo "- Visual display of available keyboard shortcuts"
+  echo "- Context-sensitive help for active applications"
+  echo "- Real-time shortcut discovery and learning"
+  echo "- Customizable display preferences"
+  echo "- Learning mode with progress tracking"
+  echo "- Support for system and application shortcuts"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Keyclu from Applications"
+  echo "2. Grant necessary accessibility permissions"
+  echo "3. Configure display preferences and triggers"
+  echo "4. Set up learning mode if desired"
+  echo "5. Start exploring shortcuts in your favorite apps"
+  echo ""
+  echo "How it works:"
+  echo "- Detects active application and available shortcuts"
+  echo "- Displays shortcuts in an easy-to-read overlay"
+  echo "- Updates in real-time as you switch applications"
+  echo "- Helps discover hidden productivity features"
+  echo "- Tracks your learning progress over time"
+  echo ""
+  echo "Customization options:"
+  echo "- Display timing and duration settings"
+  echo "- Visual appearance and positioning"
+  echo "- Filter shortcuts by category or frequency"
+  echo "- Keyboard trigger configuration"
+  echo "- Learning mode preferences"
+  echo ""
+  echo "Benefits:"
+  echo "- Accelerate keyboard shortcut mastery"
+  echo "- Discover hidden application features"
+  echo "- Improve overall productivity and workflow"
+  echo "- Reduce reliance on mouse interactions"
+  echo "- Learn efficiently with visual guidance"
+  echo ""
+  echo "Learning strategies:"
+  echo "- Focus on shortcuts for frequently used apps"
+  echo "- Practice new shortcuts in learning mode"
+  echo "- Gradually expand your shortcut vocabulary"
+  echo "- Use contextual help during regular work"
+  echo "- Track progress to stay motivated"
+  echo ""
+  echo "Keyclu will help you become a keyboard efficiency expert!"
+uninstall: |
+  echo "Uninstalling Keyclu..."
+  find /Applications -name "*Keyclu*" -delete 2>/dev/null || true

@@ -19,19 +19,15 @@ notes: |
   - Premium software with 4-week free trial ($16 one-time purchase)
   - Regular updates and excellent customer support
 dependencies: []
-install:
-  script: |
-    echo "Installing Bartender..."
-    brew install --cask bartender
-validate:
-  script: |
-    brew list --cask | grep -q "bartender" || ls /Applications/ | grep -q "Bartender.app"
-configure:
-  script: |
-    echo "Bartender configuration complete"
-    echo "Launch Bartender and grant accessibility permissions when prompted"
-    echo "Note: Bartender offers a 4-week free trial, then requires license purchase"
-uninstall:
-  script: |
-    echo "Uninstalling Bartender..."
-    brew uninstall --cask bartender
+install: |
+  echo "Installing Bartender..."
+  brew install --cask bartender
+validate: |
+  brew list --cask | grep -q "bartender" || ls /Applications/ | grep -q "Bartender.app"
+configure: |
+  echo "Bartender configuration complete"
+  echo "Launch Bartender and grant accessibility permissions when prompted"
+  echo "Note: Bartender offers a 4-week free trial, then requires license purchase"
+uninstall: |
+  echo "Uninstalling Bartender..."
+  brew uninstall --cask bartender

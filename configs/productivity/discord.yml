@@ -19,24 +19,20 @@ notes: |
   - Rich presence and game integration
   - Free with optional Nitro subscription for enhanced features
 dependencies: []
-install:
-  script: |
-    echo "Installing Discord..."
-    brew install --cask discord
-validate:
-  script: |
-    brew list --cask | grep -q "discord" || ls /Applications/ | grep -q "Discord.app"
-configure:
-  script: |
-    echo "Discord configuration complete"
-    echo "Launch Discord and create an account or sign in"
-    echo "Key features to explore:"
-    echo "- Join servers and communities"
-    echo "- Voice and video calls"
-    echo "- Screen sharing and streaming"
-    echo "- Rich presence with game integration"
-    echo "- Custom emoji and server roles"
-uninstall:
-  script: |
-    echo "Uninstalling Discord..."
-    brew uninstall --cask discord
+install: |
+  echo "Installing Discord..."
+  brew install --cask discord
+validate: |
+  brew list --cask | grep -q "discord" || ls /Applications/ | grep -q "Discord.app"
+configure: |
+  echo "Discord configuration complete"
+  echo "Launch Discord and create an account or sign in"
+  echo "Key features to explore:"
+  echo "- Join servers and communities"
+  echo "- Voice and video calls"
+  echo "- Screen sharing and streaming"
+  echo "- Rich presence with game integration"
+  echo "- Custom emoji and server roles"
+uninstall: |
+  echo "Uninstalling Discord..."
+  brew uninstall --cask discord

@@ -20,28 +20,24 @@ notes: |
   - Rich output formatting and color highlighting
   - Written in Rust for maximum performance
 dependencies: []
-install:
-  script: |
-    echo "Installing ripgrep..."
-    brew install ripgrep
-validate:
-  script: |
-    command -v rg &> /dev/null
-configure:
-  script: |
-    echo "ripgrep configuration complete"
-    echo "Usage examples:"
-    echo "  rg 'pattern'                    # Search for pattern in current directory"
-    echo "  rg 'pattern' /path/to/search    # Search in specific directory"
-    echo "  rg -i 'pattern'                 # Case-insensitive search"
-    echo "  rg -n 'pattern'                 # Show line numbers"
-    echo "  rg -A 3 -B 3 'pattern'          # Show 3 lines before and after matches"
-    echo "  rg --type py 'pattern'          # Search only in Python files"
-    echo "  rg --hidden 'pattern'           # Include hidden files"
-    echo ""
-    echo "ripgrep (rg) is now available and ready to use!"
-    echo "It's faster than grep and respects .gitignore files automatically"
-uninstall:
-  script: |
-    echo "Uninstalling ripgrep..."
-    brew uninstall ripgrep
+install: |
+  echo "Installing ripgrep..."
+  brew install ripgrep
+validate: |
+  command -v rg &> /dev/null
+configure: |
+  echo "ripgrep configuration complete"
+  echo "Usage examples:"
+  echo "  rg 'pattern'                    # Search for pattern in current directory"
+  echo "  rg 'pattern' /path/to/search    # Search in specific directory"
+  echo "  rg -i 'pattern'                 # Case-insensitive search"
+  echo "  rg -n 'pattern'                 # Show line numbers"
+  echo "  rg -A 3 -B 3 'pattern'          # Show 3 lines before and after matches"
+  echo "  rg --type py 'pattern'          # Search only in Python files"
+  echo "  rg --hidden 'pattern'           # Include hidden files"
+  echo ""
+  echo "ripgrep (rg) is now available and ready to use!"
+  echo "It's faster than grep and respects .gitignore files automatically"
+uninstall: |
+  echo "Uninstalling ripgrep..."
+  brew uninstall ripgrep

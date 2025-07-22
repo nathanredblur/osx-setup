@@ -139,18 +139,19 @@ class ConfigLoader:
                     config_dir=str(self.configs_dir)
                 )
                 
-                # Extract script sections
-                if 'install' in data and 'script' in data['install']:
-                    config_item.install_script = data['install']['script']
+                # Extract script sections - new simplified structure
+                # Scripts are now directly stored as strings, not nested under 'script' key
+                if 'install' in data and isinstance(data['install'], str):
+                    config_item.install_script = data['install']
                     
-                if 'validate' in data and 'script' in data['validate']:
-                    config_item.validate_script = data['validate']['script']
+                if 'validate' in data and isinstance(data['validate'], str):
+                    config_item.validate_script = data['validate']
                     
-                if 'configure' in data and 'script' in data['configure']:
-                    config_item.configure_script = data['configure']['script']
+                if 'configure' in data and isinstance(data['configure'], str):
+                    config_item.configure_script = data['configure']
                     
-                if 'uninstall' in data and 'script' in data['uninstall']:
-                    config_item.uninstall_script = data['uninstall']['script']
+                if 'uninstall' in data and isinstance(data['uninstall'], str):
+                    config_item.uninstall_script = data['uninstall']
                 
                 return config_item
                 

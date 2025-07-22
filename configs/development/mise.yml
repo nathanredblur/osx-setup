@@ -25,21 +25,17 @@ notes: |
   - 3. Set global version: mise global node@latest
   - 4. Create .tool-versions file in project: mise local node@18
 dependencies: []
-install:
-  script: |
-    echo "Installing Mise..."
-    brew install mise
-validate:
-  script: |
-    command -v mise &> /dev/null
-configure:
-  script: |
-    echo "Mise configuration complete"
-    echo "Add to shell profile: eval \"\$(mise activate zsh)\""
-    echo "Install a runtime: mise install node@latest"
-    echo "Set global version: mise global node@latest"
-    echo "Create .tool-versions file in projects: mise local node@18"
-uninstall:
-  script: |
-    echo "Uninstalling Mise..."
-    brew uninstall mise
+install: |
+  echo "Installing Mise..."
+  brew install mise
+validate: |
+  command -v mise &> /dev/null
+configure: |
+  echo "Mise configuration complete"
+  echo "Add to shell profile: eval \"\$(mise activate zsh)\""
+  echo "Install a runtime: mise install node@latest"
+  echo "Set global version: mise global node@latest"
+  echo "Create .tool-versions file in projects: mise local node@18"
+uninstall: |
+  echo "Uninstalling Mise..."
+  brew uninstall mise

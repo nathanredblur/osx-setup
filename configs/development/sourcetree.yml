@@ -20,38 +20,34 @@ notes: |
   - Integration with Bitbucket, GitHub, and GitLab
   - Free to use with Atlassian account
 dependencies: ["git"]
-install:
-  script: |
-    echo "Installing SourceTree..."
-    brew install --cask sourcetree
-validate:
-  script: |
-    brew list --cask | grep -q "sourcetree" || ls /Applications/ | grep -q "Sourcetree.app"
-configure:
-  script: |
-    echo "SourceTree configuration complete"
-    echo "Launch SourceTree and complete the initial setup"
-    echo ""
-    echo "Setup steps:"
-    echo "1. Create or sign in to your Atlassian account"
-    echo "2. Configure Git settings and SSH keys"
-    echo "3. Add your existing repositories"
-    echo "4. Connect to remote services (GitHub, Bitbucket, GitLab)"
-    echo ""
-    echo "Key features:"
-    echo "- Visual Git workflow with drag-and-drop"
-    echo "- Advanced branching and merging tools"
-    echo "- Built-in diff viewer and merge conflict resolution"
-    echo "- Git-flow and Git LFS support"
-    echo "- Integration with popular Git hosting services"
-    echo "- Repository bookmarks and organization"
-    echo ""
-    echo "Getting started:"
-    echo "- Clone repositories from remote services"
-    echo "- Use visual branching for Git-flow workflows"
-    echo "- Review changes with advanced diff tools"
-    echo "- Manage commits, pushes, and pulls graphically"
-uninstall:
-  script: |
-    echo "Uninstalling SourceTree..."
-    brew uninstall --cask sourcetree
+install: |
+  echo "Installing SourceTree..."
+  brew install --cask sourcetree
+validate: |
+  brew list --cask | grep -q "sourcetree" || ls /Applications/ | grep -q "Sourcetree.app"
+configure: |
+  echo "SourceTree configuration complete"
+  echo "Launch SourceTree and complete the initial setup"
+  echo ""
+  echo "Setup steps:"
+  echo "1. Create or sign in to your Atlassian account"
+  echo "2. Configure Git settings and SSH keys"
+  echo "3. Add your existing repositories"
+  echo "4. Connect to remote services (GitHub, Bitbucket, GitLab)"
+  echo ""
+  echo "Key features:"
+  echo "- Visual Git workflow with drag-and-drop"
+  echo "- Advanced branching and merging tools"
+  echo "- Built-in diff viewer and merge conflict resolution"
+  echo "- Git-flow and Git LFS support"
+  echo "- Integration with popular Git hosting services"
+  echo "- Repository bookmarks and organization"
+  echo ""
+  echo "Getting started:"
+  echo "- Clone repositories from remote services"
+  echo "- Use visual branching for Git-flow workflows"
+  echo "- Review changes with advanced diff tools"
+  echo "- Manage commits, pushes, and pulls graphically"
+uninstall: |
+  echo "Uninstalling SourceTree..."
+  brew uninstall --cask sourcetree

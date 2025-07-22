@@ -25,20 +25,16 @@ notes: |
   - 3. Install a Nerd Font for best appearance
   - 4. Restart terminal to see changes
 dependencies: []
-install:
-  script: |
-    echo "Installing Oh My Posh..."
-    brew install oh-my-posh
-validate:
-  script: |
-    command -v oh-my-posh &> /dev/null
-configure:
-  script: |
-    echo "Oh My Posh configuration complete"
-    echo "Visit https://ohmyposh.dev/docs/themes to choose a theme"
-    echo "Add to your shell config: eval \"\$(oh-my-posh init zsh --config ~/.poshthemes/jandedobbeleer.omp.json)\""
-    echo "Install a Nerd Font for best appearance"
-uninstall:
-  script: |
-    echo "Uninstalling Oh My Posh..."
-    brew uninstall oh-my-posh
+install: |
+  echo "Installing Oh My Posh..."
+  brew install oh-my-posh
+validate: |
+  command -v oh-my-posh &> /dev/null
+configure: |
+  echo "Oh My Posh configuration complete"
+  echo "Visit https://ohmyposh.dev/docs/themes to choose a theme"
+  echo "Add to your shell config: eval \"\$(oh-my-posh init zsh --config ~/.poshthemes/jandedobbeleer.omp.json)\""
+  echo "Install a Nerd Font for best appearance"
+uninstall: |
+  echo "Uninstalling Oh My Posh..."
+  brew uninstall oh-my-posh

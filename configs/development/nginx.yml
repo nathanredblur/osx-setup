@@ -19,36 +19,32 @@ notes: |
   - Supports SSL/TLS, HTTP/2, and WebSocket protocols
   - Highly configurable with modular architecture
 dependencies: []
-install:
-  script: |
-    echo "Installing Nginx..."
-    brew install nginx
-validate:
-  script: |
-    command -v nginx &> /dev/null && brew services list | grep -q nginx
-configure:
-  script: |
-    echo "Configuring Nginx..."
+install: |
+  echo "Installing Nginx..."
+  brew install nginx
+validate: |
+  command -v nginx &> /dev/null && brew services list | grep -q nginx
+configure: |
+  echo "Configuring Nginx..."
 
-    # Create basic configuration
-    CONFIG_DIR="/usr/local/etc/nginx"
+  # Create basic configuration
+  CONFIG_DIR="/usr/local/etc/nginx"
 
-    echo "Nginx configuration:"
-    echo "- Config directory: $CONFIG_DIR"
-    echo "- Main config file: $CONFIG_DIR/nginx.conf"
-    echo "- Document root: /usr/local/var/www"
-    echo ""
-    echo "Basic commands:"
-    echo "  brew services start nginx     # Start Nginx service"
-    echo "  brew services stop nginx      # Stop Nginx service"
-    echo "  brew services restart nginx   # Restart Nginx service"
-    echo "  nginx -t                      # Test configuration"
-    echo "  nginx -s reload               # Reload configuration"
-    echo ""
-    echo "Default server runs on: http://localhost:8080"
-    echo "To start Nginx now: brew services start nginx"
-uninstall:
-  script: |
-    echo "Stopping and uninstalling Nginx..."
-    brew services stop nginx
-    brew uninstall nginx
+  echo "Nginx configuration:"
+  echo "- Config directory: $CONFIG_DIR"
+  echo "- Main config file: $CONFIG_DIR/nginx.conf"
+  echo "- Document root: /usr/local/var/www"
+  echo ""
+  echo "Basic commands:"
+  echo "  brew services start nginx     # Start Nginx service"
+  echo "  brew services stop nginx      # Stop Nginx service"
+  echo "  brew services restart nginx   # Restart Nginx service"
+  echo "  nginx -t                      # Test configuration"
+  echo "  nginx -s reload               # Reload configuration"
+  echo ""
+  echo "Default server runs on: http://localhost:8080"
+  echo "To start Nginx now: brew services start nginx"
+uninstall: |
+  echo "Stopping and uninstalling Nginx..."
+  brew services stop nginx
+  brew uninstall nginx

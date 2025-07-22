@@ -20,29 +20,25 @@ notes: |
   - Integration with Gmail and other Google services
   - Cross-platform synchronization
 dependencies: []
-install:
-  script: |
-    echo "Installing Google Drive..."
-    brew install --cask google-drive
-validate:
-  script: |
-    brew list --cask | grep -q "google-drive" || ls /Applications/ | grep -q "Google Drive.app"
-configure:
-  script: |
-    echo "Google Drive configuration complete"
-    echo "Launch Google Drive and sign in with your Google account"
-    echo "Key features:"
-    echo "- Sync files across all your devices"
-    echo "- Real-time collaboration in Google Workspace"
-    echo "- File sharing with customizable permissions"
-    echo "- Version history and file recovery"
-    echo "- Integration with Gmail and Google Photos"
-    echo "- Stream files (don't take up local space) or Mirror files (offline access)"
-    echo ""
-    echo "Note: Google Drive folder will be created and accessible in Finder"
-    echo "Choose between 'Stream' or 'Mirror' sync options during setup"
-uninstall:
-  script: |
-    echo "Uninstalling Google Drive..."
-    brew uninstall --cask google-drive
-    echo "Note: Google Drive folder and synced files will remain on your system"
+install: |
+  echo "Installing Google Drive..."
+  brew install --cask google-drive
+validate: |
+  brew list --cask | grep -q "google-drive" || ls /Applications/ | grep -q "Google Drive.app"
+configure: |
+  echo "Google Drive configuration complete"
+  echo "Launch Google Drive and sign in with your Google account"
+  echo "Key features:"
+  echo "- Sync files across all your devices"
+  echo "- Real-time collaboration in Google Workspace"
+  echo "- File sharing with customizable permissions"
+  echo "- Version history and file recovery"
+  echo "- Integration with Gmail and Google Photos"
+  echo "- Stream files (don't take up local space) or Mirror files (offline access)"
+  echo ""
+  echo "Note: Google Drive folder will be created and accessible in Finder"
+  echo "Choose between 'Stream' or 'Mirror' sync options during setup"
+uninstall: |
+  echo "Uninstalling Google Drive..."
+  brew uninstall --cask google-drive
+  echo "Note: Google Drive folder and synced files will remain on your system"

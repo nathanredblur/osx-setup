@@ -19,59 +19,55 @@ notes: |
   - Requires shell integration for optimal functionality
   - Works with zsh, bash, fish, and other shells
 dependencies: []
-install:
-  script: |
-    echo "Installing zoxide..."
-    brew install zoxide
-validate:
-  script: |
-    command -v zoxide &> /dev/null
-configure:
-  script: |
-    echo "Configuring zoxide..."
+install: |
+  echo "Installing zoxide..."
+  brew install zoxide
+validate: |
+  command -v zoxide &> /dev/null
+configure: |
+  echo "Configuring zoxide..."
 
-    # Add to shell configuration
-    SHELL_NAME=$(basename "$SHELL")
+  # Add to shell configuration
+  SHELL_NAME=$(basename "$SHELL")
 
-    case "$SHELL_NAME" in
-        zsh)
-            CONFIG_FILE="$HOME/.zshrc"
-            if ! grep -q "zoxide init" "$CONFIG_FILE" 2>/dev/null; then
-                echo "" >> "$CONFIG_FILE"
-                echo "# zoxide - smarter cd command" >> "$CONFIG_FILE"
-                echo 'eval "$(zoxide init zsh)"' >> "$CONFIG_FILE"
-                echo "Added zoxide integration to ~/.zshrc"
-            else
-                echo "zoxide already configured in ~/.zshrc"
-            fi
-            ;;
-        bash)
-            CONFIG_FILE="$HOME/.bashrc"
-            if ! grep -q "zoxide init" "$CONFIG_FILE" 2>/dev/null; then
-                echo "" >> "$CONFIG_FILE"
-                echo "# zoxide - smarter cd command" >> "$CONFIG_FILE"
-                echo 'eval "$(zoxide init bash)"' >> "$CONFIG_FILE"
-                echo "Added zoxide integration to ~/.bashrc"
-            else
-                echo "zoxide already configured in ~/.bashrc"
-            fi
-            ;;
-        *)
-            echo "Shell integration for $SHELL_NAME not configured automatically"
-            echo "Please add the following to your shell configuration:"
-            echo 'eval "$(zoxide init SHELL_NAME)"'
-            ;;
-    esac
+  case "$SHELL_NAME" in
+      zsh)
+          CONFIG_FILE="$HOME/.zshrc"
+          if ! grep -q "zoxide init" "$CONFIG_FILE" 2>/dev/null; then
+              echo "" >> "$CONFIG_FILE"
+              echo "# zoxide - smarter cd command" >> "$CONFIG_FILE"
+              echo 'eval "$(zoxide init zsh)"' >> "$CONFIG_FILE"
+              echo "Added zoxide integration to ~/.zshrc"
+          else
+              echo "zoxide already configured in ~/.zshrc"
+          fi
+          ;;
+      bash)
+          CONFIG_FILE="$HOME/.bashrc"
+          if ! grep -q "zoxide init" "$CONFIG_FILE" 2>/dev/null; then
+              echo "" >> "$CONFIG_FILE"
+              echo "# zoxide - smarter cd command" >> "$CONFIG_FILE"
+              echo 'eval "$(zoxide init bash)"' >> "$CONFIG_FILE"
+              echo "Added zoxide integration to ~/.bashrc"
+          else
+              echo "zoxide already configured in ~/.bashrc"
+          fi
+          ;;
+      *)
+          echo "Shell integration for $SHELL_NAME not configured automatically"
+          echo "Please add the following to your shell configuration:"
+          echo 'eval "$(zoxide init SHELL_NAME)"'
+          ;;
+  esac
 
-    echo "zoxide configuration complete"
-    echo "Usage:"
-    echo "  z foo       # cd to highest ranked directory matching foo"
-    echo "  z foo bar   # cd to highest ranked directory matching foo and bar"
-    echo "  zi foo      # cd with interactive selection using fzf"
-    echo ""
-    echo "Restart your terminal or run 'source ~/.zshrc' to activate"
-uninstall:
-  script: |
-    echo "Uninstalling zoxide..."
-    brew uninstall zoxide
-    echo "Note: You may want to remove zoxide configuration from your shell config files"
+  echo "zoxide configuration complete"
+  echo "Usage:"
+  echo "  z foo       # cd to highest ranked directory matching foo"
+  echo "  z foo bar   # cd to highest ranked directory matching foo and bar"
+  echo "  zi foo      # cd with interactive selection using fzf"
+  echo ""
+  echo "Restart your terminal or run 'source ~/.zshrc' to activate"
+uninstall: |
+  echo "Uninstalling zoxide..."
+  brew uninstall zoxide
+  echo "Note: You may want to remove zoxide configuration from your shell config files"

@@ -20,19 +20,15 @@ notes: |
   - Collaborative features and workflow sharing
   - Free for individuals, paid plans for teams
 dependencies: []
-install:
-  script: |
-    echo "Installing Warp..."
-    brew install --cask warp
-validate:
-  script: |
-    brew list --cask | grep -q "warp" || ls /Applications/ | grep -q "Warp.app"
-configure:
-  script: |
-    echo "Warp configuration complete"
-    echo "Launch Warp and sign up for an account to access AI features"
-    echo "Consider setting Warp as your default terminal in System Preferences"
-uninstall:
-  script: |
-    echo "Uninstalling Warp..."
-    brew uninstall --cask warp
+install: |
+  echo "Installing Warp..."
+  brew install --cask warp
+validate: |
+  brew list --cask | grep -q "warp" || ls /Applications/ | grep -q "Warp.app"
+configure: |
+  echo "Warp configuration complete"
+  echo "Launch Warp and sign up for an account to access AI features"
+  echo "Consider setting Warp as your default terminal in System Preferences"
+uninstall: |
+  echo "Uninstalling Warp..."
+  brew uninstall --cask warp

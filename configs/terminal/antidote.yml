@@ -25,20 +25,16 @@ notes: |
   - 3. Run: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh
   - 4. Source plugins in ~/.zshrc: source ~/.zsh_plugins.zsh
 dependencies: []
-install:
-  script: |
-    echo "Installing Antidote..."
-    brew install antidote
-validate:
-  script: |
-    type antidote &> /dev/null
-configure:
-  script: |
-    echo "Antidote configuration complete"
-    echo "Initialize in ~/.zshrc: source \$(brew --prefix)/share/antidote/antidote.zsh"
-    echo "Create ~/.zsh_plugins.txt with your desired plugins"
-    echo "Generate bundles: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh"
-uninstall:
-  script: |
-    echo "Uninstalling Antidote..."
-    brew uninstall antidote
+install: |
+  echo "Installing Antidote..."
+  brew install antidote
+validate: |
+  type antidote &> /dev/null
+configure: |
+  echo "Antidote configuration complete"
+  echo "Initialize in ~/.zshrc: source \$(brew --prefix)/share/antidote/antidote.zsh"
+  echo "Create ~/.zsh_plugins.txt with your desired plugins"
+  echo "Generate bundles: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh"
+uninstall: |
+  echo "Uninstalling Antidote..."
+  brew uninstall antidote

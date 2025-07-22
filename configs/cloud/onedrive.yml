@@ -20,27 +20,23 @@ notes: |
   - Cross-platform synchronization
   - Integration with Windows and Microsoft ecosystem
 dependencies: []
-install:
-  script: |
-    echo "Installing OneDrive..."
-    brew install --cask onedrive
-validate:
-  script: |
-    brew list --cask | grep -q "onedrive" || ls /Applications/ | grep -q "OneDrive.app"
-configure:
-  script: |
-    echo "OneDrive configuration complete"
-    echo "Launch OneDrive and sign in with your Microsoft account"
-    echo "Key features:"
-    echo "- Sync files across all your devices"
-    echo "- Real-time collaboration in Office apps"
-    echo "- File sharing with customizable permissions"
-    echo "- Version history and file recovery"
-    echo "- Integration with Microsoft 365 apps"
-    echo ""
-    echo "Note: OneDrive folder will be created in your home directory"
-uninstall:
-  script: |
-    echo "Uninstalling OneDrive..."
-    brew uninstall --cask onedrive
-    echo "Note: OneDrive folder and synced files will remain on your system"
+install: |
+  echo "Installing OneDrive..."
+  brew install --cask onedrive
+validate: |
+  brew list --cask | grep -q "onedrive" || ls /Applications/ | grep -q "OneDrive.app"
+configure: |
+  echo "OneDrive configuration complete"
+  echo "Launch OneDrive and sign in with your Microsoft account"
+  echo "Key features:"
+  echo "- Sync files across all your devices"
+  echo "- Real-time collaboration in Office apps"
+  echo "- File sharing with customizable permissions"
+  echo "- Version history and file recovery"
+  echo "- Integration with Microsoft 365 apps"
+  echo ""
+  echo "Note: OneDrive folder will be created in your home directory"
+uninstall: |
+  echo "Uninstalling OneDrive..."
+  brew uninstall --cask onedrive
+  echo "Note: OneDrive folder and synced files will remain on your system"

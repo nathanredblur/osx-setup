@@ -19,20 +19,16 @@ notes: |
   - Essential for handling .xz and .lzma files
   - Commonly used in Linux distributions and software packages
 dependencies: []
-install:
-  script: |
-    echo "Installing XZ..."
-    brew install xz
-validate:
-  script: |
-    command -v xz &> /dev/null
-configure:
-  script: |
-    echo "XZ configuration complete"
-    echo "Use: xz filename (to compress)"
-    echo "Use: xz -d filename.xz (to decompress)"
-    echo "Use: unxz filename.xz (alternative decompression)"
-uninstall:
-  script: |
-    echo "Uninstalling XZ..."
-    brew uninstall xz
+install: |
+  echo "Installing XZ..."
+  brew install xz
+validate: |
+  command -v xz &> /dev/null
+configure: |
+  echo "XZ configuration complete"
+  echo "Use: xz filename (to compress)"
+  echo "Use: xz -d filename.xz (to decompress)"
+  echo "Use: unxz filename.xz (alternative decompression)"
+uninstall: |
+  echo "Uninstalling XZ..."
+  brew uninstall xz

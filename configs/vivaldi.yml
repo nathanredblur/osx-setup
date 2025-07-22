@@ -19,23 +19,19 @@ notes: |
   - Built-in ad blocker and privacy features
   - Chromium-based with extensive customization options
 dependencies: []
-install:
-  script: |
-    echo "Installing Vivaldi..."
-    brew install --cask vivaldi
-validate:
-  script: |
-    brew list --cask | grep -q "vivaldi" || ls /Applications/ | grep -q "Vivaldi.app"
-configure:
-  script: |
-    echo "Vivaldi configuration complete"
-    echo "Launch Vivaldi and customize your browsing experience"
-    echo "Key features to explore:"
-    echo "- Tab stacking and workspaces"
-    echo "- Built-in email client and calendar"
-    echo "- Customizable UI and themes"
-    echo "- Privacy and security settings"
-uninstall:
-  script: |
-    echo "Uninstalling Vivaldi..."
-    brew uninstall --cask vivaldi
+install: |
+  echo "Installing Vivaldi..."
+  brew install --cask vivaldi
+validate: |
+  brew list --cask | grep -q "vivaldi" || ls /Applications/ | grep -q "Vivaldi.app"
+configure: |
+  echo "Vivaldi configuration complete"
+  echo "Launch Vivaldi and customize your browsing experience"
+  echo "Key features to explore:"
+  echo "- Tab stacking and workspaces"
+  echo "- Built-in email client and calendar"
+  echo "- Customizable UI and themes"
+  echo "- Privacy and security settings"
+uninstall: |
+  echo "Uninstalling Vivaldi..."
+  brew uninstall --cask vivaldi

@@ -20,19 +20,15 @@ notes: |
   - 7-day free trial, then $38 one-time purchase
   - Integrates with macOS Focus modes
 dependencies: []
-install:
-  script: |
-    echo "Installing LookAway..."
-    brew install --cask lookaway
-validate:
-  script: |
-    brew list --cask | grep -q "lookaway" || ls /Applications/ | grep -q "LookAway.app"
-configure:
-  script: |
-    echo "LookAway configuration complete"
-    echo "Launch LookAway and configure your break preferences"
-    echo "Note: LookAway offers a 7-day free trial, then requires license purchase"
-uninstall:
-  script: |
-    echo "Uninstalling LookAway..."
-    brew uninstall --cask lookaway
+install: |
+  echo "Installing LookAway..."
+  brew install --cask lookaway
+validate: |
+  brew list --cask | grep -q "lookaway" || ls /Applications/ | grep -q "LookAway.app"
+configure: |
+  echo "LookAway configuration complete"
+  echo "Launch LookAway and configure your break preferences"
+  echo "Note: LookAway offers a 7-day free trial, then requires license purchase"
+uninstall: |
+  echo "Uninstalling LookAway..."
+  brew uninstall --cask lookaway

@@ -28,23 +28,19 @@ notes: |
   - 2. Install a Nerd Font for best icon display
   - 3. Restart terminal to use new aliases
 dependencies: []
-install:
-  script: |
-    echo "Installing Eza..."
-    brew install eza
-validate:
-  script: |
-    command -v eza &> /dev/null
-configure:
-  script: |
-    echo "Eza configuration complete"
-    echo "Add aliases to ~/.zshrc:"
-    echo "  alias ls='eza'"
-    echo "  alias ll='eza -l'"
-    echo "  alias la='eza -la'"
-    echo "  alias tree='eza --tree'"
-    echo "Install a Nerd Font for best icon display"
-uninstall:
-  script: |
-    echo "Uninstalling Eza..."
-    brew uninstall eza
+install: |
+  echo "Installing Eza..."
+  brew install eza
+validate: |
+  command -v eza &> /dev/null
+configure: |
+  echo "Eza configuration complete"
+  echo "Add aliases to ~/.zshrc:"
+  echo "  alias ls='eza'"
+  echo "  alias ll='eza -l'"
+  echo "  alias la='eza -la'"
+  echo "  alias tree='eza --tree'"
+  echo "Install a Nerd Font for best icon display"
+uninstall: |
+  echo "Uninstalling Eza..."
+  brew uninstall eza

@@ -20,24 +20,20 @@ notes: |
   - Cross-device synchronization and offline downloads (Premium)
   - Social features and playlist sharing
 dependencies: []
-install:
-  script: |
-    echo "Installing Spotify..."
-    brew install --cask spotify
-validate:
-  script: |
-    brew list --cask | grep -q "spotify" || ls /Applications/ | grep -q "Spotify.app"
-configure:
-  script: |
-    echo "Spotify configuration complete"
-    echo "Launch Spotify and sign in or create an account"
-    echo "Features available:"
-    echo "- Stream millions of songs and podcasts"
-    echo "- Create and share playlists"
-    echo "- Discover new music with personalized recommendations"
-    echo "- Connect with friends and share music"
-    echo "- Upgrade to Premium for offline downloads and no ads"
-uninstall:
-  script: |
-    echo "Uninstalling Spotify..."
-    brew uninstall --cask spotify
+install: |
+  echo "Installing Spotify..."
+  brew install --cask spotify
+validate: |
+  brew list --cask | grep -q "spotify" || ls /Applications/ | grep -q "Spotify.app"
+configure: |
+  echo "Spotify configuration complete"
+  echo "Launch Spotify and sign in or create an account"
+  echo "Features available:"
+  echo "- Stream millions of songs and podcasts"
+  echo "- Create and share playlists"
+  echo "- Discover new music with personalized recommendations"
+  echo "- Connect with friends and share music"
+  echo "- Upgrade to Premium for offline downloads and no ads"
+uninstall: |
+  echo "Uninstalling Spotify..."
+  brew uninstall --cask spotify

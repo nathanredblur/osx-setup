@@ -117,14 +117,10 @@ Each installable item or system configuration is defined in its own YAML file (e
 - `category` (string, required): Groups the item in the UI (e.g., "Core Utilities", "Development", "System Tweaks", "Browsers").
 - `selected_by_default` (boolean, optional, default: `false`): If `true`, this item will be pre-selected in the interface.
 - `dependencies` (list of strings, optional): A list of `id`s of other items that must be successfully processed before this item.
-- `install` (object, optional):
-  - `script` (string, required): Shell script to perform the installation.
-- `validate` (object, optional):
-  - `script` (string, required): Shell script to check if the item is already installed/configured. Should exit with `0` if validation passes, non-zero otherwise.
-- `configure` (object, optional):
-  - `script` (string, required): Shell script for post-installation configuration.
-- `uninstall` (object, optional):
-  - `script` (string, required): Shell script to uninstall the item.
+- `install` (string, optional): Shell script to perform the installation.
+- `validate` (string, optional): Shell script to check if the item is already installed/configured. Should exit with `0` if validation passes, non-zero otherwise.
+- `configure` (string, optional): Shell script for post-installation configuration.
+- `uninstall` (string, optional): Shell script to uninstall the item.
 
 ### 3.2 Example: Software Installation (`vscode.yml`)
 
@@ -135,22 +131,19 @@ description: "Free source-code editor made by Microsoft"
 type: "brew_cask"
 category: "Development"
 selected_by_default: false
-install:
-  script: |
-    echo "Installing Visual Studio Code..."
-    brew install --cask visual-studio-code
-validate:
-  script: |
-    brew list --cask | grep -q "visual-studio-code" || ls /Applications/ | grep -q "Visual Studio Code.app"
-configure:
-  script: |
-    echo "Configuring Visual Studio Code..."
-    # Install the 'code' command in PATH if available
-    if command -v code &> /dev/null; then
-      echo "VS Code 'code' command is available"
-    else
-      echo "You may need to install 'code' command from VS Code Command Palette"
-    fi
+install: |
+  echo "Installing Visual Studio Code..."
+  brew install --cask visual-studio-code
+validate: |
+  brew list --cask | grep -q "visual-studio-code" || ls /Applications/ | grep -q "Visual Studio Code.app"
+configure: |
+  echo "Configuring Visual Studio Code..."
+  # Install the 'code' command in PATH if available
+  if command -v code &> /dev/null; then
+    echo "VS Code 'code' command is available"
+  else
+    echo "You may need to install 'code' command from VS Code Command Palette"
+  fi
 ```
 
 ### 3.3 Example: System Configuration (`trackpad_settings.yml`)
@@ -162,22 +155,19 @@ description: "Configure trackpad with tap to click and other improvements"
 type: "system_config"
 category: "System Tweaks"
 selected_by_default: true
-install:
-  script: |
-    echo "This item only configures existing system settings"
-validate:
-  script: |
-    # Always return 1 (not configured) so configure script runs
-    exit 1
-configure:
-  script: |
-    echo "Applying trackpad settings..."
-    # Enable tap to click
-    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-    defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
-    defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-    defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-    echo "Trackpad settings applied successfully"
+install: |
+  echo "This item only configures existing system settings"
+validate: |
+  # Always return 1 (not configured) so configure script runs
+  exit 1
+configure: |
+  echo "Applying trackpad settings..."
+  # Enable tap to click
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+  defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  echo "Trackpad settings applied successfully"
 ```
 
 ## 4. User Interface (UI) Design

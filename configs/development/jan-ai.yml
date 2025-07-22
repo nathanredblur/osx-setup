@@ -20,41 +20,37 @@ notes: |
   - Extensible architecture with plugins
   - Cross-platform compatibility
 dependencies: []
-install:
-  script: |
-    echo "Installing Jan AI..."
-    brew install --cask jan
-validate:
-  script: |
-    brew list --cask | grep -q "jan" || ls /Applications/ | grep -q "Jan.app"
-configure:
-  script: |
-    echo "Jan AI configuration complete"
-    echo "Launch Jan AI to start using your local AI assistant"
-    echo ""
-    echo "Key features:"
-    echo "- 100% offline AI assistant"
-    echo "- No data sent to external servers"
-    echo "- Support for multiple AI models"
-    echo "- Extensible with plugins"
-    echo "- Conversation history stored locally"
-    echo "- Customizable AI behavior"
-    echo ""
-    echo "Getting started:"
-    echo "1. Download and install AI models"
-    echo "2. Start conversations with your local AI"
-    echo "3. Explore available plugins and extensions"
-    echo "4. Customize AI behavior and responses"
-    echo ""
-    echo "Popular models to try:"
-    echo "- Llama 2 (general purpose)"
-    echo "- Mistral (fast and efficient)"
-    echo "- Code Llama (programming assistance)"
-    echo ""
-    echo "Note: Models require significant disk space"
-    echo "Ensure you have adequate storage before downloading"
-uninstall:
-  script: |
-    echo "Uninstalling Jan AI..."
-    brew uninstall --cask jan
-    echo "Note: Downloaded AI models and conversation history will remain"
+install: |
+  echo "Installing Jan AI..."
+  brew install --cask jan
+validate: |
+  brew list --cask | grep -q "jan" || ls /Applications/ | grep -q "Jan.app"
+configure: |
+  echo "Jan AI configuration complete"
+  echo "Launch Jan AI to start using your local AI assistant"
+  echo ""
+  echo "Key features:"
+  echo "- 100% offline AI assistant"
+  echo "- No data sent to external servers"
+  echo "- Support for multiple AI models"
+  echo "- Extensible with plugins"
+  echo "- Conversation history stored locally"
+  echo "- Customizable AI behavior"
+  echo ""
+  echo "Getting started:"
+  echo "1. Download and install AI models"
+  echo "2. Start conversations with your local AI"
+  echo "3. Explore available plugins and extensions"
+  echo "4. Customize AI behavior and responses"
+  echo ""
+  echo "Popular models to try:"
+  echo "- Llama 2 (general purpose)"
+  echo "- Mistral (fast and efficient)"
+  echo "- Code Llama (programming assistance)"
+  echo ""
+  echo "Note: Models require significant disk space"
+  echo "Ensure you have adequate storage before downloading"
+uninstall: |
+  echo "Uninstalling Jan AI..."
+  brew uninstall --cask jan
+  echo "Note: Downloaded AI models and conversation history will remain"

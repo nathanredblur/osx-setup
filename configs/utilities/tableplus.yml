@@ -20,39 +20,35 @@ notes: |
   - SSH tunnel and SSL connection support
   - Free tier with limitations, paid license for full features
 dependencies: []
-install:
-  script: |
-    echo "Installing TablePlus..."
-    brew install --cask tableplus
-validate:
-  script: |
-    brew list --cask | grep -q "tableplus" || ls /Applications/ | grep -q "TablePlus.app"
-configure:
-  script: |
-    echo "TablePlus configuration complete"
-    echo "Launch TablePlus to start managing databases"
-    echo ""
-    echo "Supported databases:"
-    echo "- MySQL / MariaDB"
-    echo "- PostgreSQL"
-    echo "- SQLite"
-    echo "- Microsoft SQL Server"
-    echo "- Redis"
-    echo "- MongoDB"
-    echo "- Amazon Redshift"
-    echo "- And many more..."
-    echo ""
-    echo "Key features:"
-    echo "- Intuitive database browser"
-    echo "- Advanced SQL editor with autocomplete"
-    echo "- Data export in multiple formats"
-    echo "- SSH tunneling and SSL connections"
-    echo "- Query history and favorites"
-    echo "- Multiple tabs and connections"
-    echo ""
-    echo "Note: TablePlus offers a free tier with limitations"
-    echo "Purchase license for unlimited connections and advanced features"
-uninstall:
-  script: |
-    echo "Uninstalling TablePlus..."
-    brew uninstall --cask tableplus
+install: |
+  echo "Installing TablePlus..."
+  brew install --cask tableplus
+validate: |
+  brew list --cask | grep -q "tableplus" || ls /Applications/ | grep -q "TablePlus.app"
+configure: |
+  echo "TablePlus configuration complete"
+  echo "Launch TablePlus to start managing databases"
+  echo ""
+  echo "Supported databases:"
+  echo "- MySQL / MariaDB"
+  echo "- PostgreSQL"
+  echo "- SQLite"
+  echo "- Microsoft SQL Server"
+  echo "- Redis"
+  echo "- MongoDB"
+  echo "- Amazon Redshift"
+  echo "- And many more..."
+  echo ""
+  echo "Key features:"
+  echo "- Intuitive database browser"
+  echo "- Advanced SQL editor with autocomplete"
+  echo "- Data export in multiple formats"
+  echo "- SSH tunneling and SSL connections"
+  echo "- Query history and favorites"
+  echo "- Multiple tabs and connections"
+  echo ""
+  echo "Note: TablePlus offers a free tier with limitations"
+  echo "Purchase license for unlimited connections and advanced features"
+uninstall: |
+  echo "Uninstalling TablePlus..."
+  brew uninstall --cask tableplus

@@ -17,18 +17,14 @@ notes: |
   - Nearly complete replacement for Spectacle
   - Integrates well with macOS
 dependencies: []
-install:
-  script: |
-    echo "Installing Rectangle..."
-    brew install --cask rectangle
-validate:
-  script: |
-    brew list --cask | grep -q "rectangle" || ls /Applications/ | grep -q "Rectangle.app"
-configure:
-  script: |
-    echo "Rectangle configuration complete"
-    echo "Launch Rectangle and grant accessibility permissions when prompted"
-uninstall:
-  script: |
-    echo "Uninstalling Rectangle..."
-    brew uninstall --cask rectangle
+install: |
+  echo "Installing Rectangle..."
+  brew install --cask rectangle
+validate: |
+  brew list --cask | grep -q "rectangle" || ls /Applications/ | grep -q "Rectangle.app"
+configure: |
+  echo "Rectangle configuration complete"
+  echo "Launch Rectangle and grant accessibility permissions when prompted"
+uninstall: |
+  echo "Uninstalling Rectangle..."
+  brew uninstall --cask rectangle

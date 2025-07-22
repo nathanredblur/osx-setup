@@ -20,24 +20,20 @@ notes: |
   - Bots and automation features
   - Cross-platform synchronization
 dependencies: ["mas_cli"]
-install:
-  script: |
-    echo "Installing Telegram..."
-    mas install 747648890
-validate:
-  script: |
-    mas list | grep -q "Telegram" || ls /Applications/ | grep -q "Telegram.app"
-configure:
-  script: |
-    echo "Telegram configuration complete"
-    echo "Launch Telegram and sign in with your phone number"
-    echo "Key features:"
-    echo "- Send messages, photos, videos, and files"
-    echo "- Create groups and channels"
-    echo "- Use bots for automation and games"
-    echo "- Secret chats with end-to-end encryption"
-    echo "- Cloud storage for all your chats and media"
-uninstall:
-  script: |
-    echo "Uninstalling Telegram..."
-    mas uninstall 747648890
+install: |
+  echo "Installing Telegram..."
+  mas install 747648890
+validate: |
+  mas list | grep -q "Telegram" || ls /Applications/ | grep -q "Telegram.app"
+configure: |
+  echo "Telegram configuration complete"
+  echo "Launch Telegram and sign in with your phone number"
+  echo "Key features:"
+  echo "- Send messages, photos, videos, and files"
+  echo "- Create groups and channels"
+  echo "- Use bots for automation and games"
+  echo "- Secret chats with end-to-end encryption"
+  echo "- Cloud storage for all your chats and media"
+uninstall: |
+  echo "Uninstalling Telegram..."
+  mas uninstall 747648890

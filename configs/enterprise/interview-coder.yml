@@ -21,94 +21,90 @@ notes: |
   - Solution explanations and optimization tips
   - Career development and interview preparation tool
 dependencies: []
-install:
-  script: |
-    echo "Installing Interview Coder..."
-    echo "Note: Interview Coder may need to be downloaded manually"
-    echo ""
-    echo "Installation options:"
-    echo "1. Download from official website: https://interviewcoder.com/"
-    echo "2. Check if available via Homebrew Cask"
-    echo "3. Look for Mac App Store availability"
-    echo ""
-    # Try Homebrew first
-    if command -v brew >/dev/null 2>&1; then
-      echo "Attempting to install via Homebrew..."
-      if brew search interview-coder >/dev/null 2>&1; then
-        brew install --cask interview-coder
-      else
-        echo "Interview Coder not found in Homebrew. Manual installation required."
-        echo ""
-        echo "Manual installation steps:"
-        echo "1. Visit https://interviewcoder.com/"
-        echo "2. Download the macOS application"
-        echo "3. Open the downloaded DMG file"
-        echo "4. Drag the app to Applications folder"
-        echo "5. Launch from Applications and complete setup"
-      fi
+install: |
+  echo "Installing Interview Coder..."
+  echo "Note: Interview Coder may need to be downloaded manually"
+  echo ""
+  echo "Installation options:"
+  echo "1. Download from official website: https://interviewcoder.com/"
+  echo "2. Check if available via Homebrew Cask"
+  echo "3. Look for Mac App Store availability"
+  echo ""
+  # Try Homebrew first
+  if command -v brew >/dev/null 2>&1; then
+    echo "Attempting to install via Homebrew..."
+    if brew search interview-coder >/dev/null 2>&1; then
+      brew install --cask interview-coder
     else
-      echo "Please install Interview Coder manually from the official website"
+      echo "Interview Coder not found in Homebrew. Manual installation required."
+      echo ""
+      echo "Manual installation steps:"
+      echo "1. Visit https://interviewcoder.com/"
+      echo "2. Download the macOS application"
+      echo "3. Open the downloaded DMG file"
+      echo "4. Drag the app to Applications folder"
+      echo "5. Launch from Applications and complete setup"
     fi
-validate:
-  script: |
-    # Check for common app names
-    if ls /Applications/ | grep -i "interview.*coder" >/dev/null 2>&1; then
-      exit 0
-    fi
+  else
+    echo "Please install Interview Coder manually from the official website"
+  fi
+validate: |
+  # Check for common app names
+  if ls /Applications/ | grep -i "interview.*coder" >/dev/null 2>&1; then
+    exit 0
+  fi
 
-    if ls /Applications/ | grep -i "interviewcoder" >/dev/null 2>&1; then
-      exit 0
-    fi
+  if ls /Applications/ | grep -i "interviewcoder" >/dev/null 2>&1; then
+    exit 0
+  fi
 
-    # If not found, consider it not installed
-    echo "Interview Coder not detected. May need manual installation."
-    exit 1
-configure:
-  script: |
-    echo "Interview Coder configuration complete"
-    echo "Launch Interview Coder to start practicing coding interviews"
-    echo ""
-    echo "Key features:"
-    echo "- AI-powered interview simulation"
-    echo "- Real-time hints and feedback"
-    echo "- Multiple programming language support"
-    echo "- Timed interview practice sessions"
-    echo "- Solution explanations and optimizations"
-    echo "- Progress tracking and performance analytics"
-    echo ""
-    echo "Getting started:"
-    echo "1. Launch Interview Coder from Applications"
-    echo "2. Create an account or sign in"
-    echo "3. Choose your preferred programming language"
-    echo "4. Select interview difficulty level"
-    echo "5. Start with practice problems"
-    echo ""
-    echo "Interview preparation features:"
-    echo "- Algorithm and data structure problems"
-    echo "- System design interview practice"
-    echo "- Behavioral interview questions"
-    echo "- Company-specific interview formats"
-    echo "- Mock interview sessions"
-    echo ""
-    echo "Learning support:"
-    echo "- Step-by-step solution breakdowns"
-    echo "- Time and space complexity analysis"
-    echo "- Best practices and coding patterns"
-    echo "- Interview tips and strategies"
-    echo ""
-    echo "Supported languages:"
-    echo "- Python, Java, JavaScript, C++"
-    echo "- Go, Rust, Swift, Kotlin"
-    echo "- SQL for database questions"
-    echo ""
-    echo "Use Interview Coder regularly to:"
-    echo "- Build confidence for technical interviews"
-    echo "- Practice problem-solving under pressure"
-    echo "- Learn optimal solution patterns"
-    echo "- Improve coding speed and accuracy"
-uninstall:
-  script: |
-    echo "Uninstalling Interview Coder..."
-    echo "Removing Interview Coder from Applications..."
-    find /Applications -name "*Interview*Coder*" -delete 2>/dev/null || true
-    echo "Manual cleanup may be required if app has different name"
+  # If not found, consider it not installed
+  echo "Interview Coder not detected. May need manual installation."
+  exit 1
+configure: |
+  echo "Interview Coder configuration complete"
+  echo "Launch Interview Coder to start practicing coding interviews"
+  echo ""
+  echo "Key features:"
+  echo "- AI-powered interview simulation"
+  echo "- Real-time hints and feedback"
+  echo "- Multiple programming language support"
+  echo "- Timed interview practice sessions"
+  echo "- Solution explanations and optimizations"
+  echo "- Progress tracking and performance analytics"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Interview Coder from Applications"
+  echo "2. Create an account or sign in"
+  echo "3. Choose your preferred programming language"
+  echo "4. Select interview difficulty level"
+  echo "5. Start with practice problems"
+  echo ""
+  echo "Interview preparation features:"
+  echo "- Algorithm and data structure problems"
+  echo "- System design interview practice"
+  echo "- Behavioral interview questions"
+  echo "- Company-specific interview formats"
+  echo "- Mock interview sessions"
+  echo ""
+  echo "Learning support:"
+  echo "- Step-by-step solution breakdowns"
+  echo "- Time and space complexity analysis"
+  echo "- Best practices and coding patterns"
+  echo "- Interview tips and strategies"
+  echo ""
+  echo "Supported languages:"
+  echo "- Python, Java, JavaScript, C++"
+  echo "- Go, Rust, Swift, Kotlin"
+  echo "- SQL for database questions"
+  echo ""
+  echo "Use Interview Coder regularly to:"
+  echo "- Build confidence for technical interviews"
+  echo "- Practice problem-solving under pressure"
+  echo "- Learn optimal solution patterns"
+  echo "- Improve coding speed and accuracy"
+uninstall: |
+  echo "Uninstalling Interview Coder..."
+  echo "Removing Interview Coder from Applications..."
+  find /Applications -name "*Interview*Coder*" -delete 2>/dev/null || true
+  echo "Manual cleanup may be required if app has different name"

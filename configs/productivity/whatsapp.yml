@@ -17,18 +17,14 @@ notes: |
   - End-to-end encryption for all messages and calls
   - Syncs with your mobile WhatsApp account
 dependencies: []
-install:
-  script: |
-    echo "Installing WhatsApp..."
-    brew install --cask whatsapp
-validate:
-  script: |
-    brew list --cask | grep -q "whatsapp" || ls /Applications/ | grep -q "WhatsApp.app"
-configure:
-  script: |
-    echo "WhatsApp configuration complete"
-    echo "Launch WhatsApp and scan the QR code with your phone to link devices"
-uninstall:
-  script: |
-    echo "Uninstalling WhatsApp..."
-    brew uninstall --cask whatsapp
+install: |
+  echo "Installing WhatsApp..."
+  brew install --cask whatsapp
+validate: |
+  brew list --cask | grep -q "whatsapp" || ls /Applications/ | grep -q "WhatsApp.app"
+configure: |
+  echo "WhatsApp configuration complete"
+  echo "Launch WhatsApp and scan the QR code with your phone to link devices"
+uninstall: |
+  echo "Uninstalling WhatsApp..."
+  brew uninstall --cask whatsapp

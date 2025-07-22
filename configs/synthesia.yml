@@ -19,30 +19,27 @@ notes: |
   - Large library of songs and lessons available
   - Suitable for beginners and advanced players
 dependencies: []
-install:
-  script: |
-    echo "Installing Synthesia..."
-    if brew install --cask synthesia; then
-      echo "SUCCESS: Synthesia installed successfully."
-    else
-      echo "ERROR: Synthesia installation failed."
-      exit 1
-    fi
-validate:
-  script: |
-    if brew list --cask | grep -q "^synthesia$"; then
-      echo "Synthesia is installed."
-      exit 0 # Installed
-    else
-      echo "Synthesia is NOT installed."
-      exit 1 # Not installed
-    fi
-uninstall:
-  script: |
-    echo "Uninstalling Synthesia..."
-    if brew uninstall --cask synthesia; then
-      echo "SUCCESS: Synthesia uninstalled successfully."
-    else
-      echo "ERROR: Synthesia uninstallation failed."
-      exit 1
-    fi
+install: |
+  echo "Installing Synthesia..."
+  if brew install --cask synthesia; then
+    echo "SUCCESS: Synthesia installed successfully."
+  else
+    echo "ERROR: Synthesia installation failed."
+    exit 1
+  fi
+validate: |
+  if brew list --cask | grep -q "^synthesia$"; then
+    echo "Synthesia is installed."
+    exit 0 # Installed
+  else
+    echo "Synthesia is NOT installed."
+    exit 1 # Not installed
+  fi
+uninstall: |
+  echo "Uninstalling Synthesia..."
+  if brew uninstall --cask synthesia; then
+    echo "SUCCESS: Synthesia uninstalled successfully."
+  else
+    echo "ERROR: Synthesia uninstallation failed."
+    exit 1
+  fi

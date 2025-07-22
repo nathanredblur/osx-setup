@@ -19,19 +19,15 @@ notes: |
   - Lightweight and minimal system resource usage
   - Alternative to paid menu bar managers
 dependencies: []
-install:
-  script: |
-    echo "Installing Ice..."
-    brew install --cask jordanbaird-ice
-validate:
-  script: |
-    brew list --cask | grep -q "jordanbaird-ice" || ls /Applications/ | grep -q "Ice.app"
-configure:
-  script: |
-    echo "Ice configuration complete"
-    echo "Launch Ice and grant accessibility permissions when prompted"
-    echo "Configure your menu bar organization preferences"
-uninstall:
-  script: |
-    echo "Uninstalling Ice..."
-    brew uninstall --cask jordanbaird-ice
+install: |
+  echo "Installing Ice..."
+  brew install --cask jordanbaird-ice
+validate: |
+  brew list --cask | grep -q "jordanbaird-ice" || ls /Applications/ | grep -q "Ice.app"
+configure: |
+  echo "Ice configuration complete"
+  echo "Launch Ice and grant accessibility permissions when prompted"
+  echo "Configure your menu bar organization preferences"
+uninstall: |
+  echo "Uninstalling Ice..."
+  brew uninstall --cask jordanbaird-ice

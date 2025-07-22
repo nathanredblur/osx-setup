@@ -20,89 +20,85 @@ notes: |
   - Built-in VPN and encrypted search
   - Free to use with focus on user privacy
 dependencies: []
-install:
-  script: |
-    echo "Installing Zeb Browser..."
-    echo "Note: Zeb Browser requires manual download and installation"
-    echo ""
-    echo "Installation steps:"
-    echo "1. Visit https://zebrowser.com/ to download"
-    echo "2. Download the macOS version"
-    echo "3. Open the downloaded DMG file"
-    echo "4. Drag Zeb Browser to Applications folder"
-    echo "5. Launch and complete initial privacy setup"
-    echo ""
-    # Create temporary directory for download
-    tmp_dir=$(mktemp -d)
-    cd "$tmp_dir"
+install: |
+  echo "Installing Zeb Browser..."
+  echo "Note: Zeb Browser requires manual download and installation"
+  echo ""
+  echo "Installation steps:"
+  echo "1. Visit https://zebrowser.com/ to download"
+  echo "2. Download the macOS version"
+  echo "3. Open the downloaded DMG file"
+  echo "4. Drag Zeb Browser to Applications folder"
+  echo "5. Launch and complete initial privacy setup"
+  echo ""
+  # Create temporary directory for download
+  tmp_dir=$(mktemp -d)
+  cd "$tmp_dir"
 
-    echo "Attempting to download Zeb Browser..."
-    echo "Manual download required from official website"
-    echo ""
-    echo "Alternative: Check if available via Homebrew..."
-    if command -v brew >/dev/null 2>&1; then
-      if brew search zeb >/dev/null 2>&1; then
-        echo "Checking Homebrew for Zeb Browser..."
-        # This would work if available
-        # brew install --cask zeb-browser
-      else
-        echo "Zeb Browser not found in Homebrew. Manual installation required."
-      fi
+  echo "Attempting to download Zeb Browser..."
+  echo "Manual download required from official website"
+  echo ""
+  echo "Alternative: Check if available via Homebrew..."
+  if command -v brew >/dev/null 2>&1; then
+    if brew search zeb >/dev/null 2>&1; then
+      echo "Checking Homebrew for Zeb Browser..."
+      # This would work if available
+      # brew install --cask zeb-browser
+    else
+      echo "Zeb Browser not found in Homebrew. Manual installation required."
     fi
-validate:
-  script: |
-    # Check for Zeb Browser in Applications
-    if ls /Applications/ | grep -i "zeb" >/dev/null 2>&1; then
-      exit 0
-    fi
+  fi
+validate: |
+  # Check for Zeb Browser in Applications
+  if ls /Applications/ | grep -i "zeb" >/dev/null 2>&1; then
+    exit 0
+  fi
 
-    # Check for ZebBrowser or similar variations
-    if ls /Applications/ | grep -i "zebrowser" >/dev/null 2>&1; then
-      exit 0
-    fi
+  # Check for ZebBrowser or similar variations
+  if ls /Applications/ | grep -i "zebrowser" >/dev/null 2>&1; then
+    exit 0
+  fi
 
-    echo "Zeb Browser not detected. Manual installation may be required."
-    exit 1
-configure:
-  script: |
-    echo "Zeb Browser configuration complete"
-    echo "Launch Zeb Browser to configure privacy settings"
-    echo ""
-    echo "Key features:"
-    echo "- Built-in ad blocker and tracking protection"
-    echo "- Privacy-first browsing with no data collection"
-    echo "- Encrypted search and secure browsing"
-    echo "- Fast page loading with security optimizations"
-    echo "- Anonymous browsing modes"
-    echo "- Built-in VPN capabilities"
-    echo ""
-    echo "Getting started:"
-    echo "1. Launch Zeb Browser from Applications"
-    echo "2. Complete privacy and security setup"
-    echo "3. Configure ad blocking and tracking preferences"
-    echo "4. Set up encrypted search preferences"
-    echo "5. Import bookmarks if needed"
-    echo ""
-    echo "Privacy features:"
-    echo "- No user tracking or data collection"
-    echo "- Anonymous browsing with secure connections"
-    echo "- Built-in ad and tracker blocking"
-    echo "- Encrypted DNS and secure search"
-    echo "- Private search engines integration"
-    echo ""
-    echo "Security benefits:"
-    echo "- Enhanced protection against malicious websites"
-    echo "- Secure cookie and session management"
-    echo "- Protected against fingerprinting"
-    echo "- Safe browsing with real-time threat detection"
-    echo ""
-    echo "Use cases:"
-    echo "- Privacy-conscious web browsing"
-    echo "- Secure research and information gathering"
-    echo "- Anonymous browsing sessions"
-    echo "- Protection from online tracking"
-uninstall:
-  script: |
-    echo "Uninstalling Zeb Browser..."
-    find /Applications -name "*Zeb*" -delete 2>/dev/null || true
-    find /Applications -name "*zeb*" -delete 2>/dev/null || true
+  echo "Zeb Browser not detected. Manual installation may be required."
+  exit 1
+configure: |
+  echo "Zeb Browser configuration complete"
+  echo "Launch Zeb Browser to configure privacy settings"
+  echo ""
+  echo "Key features:"
+  echo "- Built-in ad blocker and tracking protection"
+  echo "- Privacy-first browsing with no data collection"
+  echo "- Encrypted search and secure browsing"
+  echo "- Fast page loading with security optimizations"
+  echo "- Anonymous browsing modes"
+  echo "- Built-in VPN capabilities"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Zeb Browser from Applications"
+  echo "2. Complete privacy and security setup"
+  echo "3. Configure ad blocking and tracking preferences"
+  echo "4. Set up encrypted search preferences"
+  echo "5. Import bookmarks if needed"
+  echo ""
+  echo "Privacy features:"
+  echo "- No user tracking or data collection"
+  echo "- Anonymous browsing with secure connections"
+  echo "- Built-in ad and tracker blocking"
+  echo "- Encrypted DNS and secure search"
+  echo "- Private search engines integration"
+  echo ""
+  echo "Security benefits:"
+  echo "- Enhanced protection against malicious websites"
+  echo "- Secure cookie and session management"
+  echo "- Protected against fingerprinting"
+  echo "- Safe browsing with real-time threat detection"
+  echo ""
+  echo "Use cases:"
+  echo "- Privacy-conscious web browsing"
+  echo "- Secure research and information gathering"
+  echo "- Anonymous browsing sessions"
+  echo "- Protection from online tracking"
+uninstall: |
+  echo "Uninstalling Zeb Browser..."
+  find /Applications -name "*Zeb*" -delete 2>/dev/null || true
+  find /Applications -name "*zeb*" -delete 2>/dev/null || true

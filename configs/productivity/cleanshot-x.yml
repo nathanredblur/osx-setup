@@ -20,29 +20,25 @@ notes: |
   - GIF creation and video editing capabilities
   - Requires subscription for full features
 dependencies: []
-install:
-  script: |
-    echo "Installing CleanShot X..."
-    brew install --cask cleanshot
-validate:
-  script: |
-    brew list --cask | grep -q "cleanshot" || ls /Applications/ | grep -q "CleanShot X.app"
-configure:
-  script: |
-    echo "CleanShot X configuration complete"
-    echo "Launch CleanShot X and configure your preferences"
-    echo "Key features:"
-    echo "- Advanced screenshot tools with annotation"
-    echo "- Screen recording with editing capabilities"
-    echo "- Scrolling capture for long content"
-    echo "- Cloud storage and instant sharing"
-    echo "- GIF creation and optimization"
-    echo "- Custom keyboard shortcuts"
-    echo ""
-    echo "Note: CleanShot X offers a free trial"
-    echo "Subscription required for cloud features and full functionality"
-    echo "Configure keyboard shortcuts to replace default macOS screenshot tools"
-uninstall:
-  script: |
-    echo "Uninstalling CleanShot X..."
-    brew uninstall --cask cleanshot
+install: |
+  echo "Installing CleanShot X..."
+  brew install --cask cleanshot
+validate: |
+  brew list --cask | grep -q "cleanshot" || ls /Applications/ | grep -q "CleanShot X.app"
+configure: |
+  echo "CleanShot X configuration complete"
+  echo "Launch CleanShot X and configure your preferences"
+  echo "Key features:"
+  echo "- Advanced screenshot tools with annotation"
+  echo "- Screen recording with editing capabilities"
+  echo "- Scrolling capture for long content"
+  echo "- Cloud storage and instant sharing"
+  echo "- GIF creation and optimization"
+  echo "- Custom keyboard shortcuts"
+  echo ""
+  echo "Note: CleanShot X offers a free trial"
+  echo "Subscription required for cloud features and full functionality"
+  echo "Configure keyboard shortcuts to replace default macOS screenshot tools"
+uninstall: |
+  echo "Uninstalling CleanShot X..."
+  brew uninstall --cask cleanshot

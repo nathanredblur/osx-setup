@@ -18,19 +18,15 @@ notes: |
   - Essential for handling downloaded archives
   - Integrates with other compression tools
 dependencies: []
-install:
-  script: |
-    echo "Installing Unzip..."
-    brew install unzip
-validate:
-  script: |
-    command -v unzip &> /dev/null
-configure:
-  script: |
-    echo "Unzip configuration complete"
-    echo "Use: unzip filename.zip"
-    echo "Extract to specific directory: unzip filename.zip -d /path/to/directory"
-uninstall:
-  script: |
-    echo "Uninstalling Unzip..."
-    brew uninstall unzip
+install: |
+  echo "Installing Unzip..."
+  brew install unzip
+validate: |
+  command -v unzip &> /dev/null
+configure: |
+  echo "Unzip configuration complete"
+  echo "Use: unzip filename.zip"
+  echo "Extract to specific directory: unzip filename.zip -d /path/to/directory"
+uninstall: |
+  echo "Uninstalling Unzip..."
+  brew uninstall unzip

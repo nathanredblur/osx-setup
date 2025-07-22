@@ -1,0 +1,118 @@
+id: "zmk-studio"
+name: "ZMK Studio"
+description: "Visual keyboard configuration tool for ZMK firmware"
+type: "direct_download_dmg"
+category: "Utilities"
+selected_by_default: false
+requires_license: false
+tags:
+  - keyboard
+  - configuration
+  - zmk
+  - firmware
+  - mechanical
+  - customization
+url: "https://zmk.dev/docs/features/studio"
+notes: |
+  - Visual configuration tool for ZMK firmware keyboards
+  - Real-time keymap editing and customization
+  - Support for layers, macros, and advanced features
+  - Direct communication with ZMK-powered keyboards
+  - User-friendly interface for complex configurations
+  - Free and open source keyboard tool
+dependencies: []
+install:
+  script: |
+    echo "Installing ZMK Studio..."
+    echo "Note: ZMK Studio is for ZMK firmware-powered keyboards"
+    echo ""
+    echo "Installation options:"
+    echo "1. Download from ZMK documentation site"
+    echo "2. Check GitHub releases for latest version"
+    echo "3. Build from source if needed"
+    echo ""
+    echo "Manual installation steps:"
+    echo "1. Visit https://zmk.dev/ or GitHub releases"
+    echo "2. Download ZMK Studio for macOS"
+    echo "3. Open the downloaded DMG file"
+    echo "4. Move ZMK Studio to Applications folder"
+    echo "5. Launch and connect your ZMK keyboard"
+    echo ""
+    # Check if available via Homebrew
+    if command -v brew >/dev/null 2>&1; then
+      echo "Checking Homebrew for ZMK Studio..."
+      if brew search zmk >/dev/null 2>&1; then
+        # This would work if available
+        echo "ZMK Studio not found in Homebrew. Manual installation required."
+      fi
+    fi
+    echo ""
+    echo "Note: Requires ZMK firmware-compatible keyboard"
+validate:
+  script: |
+    # Check for ZMK Studio in Applications
+    if ls /Applications/ | grep -i "zmk.*studio" >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    # Check for variations
+    if ls /Applications/ | grep -i "zmk" >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    echo "ZMK Studio not detected"
+    exit 1
+configure:
+  script: |
+    echo "ZMK Studio configuration complete"
+    echo "Launch ZMK Studio to configure your ZMK keyboard"
+    echo ""
+    echo "Key features:"
+    echo "- Visual keymap editor with real-time preview"
+    echo "- Layer management and configuration"
+    echo "- Macro creation and editing"
+    echo "- Direct keyboard communication"
+    echo "- Advanced behavior configuration"
+    echo "- Export/import configuration support"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch ZMK Studio from Applications"
+    echo "2. Connect your ZMK firmware keyboard via USB"
+    echo "3. Load your current keyboard configuration"
+    echo "4. Edit keymaps visually using the interface"
+    echo "5. Flash changes directly to your keyboard"
+    echo ""
+    echo "Supported features:"
+    echo "- Multiple layers (base, symbols, numbers, etc.)"
+    echo "- Hold-tap behaviors and mod-taps"
+    echo "- Macros and complex key sequences"
+    echo "- RGB underglow and LED configuration"
+    echo "- Rotary encoder and other input support"
+    echo "- Wireless and split keyboard features"
+    echo ""
+    echo "Configuration capabilities:"
+    echo "- Visual keymap layout editing"
+    echo "- Behavior and timing adjustments"
+    echo "- Layer activation and switching"
+    echo "- Combo and sequence definitions"
+    echo "- Power management settings"
+    echo ""
+    echo "Keyboard compatibility:"
+    echo "- ZMK firmware-powered keyboards"
+    echo "- Popular mechanical keyboard PCBs"
+    echo "- Custom keyboards with ZMK support"
+    echo "- Split keyboards and wireless boards"
+    echo ""
+    echo "Benefits:"
+    echo "- No need to manually edit configuration files"
+    echo "- Real-time visualization of changes"
+    echo "- Easy experimentation with layouts"
+    echo "- Quick iteration on keyboard configurations"
+    echo "- Backup and restore configurations"
+    echo ""
+    echo "Note: ZMK Studio requires ZMK firmware on your keyboard"
+    echo "Visit https://zmk.dev/ for firmware installation guides"
+uninstall:
+  script: |
+    echo "Uninstalling ZMK Studio..."
+    find /Applications -name "*ZMK*" -delete 2>/dev/null || true

@@ -1,0 +1,62 @@
+id: "zoom"
+name: "Zoom"
+description: "Video conferencing platform"
+type: "brew_cask"
+category: "Communication"
+selected_by_default: false
+requires_license: false
+tags:
+  - video-conferencing
+  - meetings
+  - webinars
+  - collaboration
+  - business
+url: "https://zoom.us/"
+notes: |
+  - Popular video conferencing solution for meetings and webinars
+  - HD video and audio quality
+  - Screen sharing and recording capabilities
+  - Breakout rooms and collaboration features
+  - Integration with calendar and productivity apps
+  - Free tier available with paid plans for advanced features
+dependencies: []
+install:
+  script: |
+    echo "Installing Zoom..."
+    brew install --cask zoom
+validate:
+  script: |
+    brew list --cask | grep -q "zoom" || ls /Applications/ | grep -q "zoom.us.app"
+configure:
+  script: |
+    echo "Zoom configuration complete"
+    echo "Launch Zoom and create an account or sign in"
+    echo ""
+    echo "Key features:"
+    echo "- HD video and audio conferencing"
+    echo "- Screen sharing and annotation"
+    echo "- Meeting recording and cloud storage"
+    echo "- Breakout rooms for small group collaboration"
+    echo "- Virtual backgrounds and filters"
+    echo "- Chat and file sharing during meetings"
+    echo ""
+    echo "Getting started:"
+    echo "1. Create a Zoom account or sign in"
+    echo "2. Configure audio and video settings"
+    echo "3. Test your microphone and camera"
+    echo "4. Set up virtual backgrounds if desired"
+    echo "5. Integrate with your calendar application"
+    echo ""
+    echo "Meeting features:"
+    echo "- Host or join meetings with Meeting ID"
+    echo "- Schedule meetings with calendar integration"
+    echo "- Share your screen for presentations"
+    echo "- Record meetings for later review"
+    echo "- Use waiting rooms for security"
+    echo ""
+    echo "Note: Free accounts have 40-minute limit for group meetings"
+    echo "Upgrade to paid plan for unlimited meeting duration"
+uninstall:
+  script: |
+    echo "Uninstalling Zoom..."
+    brew uninstall --cask zoom

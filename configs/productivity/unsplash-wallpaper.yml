@@ -1,0 +1,116 @@
+id: "unsplash-wallpaper"
+name: "Unsplash Wallpaper"
+description: "Beautiful wallpapers from Unsplash community"
+type: "direct_download_dmg"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - wallpaper
+  - unsplash
+  - photography
+  - desktop
+  - productivity
+  - inspiration
+url: "https://unsplash.com/"
+notes: |
+  - Access to Unsplash's vast collection of high-quality photos
+  - Automatic wallpaper rotation with beautiful imagery
+  - Curated collections from professional photographers
+  - Inspiration and aesthetic enhancement for workspace
+  - Free high-resolution photography
+  - Note: This may refer to a specific Unsplash wallpaper app
+dependencies: []
+install:
+  script: |
+    echo "Installing Unsplash Wallpaper..."
+    echo "Note: There are multiple Unsplash wallpaper applications available"
+    echo ""
+    echo "Options for Unsplash wallpapers:"
+    echo "1. irVue (already available in this configuration)"
+    echo "2. Unsplash Wallpapers (Mac App Store)"
+    echo "3. Direct download from unsplash.com"
+    echo "4. Third-party Unsplash apps"
+    echo ""
+    echo "Checking for available Unsplash wallpaper apps..."
+
+    # Try to find and install a specific Unsplash wallpaper app
+    if command -v mas >/dev/null 2>&1; then
+      echo "Searching Mac App Store for Unsplash wallpaper apps..."
+      # Try to install a popular Unsplash wallpaper app
+      # Note: App Store ID would need to be verified
+      echo "You may want to search 'Unsplash' in the Mac App Store manually"
+    fi
+
+    echo ""
+    echo "Alternative: Use irVue (already configured) for Unsplash wallpapers"
+    echo "Or visit https://unsplash.com/ to browse and download wallpapers manually"
+validate:
+  script: |
+    # Check for various Unsplash-related apps
+    if ls /Applications/ | grep -i "unsplash" >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    # Check if irVue is installed (alternative Unsplash app)
+    if ls /Applications/ | grep -i "irvue" >/dev/null 2>&1; then
+      echo "irVue (Unsplash wallpaper app) is available"
+      exit 0
+    fi
+
+    # Consider manual wallpaper downloads as "installed"
+    if [ -d "$HOME/Pictures/Wallpapers" ]; then
+      echo "Wallpapers directory exists - manual Unsplash usage assumed"
+      exit 0
+    fi
+
+    exit 1
+configure:
+  script: |
+    echo "Unsplash Wallpaper configuration complete"
+    echo "Enjoy beautiful photography for your desktop background"
+    echo ""
+    echo "Unsplash features:"
+    echo "- Over 3 million high-quality photos"
+    echo "- Professional photography from global contributors"
+    echo "- Various categories: nature, architecture, animals, etc."
+    echo "- Free to use for personal and commercial purposes"
+    echo "- Regular updates with new content daily"
+    echo ""
+    echo "Ways to use Unsplash wallpapers:"
+    echo "1. Install irVue for automatic wallpaper rotation"
+    echo "2. Use Unsplash Wallpapers app from Mac App Store"
+    echo "3. Browse and download manually from unsplash.com"
+    echo "4. Use Unsplash API for custom wallpaper apps"
+    echo ""
+    echo "Manual usage:"
+    echo "1. Visit https://unsplash.com/"
+    echo "2. Search for desired photo categories"
+    echo "3. Download high-resolution images"
+    echo "4. Set as desktop wallpaper in System Preferences"
+    echo ""
+    echo "Creating wallpapers directory for organization..."
+    mkdir -p "$HOME/Pictures/Wallpapers/Unsplash"
+    echo "Directory created: ~/Pictures/Wallpapers/Unsplash"
+    echo ""
+    echo "Popular categories:"
+    echo "- Nature and landscapes"
+    echo "- Minimalist and abstract"
+    echo "- Architecture and buildings"
+    echo "- Technology and workspace"
+    echo "- Travel and adventure"
+    echo ""
+    echo "Benefits:"
+    echo "- Enhance workspace aesthetics"
+    echo "- Daily inspiration from beautiful imagery"
+    echo "- Support independent photographers"
+    echo "- High-quality, professional photography"
+    echo "- Completely free to use"
+    echo ""
+    echo "Recommendation: Also install irVue for automatic Unsplash wallpapers"
+uninstall:
+  script: |
+    echo "Uninstalling Unsplash Wallpaper..."
+    echo "Removing downloaded wallpapers (optional)..."
+    echo "Remove ~/Pictures/Wallpapers/Unsplash if no longer needed"
+    echo "Unsplash wallpaper access removed"

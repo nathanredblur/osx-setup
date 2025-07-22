@@ -1,0 +1,65 @@
+id: "arc"
+name: "Arc"
+description: "The browser company's reimagined web browser"
+type: "brew_cask"
+category: "Browsers"
+selected_by_default: false
+requires_license: false
+tags:
+  - browser
+  - modern
+  - productivity
+  - sidebar
+  - spaces
+url: "https://arc.net/"
+notes: |
+  - Modern browser with innovative sidebar design
+  - Workspace organization with Spaces feature
+  - Built-in productivity tools and integrations
+  - Privacy-focused with enhanced security
+  - Unique tab management and organization
+  - Free to use with premium features available
+dependencies: []
+install:
+  script: |
+    echo "Installing Arc Browser..."
+    brew install --cask arc
+validate:
+  script: |
+    brew list --cask | grep -q "arc" || ls /Applications/ | grep -q "Arc.app"
+configure:
+  script: |
+    echo "Arc Browser configuration complete"
+    echo "Launch Arc to complete setup and create your account"
+    echo ""
+    echo "Key features:"
+    echo "- Vertical sidebar with tab management"
+    echo "- Spaces for organizing different contexts"
+    echo "- Built-in ad blocker and privacy protection"
+    echo "- Mini player for media content"
+    echo "- Split view for multitasking"
+    echo "- Command palette for quick actions"
+    echo ""
+    echo "Getting started:"
+    echo "1. Create an Arc account or sign in"
+    echo "2. Set up your first Space for work or personal use"
+    echo "3. Import bookmarks from other browsers"
+    echo "4. Customize sidebar and toolbar preferences"
+    echo "5. Explore productivity features and shortcuts"
+    echo ""
+    echo "Unique features:"
+    echo "- Sidebar tabs instead of traditional top tabs"
+    echo "- Spaces for context switching (work, personal, etc.)"
+    echo "- Easels for visual collaboration"
+    echo "- Built-in screenshot and annotation tools"
+    echo "- Smart folders for automatic tab organization"
+    echo ""
+    echo "Tips:"
+    echo "- Use Cmd+T to open the command palette"
+    echo "- Pin frequently used tabs in the sidebar"
+    echo "- Create different Spaces for different projects"
+    echo "- Use split view to see multiple pages at once"
+uninstall:
+  script: |
+    echo "Uninstalling Arc Browser..."
+    brew uninstall --cask arc

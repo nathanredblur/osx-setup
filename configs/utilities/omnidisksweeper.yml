@@ -1,0 +1,94 @@
+id: "omnidisksweeper"
+name: "OmniDiskSweeper"
+description: "Disk space analyzer to find and delete large files"
+type: "mas"
+category: "Utilities"
+selected_by_default: false
+requires_license: false
+tags:
+  - disk-space
+  - cleanup
+  - analyzer
+  - storage
+  - files
+  - omni
+url: "https://www.omnigroup.com/more"
+notes: |
+  - Visual disk space analyzer and cleanup tool
+  - Hierarchical view of disk usage by directory
+  - Quick identification of space-consuming files
+  - Safe file deletion with preview capabilities
+  - Simple and intuitive interface
+  - Free utility from The Omni Group
+dependencies: []
+install:
+  script: |
+    echo "Installing OmniDiskSweeper..."
+    echo "Note: OmniDiskSweeper is available on the Mac App Store"
+    echo "App Store ID: 416442386"
+    echo ""
+    if command -v mas >/dev/null 2>&1; then
+      echo "Installing OmniDiskSweeper via mas..."
+      mas install 416442386
+    else
+      echo "mas-cli not found. Please install OmniDiskSweeper manually from the App Store"
+      echo "Search for 'OmniDiskSweeper' by The Omni Group"
+    fi
+validate:
+  script: |
+    # Check if installed via App Store
+    if ls /Applications/ | grep -q "OmniDiskSweeper.app"; then
+      exit 0
+    fi
+
+    # Check in system Applications
+    if ls "/Applications/OmniDiskSweeper.app" &> /dev/null; then
+      exit 0
+    fi
+
+    exit 1
+configure:
+  script: |
+    echo "OmniDiskSweeper configuration complete"
+    echo "Launch OmniDiskSweeper to analyze your disk usage"
+    echo ""
+    echo "Key features:"
+    echo "- Visual representation of disk space usage"
+    echo "- Hierarchical directory view with size information"
+    echo "- Quick identification of large files and folders"
+    echo "- Safe file deletion with preview"
+    echo "- Multiple volume support"
+    echo "- Real-time size calculations"
+    echo ""
+    echo "How to use:"
+    echo "1. Launch OmniDiskSweeper"
+    echo "2. Select the drive or folder to analyze"
+    echo "3. Wait for the analysis to complete"
+    echo "4. Browse through directories sorted by size"
+    echo "5. Identify large, unnecessary files"
+    echo "6. Delete files safely using the built-in delete function"
+    echo ""
+    echo "Tips for effective cleanup:"
+    echo "- Start with the largest directories first"
+    echo "- Look for old downloads, cache files, and logs"
+    echo "- Check for duplicate or forgotten files"
+    echo "- Be careful with system directories"
+    echo "- Preview files before deletion"
+    echo ""
+    echo "Common large file locations:"
+    echo "- ~/Downloads (old downloads)"
+    echo "- ~/Library/Caches (cache files)"
+    echo "- /var/log (system logs)"
+    echo "- ~/Movies (video files)"
+    echo "- ~/Library/Application Support (app data)"
+    echo ""
+    echo "Note: Always be cautious when deleting files"
+    echo "Preview files and understand their purpose before deletion"
+uninstall:
+  script: |
+    echo "Uninstalling OmniDiskSweeper..."
+    if command -v mas >/dev/null 2>&1; then
+      echo "Note: Use Mac App Store to uninstall or:"
+      echo "mas uninstall 416442386"
+    fi
+    echo "Or manually delete from Applications folder"

@@ -1,0 +1,107 @@
+id: "numi"
+name: "Numi"
+description: "Beautiful natural language calculator"
+type: "mas"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - calculator
+  - math
+  - natural-language
+  - productivity
+  - computation
+  - utilities
+url: "https://numi.app/"
+notes: |
+  - Natural language calculator with beautiful interface
+  - Supports complex mathematical expressions and units
+  - Currency conversion and date calculations
+  - Variables and custom functions support
+  - Text-based input with instant results
+  - Free with optional premium features
+dependencies: []
+install:
+  script: |
+    echo "Installing Numi..."
+    echo "Note: Numi is available on the Mac App Store"
+    echo "App Store ID: 1059503668"
+    echo ""
+    if command -v mas >/dev/null 2>&1; then
+      echo "Installing Numi via mas..."
+      mas install 1059503668
+    else
+      echo "mas-cli not found. Please install Numi manually from the App Store"
+      echo "Search for 'Numi' in the Mac App Store"
+    fi
+validate:
+  script: |
+    # Check if installed via App Store
+    if ls /Applications/ | grep -q "Numi.app"; then
+      exit 0
+    fi
+
+    # Check for variations in app name
+    if ls /Applications/ | grep -i "numi" >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    exit 1
+configure:
+  script: |
+    echo "Numi configuration complete"
+    echo "Launch Numi to start natural language calculations"
+    echo ""
+    echo "Key features:"
+    echo "- Natural language mathematical expressions"
+    echo "- Unit conversions and currency calculations"
+    echo "- Date and time arithmetic"
+    echo "- Variables and custom functions"
+    echo "- Beautiful, clean interface"
+    echo "- Text-based input with instant results"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch Numi from Applications"
+    echo "2. Try typing natural expressions like '10% of 250'"
+    echo "3. Experiment with unit conversions '50 mph to km/h'"
+    echo "4. Use variables 'price = 100, tax = price * 8%'"
+    echo "5. Explore date calculations and more"
+    echo ""
+    echo "Example calculations:"
+    echo "- Basic math: '15 + 25 * 2'"
+    echo "- Percentages: '20% of 500' or '100 + 15%'"
+    echo "- Unit conversion: '5 feet to meters'"
+    echo "- Currency: '100 USD to EUR' (requires internet)"
+    echo "- Date math: 'today + 30 days'"
+    echo "- Variables: 'salary = 5000, tax = salary * 25%'"
+    echo ""
+    echo "Advanced features:"
+    echo "- Custom functions and formulas"
+    echo "- Multiple currency support"
+    echo "- Scientific and programming calculations"
+    echo "- Hexadecimal and binary operations"
+    echo "- Trigonometric functions"
+    echo "- Statistical calculations"
+    echo ""
+    echo "Unit categories:"
+    echo "- Length: meters, feet, inches, miles, etc."
+    echo "- Weight: kg, pounds, ounces, tons, etc."
+    echo "- Temperature: Celsius, Fahrenheit, Kelvin"
+    echo "- Volume: liters, gallons, cups, etc."
+    echo "- Time: seconds, minutes, hours, days, etc."
+    echo "- Data: bytes, KB, MB, GB, TB, etc."
+    echo ""
+    echo "Tips for effective use:"
+    echo "- Type naturally: 'What is 15% tip on $80?'"
+    echo "- Use variables for complex calculations"
+    echo "- Combine operations: '(100 + 50) * 1.25'"
+    echo "- Save frequently used formulas"
+    echo "- Explore different unit combinations"
+uninstall:
+  script: |
+    echo "Uninstalling Numi..."
+    if command -v mas >/dev/null 2>&1; then
+      echo "Note: Use Mac App Store to uninstall or:"
+      echo "mas uninstall 1059503668"
+    fi
+    echo "Or manually delete from Applications folder"

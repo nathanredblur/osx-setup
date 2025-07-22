@@ -1,0 +1,60 @@
+id: "monitor-control"
+name: "MonitorControl"
+description: "Control external display brightness and volume"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - monitor
+  - brightness
+  - volume
+  - display
+  - external
+url: "https://github.com/MonitorControl/MonitorControl"
+notes: |
+  - Control external monitor settings from macOS
+  - Adjust brightness and volume of external displays
+  - Native keyboard shortcut support
+  - Menu bar integration for quick access
+  - Support for multiple monitors
+  - Open source and free
+dependencies: []
+install:
+  script: |
+    echo "Installing MonitorControl..."
+    brew install --cask monitorcontrol
+validate:
+  script: |
+    brew list --cask | grep -q "monitorcontrol" || ls /Applications/ | grep -q "MonitorControl.app"
+configure:
+  script: |
+    echo "MonitorControl configuration complete"
+    echo "Launch MonitorControl and grant necessary permissions"
+    echo ""
+    echo "Setup steps:"
+    echo "1. Launch MonitorControl application"
+    echo "2. Grant accessibility permissions in System Preferences"
+    echo "3. Configure keyboard shortcuts for brightness/volume control"
+    echo "4. Enable menu bar icon for quick access"
+    echo ""
+    echo "Key features:"
+    echo "- Control external monitor brightness with keyboard"
+    echo "- Adjust external monitor volume"
+    echo "- Native macOS keyboard shortcuts (F1/F2 for brightness)"
+    echo "- Menu bar controls for quick access"
+    echo "- Support for multiple external monitors"
+    echo "- DDC/CI protocol support"
+    echo ""
+    echo "Usage:"
+    echo "- Use F1/F2 keys to control external monitor brightness"
+    echo "- Use F10/F11/F12 keys for volume control"
+    echo "- Access controls via menu bar icon"
+    echo "- Configure per-monitor settings"
+    echo ""
+    echo "Note: Requires compatible external monitors with DDC/CI support"
+    echo "Most modern monitors support this feature"
+uninstall:
+  script: |
+    echo "Uninstalling MonitorControl..."
+    brew uninstall --cask monitorcontrol

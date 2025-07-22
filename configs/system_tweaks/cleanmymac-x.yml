@@ -1,0 +1,57 @@
+id: "cleanmymac-x"
+name: "CleanMyMac X"
+description: "System cleaner and optimizer"
+type: "brew_cask"
+category: "System Tweaks"
+selected_by_default: false
+requires_license: true
+tags:
+  - system-cleaner
+  - optimization
+  - maintenance
+  - storage
+  - performance
+url: "https://cleanmymac.com/"
+notes: |
+  - Comprehensive system cleaning and optimization suite
+  - Removes junk files, cache, and unnecessary data
+  - Malware detection and removal
+  - Application uninstaller and updater
+  - System performance optimization
+  - Requires subscription for full features
+dependencies: []
+install:
+  script: |
+    echo "Installing CleanMyMac X..."
+    brew install --cask cleanmymac
+validate:
+  script: |
+    brew list --cask | grep -q "cleanmymac" || ls /Applications/ | grep -q "CleanMyMac X.app"
+configure:
+  script: |
+    echo "CleanMyMac X configuration complete"
+    echo "Launch CleanMyMac X and complete the initial setup"
+    echo ""
+    echo "Key features:"
+    echo "- Smart scan for system optimization"
+    echo "- Malware removal and security protection"
+    echo "- Large file and old folder cleanup"
+    echo "- Application uninstaller and updater"
+    echo "- System maintenance scripts"
+    echo "- Privacy protection and secure deletion"
+    echo ""
+    echo "Main modules:"
+    echo "- Smart Scan: One-click system optimization"
+    echo "- Malware Removal: Security threat detection"
+    echo "- Privacy: Clear browsing data and chat logs"
+    echo "- Large & Old Files: Find space-consuming items"
+    echo "- Uninstaller: Complete app removal"
+    echo "- Updater: Keep apps current"
+    echo ""
+    echo "Note: CleanMyMac X offers a free trial"
+    echo "Subscription required for full functionality"
+    echo "Be careful with system file cleaning - review before deleting"
+uninstall:
+  script: |
+    echo "Uninstalling CleanMyMac X..."
+    brew uninstall --cask cleanmymac

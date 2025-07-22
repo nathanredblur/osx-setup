@@ -1,0 +1,56 @@
+id: "soundsource"
+name: "SoundSource"
+description: "Audio control utility"
+type: "brew_cask"
+category: "Utilities"
+selected_by_default: false
+requires_license: true
+tags:
+  - audio
+  - control
+  - volume
+  - routing
+  - utilities
+url: "https://rogueamoeba.com/soundsource/"
+notes: |
+  - Control audio sources and routing on macOS
+  - Per-application volume control
+  - Audio effects and EQ for individual apps
+  - Input and output device switching
+  - System-wide audio enhancements
+  - Requires license purchase for full functionality
+dependencies: []
+install:
+  script: |
+    echo "Installing SoundSource..."
+    brew install --cask soundsource
+validate:
+  script: |
+    brew list --cask | grep -q "soundsource" || ls /Applications/ | grep -q "SoundSource.app"
+configure:
+  script: |
+    echo "SoundSource configuration complete"
+    echo "Launch SoundSource to start controlling audio"
+    echo ""
+    echo "Key features:"
+    echo "- Per-application volume control"
+    echo "- Audio device switching"
+    echo "- Built-in EQ and audio effects"
+    echo "- Input monitoring and routing"
+    echo "- Menu bar control for quick access"
+    echo "- Keyboard shortcuts for common actions"
+    echo ""
+    echo "Common use cases:"
+    echo "- Control volume of individual apps"
+    echo "- Switch between headphones and speakers"
+    echo "- Apply EQ to specific applications"
+    echo "- Monitor audio input levels"
+    echo "- Quick access to audio settings"
+    echo ""
+    echo "Note: SoundSource offers a free trial"
+    echo "Purchase license from Rogue Amoeba for full features"
+    echo "You may need to grant audio permissions in System Preferences"
+uninstall:
+  script: |
+    echo "Uninstalling SoundSource..."
+    brew uninstall --cask soundsource

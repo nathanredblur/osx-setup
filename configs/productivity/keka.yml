@@ -1,0 +1,54 @@
+id: "keka"
+name: "Keka"
+description: "File archiver for macOS"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - archiver
+  - compression
+  - file-management
+  - zip
+  - utilities
+url: "https://www.keka.io/"
+notes: |
+  - Powerful file archiver supporting multiple formats
+  - Supports 7Z, ZIP, TAR, GZIP, BZIP2, XZ, LZMA, and many more
+  - Password protection and encryption
+  - Drag and drop interface
+  - High compression ratios
+  - Free with optional paid version for App Store
+dependencies: []
+install:
+  script: |
+    echo "Installing Keka..."
+    brew install --cask keka
+validate:
+  script: |
+    brew list --cask | grep -q "keka" || ls /Applications/ | grep -q "Keka.app"
+configure:
+  script: |
+    echo "Keka configuration complete"
+    echo "Keka is now ready for file archiving and extraction"
+    echo ""
+    echo "Supported formats:"
+    echo "- Create: 7Z, ZIP, TAR, GZIP, BZIP2, XZ, LZMA"
+    echo "- Extract: RAR, 7Z, LZMA, XZ, ZIP, TAR, GZIP, BZIP2, ISO, EXE, CAB, PAX, and more"
+    echo ""
+    echo "Key features:"
+    echo "- High compression ratios"
+    echo "- Password protection and AES-256 encryption"
+    echo "- Drag and drop interface"
+    echo "- Batch compression and extraction"
+    echo "- Integration with Finder context menus"
+    echo ""
+    echo "Usage:"
+    echo "- Drag files/folders onto Keka to create archives"
+    echo "- Double-click archives to extract them"
+    echo "- Right-click in Finder for context menu options"
+    echo "- Set compression level and format in preferences"
+uninstall:
+  script: |
+    echo "Uninstalling Keka..."
+    brew uninstall --cask keka

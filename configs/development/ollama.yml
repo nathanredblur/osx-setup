@@ -1,0 +1,54 @@
+id: "ollama"
+name: "Ollama"
+description: "Run large language models locally"
+type: "brew"
+category: "Development"
+selected_by_default: false
+requires_license: false
+tags:
+  - ai
+  - llm
+  - local
+  - machine-learning
+  - development
+url: "https://ollama.ai/"
+notes: |
+  - Command-line tool for running LLMs locally
+  - Supports popular models like Llama 2, Mistral, CodeLlama, and more
+  - GPU acceleration support for faster inference
+  - Simple API for integration with applications
+  - Privacy-focused: everything runs on your machine
+  - Easy model management and switching
+dependencies: []
+install:
+  script: |
+    echo "Installing Ollama..."
+    brew install ollama
+validate:
+  script: |
+    command -v ollama &> /dev/null
+configure:
+  script: |
+    echo "Configuring Ollama..."
+
+    echo "Ollama configuration complete"
+    echo "Popular models to try:"
+    echo "  ollama pull llama2           # Llama 2 7B"
+    echo "  ollama pull mistral          # Mistral 7B"
+    echo "  ollama pull codellama        # Code Llama for programming"
+    echo "  ollama pull phi              # Microsoft Phi (smaller model)"
+    echo ""
+    echo "Basic usage:"
+    echo "  ollama run llama2            # Run interactive chat"
+    echo "  ollama list                  # List installed models"
+    echo "  ollama serve                 # Start API server (localhost:11434)"
+    echo ""
+    echo "API usage:"
+    echo "  curl -d '{\"model\":\"llama2\",\"prompt\":\"Hello\"}' http://localhost:11434/api/generate"
+    echo ""
+    echo "Note: Models are large (several GB). Ensure you have enough disk space."
+uninstall:
+  script: |
+    echo "Uninstalling Ollama..."
+    brew uninstall ollama
+    echo "Note: Downloaded models in ~/.ollama will remain"

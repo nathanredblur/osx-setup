@@ -1,0 +1,92 @@
+id: "beardedspice"
+name: "BeardedSpice"
+description: "Mac media keys for the web"
+type: "brew_cask"
+category: "Media"
+selected_by_default: false
+requires_license: false
+tags:
+  - media-keys
+  - web
+  - browser
+  - control
+  - keyboard
+  - streaming
+url: "https://beardedspice.github.io/"
+notes: |
+  - Mac media keys support for web-based music players
+  - Control web media players with keyboard shortcuts
+  - Support for popular streaming services
+  - System-wide media key integration
+  - Lightweight and efficient operation
+  - Free and open source
+dependencies: []
+install:
+  script: |
+    echo "Installing BeardedSpice..."
+    brew install --cask beardedspice
+validate:
+  script: |
+    brew list --cask | grep -q "beardedspice" || ls /Applications/ | grep -q "BeardedSpice.app"
+configure:
+  script: |
+    echo "BeardedSpice configuration complete"
+    echo "Launch BeardedSpice to control web media players"
+    echo ""
+    echo "Key features:"
+    echo "- Mac media keys support for web players"
+    echo "- System-wide keyboard shortcut integration"
+    echo "- Support for 50+ popular streaming services"
+    echo "- Automatic detection of active media players"
+    echo "- Lightweight menu bar operation"
+    echo "- Custom hotkey configuration"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch BeardedSpice from Applications"
+    echo "2. Grant necessary accessibility permissions"
+    echo "3. Configure supported streaming services"
+    echo "4. Test media keys with your favorite web player"
+    echo "5. Customize hotkeys if needed"
+    echo ""
+    echo "Supported services include:"
+    echo "- YouTube and YouTube Music"
+    echo "- Spotify Web Player"
+    echo "- SoundCloud and Bandcamp"
+    echo "- Twitch and other streaming platforms"
+    echo "- Pandora and Last.fm"
+    echo "- Google Play Music and many more"
+    echo ""
+    echo "Media key functions:"
+    echo "- Play/Pause: Control playback state"
+    echo "- Next Track: Skip to next song"
+    echo "- Previous Track: Go to previous song"
+    echo "- Volume Control: Adjust player volume"
+    echo "- Custom Actions: Service-specific controls"
+    echo ""
+    echo "How it works:"
+    echo "- Detects active media players in browser tabs"
+    echo "- Intercepts system media key presses"
+    echo "- Routes commands to appropriate web player"
+    echo "- Works across multiple browsers and tabs"
+    echo "- Prioritizes currently playing content"
+    echo ""
+    echo "Configuration options:"
+    echo "- Enable/disable specific streaming services"
+    echo "- Customize keyboard shortcuts and hotkeys"
+    echo "- Set priority for multiple active players"
+    echo "- Configure notification preferences"
+    echo "- Adjust detection and response settings"
+    echo ""
+    echo "Benefits:"
+    echo "- Native media key support for web players"
+    echo "- No need to switch to browser for control"
+    echo "- Works with external keyboards and headphones"
+    echo "- Consistent media control experience"
+    echo "- Enhanced productivity during work/study"
+    echo ""
+    echo "BeardedSpice will run in the menu bar"
+    echo "Media keys will now work with web-based players!"
+uninstall:
+  script: |
+    echo "Uninstalling BeardedSpice..."
+    brew uninstall --cask beardedspice

@@ -1,0 +1,79 @@
+id: "reflex"
+name: "Reflex"
+description: "Media key forwarder for Music (iTunes) and Spotify"
+type: "brew_cask"
+category: "Media"
+selected_by_default: false
+requires_license: false
+tags:
+  - media-keys
+  - music
+  - spotify
+  - itunes
+  - keyboard
+  - control
+url: "https://stuntsoftware.com/reflex/"
+notes: |
+  - Media key forwarder for Music (iTunes) and Spotify
+  - Routes media keys to the correct music application
+  - Intelligent switching between music apps
+  - Lightweight menu bar utility
+  - Support for keyboard and headphone controls
+  - Free utility for better media control
+dependencies: []
+install:
+  script: |
+    echo "Installing Reflex..."
+    brew install --cask reflex
+validate:
+  script: |
+    brew list --cask | grep -q "reflex" || ls /Applications/ | grep -q "Reflex.app"
+configure:
+  script: |
+    echo "Reflex configuration complete"
+    echo "Launch Reflex to set up media key forwarding"
+    echo ""
+    echo "Key features:"
+    echo "- Forward media keys to correct music application"
+    echo "- Support for Music (iTunes) and Spotify"
+    echo "- Intelligent app detection and switching"
+    echo "- Works with keyboard and headphone controls"
+    echo "- Menu bar integration for quick access"
+    echo "- Lightweight and efficient operation"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch Reflex from Applications"
+    echo "2. Grant necessary accessibility permissions"
+    echo "3. Configure media key preferences"
+    echo "4. Set up application priorities if needed"
+    echo "5. Test media keys with your music apps"
+    echo ""
+    echo "How it works:"
+    echo "- Detects which music app is currently playing"
+    echo "- Routes media keys (play, pause, next, previous) accordingly"
+    echo "- Handles switching between multiple music applications"
+    echo "- Works with built-in and external keyboards"
+    echo "- Supports headphone and speaker controls"
+    echo ""
+    echo "Supported applications:"
+    echo "- Apple Music (formerly iTunes)"
+    echo "- Spotify"
+    echo "- Other compatible media applications"
+    echo ""
+    echo "Benefits:"
+    echo "- Seamless media control across applications"
+    echo "- No more wrong-app media key activation"
+    echo "- Better integration with external keyboards"
+    echo "- Enhanced music listening workflow"
+    echo ""
+    echo "Settings:"
+    echo "- Application priority configuration"
+    echo "- Media key behavior customization"
+    echo "- Auto-start preferences"
+    echo "- Accessibility permissions management"
+    echo ""
+    echo "Reflex will run in the background and menu bar"
+uninstall:
+  script: |
+    echo "Uninstalling Reflex..."
+    brew uninstall --cask reflex

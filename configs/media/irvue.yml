@@ -1,0 +1,101 @@
+id: "irvue"
+name: "irVue"
+description: "Unsplash wallpaper app for beautiful desktop backgrounds"
+type: "mas"
+category: "Media"
+selected_by_default: false
+requires_license: false
+tags:
+  - wallpaper
+  - unsplash
+  - photography
+  - desktop
+  - backgrounds
+  - beauty
+url: "https://irvue.tumblr.com/"
+notes: |
+  - Beautiful wallpaper app powered by Unsplash photography
+  - Automatic wallpaper rotation with high-quality images
+  - Curated collections from professional photographers
+  - Customizable refresh intervals and categories
+  - Minimal resource usage and clean interface
+  - Free with optional premium features
+dependencies: []
+install:
+  script: |
+    echo "Installing irVue..."
+    echo "Note: irVue is available on the Mac App Store"
+    echo "App Store ID: 1039633667"
+    echo ""
+    if command -v mas >/dev/null 2>&1; then
+      echo "Installing irVue via mas..."
+      mas install 1039633667
+    else
+      echo "mas-cli not found. Please install irVue manually from the App Store"
+      echo "Search for 'irvue' in the Mac App Store"
+    fi
+validate:
+  script: |
+    # Check if installed via App Store
+    if ls /Applications/ | grep -q "irvue.app"; then
+      exit 0
+    fi
+
+    # Check for variations in app name
+    if ls /Applications/ | grep -i "irvue" >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    exit 1
+configure:
+  script: |
+    echo "irVue configuration complete"
+    echo "Launch irVue to start enjoying beautiful wallpapers"
+    echo ""
+    echo "Key features:"
+    echo "- High-resolution photos from Unsplash photographers"
+    echo "- Automatic wallpaper rotation"
+    echo "- Curated collections and categories"
+    echo "- Customizable refresh intervals"
+    echo "- Minimal and elegant interface"
+    echo "- Low system resource usage"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch irVue from Applications"
+    echo "2. Grant necessary permissions for wallpaper changes"
+    echo "3. Choose your preferred photo categories"
+    echo "4. Set wallpaper refresh interval (hourly, daily, etc.)"
+    echo "5. Enjoy automatically changing beautiful backgrounds"
+    echo ""
+    echo "Customization options:"
+    echo "- Photo categories (nature, architecture, abstract, etc.)"
+    echo "- Refresh frequency (15 min to weekly)"
+    echo "- Display options for multiple monitors"
+    echo "- Blur and dimming effects"
+    echo "- Automatic dark/light mode switching"
+    echo ""
+    echo "Photo categories:"
+    echo "- Nature and landscapes"
+    echo "- Architecture and buildings"
+    echo "- Abstract and artistic"
+    echo "- Animals and wildlife"
+    echo "- Travel and cities"
+    echo "- Minimalist designs"
+    echo ""
+    echo "Benefits:"
+    echo "- Fresh desktop inspiration daily"
+    echo "- Discover amazing photography"
+    echo "- Support independent photographers"
+    echo "- Enhance your workspace aesthetics"
+    echo "- Automatic variety without manual searching"
+    echo ""
+    echo "irVue will run quietly in the background"
+    echo "Access settings through the menu bar icon"
+uninstall:
+  script: |
+    echo "Uninstalling irVue..."
+    if command -v mas >/dev/null 2>&1; then
+      echo "Note: Use Mac App Store to uninstall or:"
+      echo "mas uninstall 1039633667"
+    fi
+    echo "Or manually delete from Applications folder"

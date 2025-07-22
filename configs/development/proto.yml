@@ -5,6 +5,7 @@ type: "brew"
 category: "Development"
 selected_by_default: false
 requires_license: false
+dependencies: [git, unzip, gzip, xz]
 tags:
   - version-manager
   - toolchain
@@ -34,7 +35,36 @@ validate:
     command -v proto &> /dev/null
 configure:
   script: |
-    echo "Proto configuration complete"
+    echo "Configuring Proto..."
+    proto setup
+
+    
+    echo "Installing Node.js..."
+    proto install node
+    proto global node lts/iron
+    proto pin node lts/iron
+
+    echo "Installing npm..."
+    proto install npm
+    proto global npm latest
+
+    echo "Installing pnpm..."
+    proto install pnpm
+    proto global pnpm latest
+
+    echo "Installing Yarn..."
+    proto install yarn
+    proto global yarn latest
+
+    echo "Installing uv..."
+    proto install uv
+    proto global uv latest
+
+    echo "Installing Python..."
+    proto install python
+    proto global python latest
+
+
     echo "Add to shell profile: eval \"\$(proto activate zsh)\""
     echo "Install a tool: proto install node"
     echo "Set global version: proto global node latest"

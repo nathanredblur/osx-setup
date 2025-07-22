@@ -1,0 +1,53 @@
+id: "lm-studio"
+name: "LM Studio"
+description: "Local AI model runner"
+type: "brew_cask"
+category: "Development"
+selected_by_default: false
+requires_license: false
+tags:
+  - ai
+  - llm
+  - local
+  - machine-learning
+  - gui
+url: "https://lmstudio.ai/"
+notes: |
+  - Run large language models locally with a user-friendly GUI
+  - Support for popular models like Llama, Mistral, and CodeLlama
+  - Easy model downloading and management
+  - Local API server for application integration
+  - GPU acceleration support
+  - Privacy-focused: everything runs on your machine
+dependencies: []
+install:
+  script: |
+    echo "Installing LM Studio..."
+    brew install --cask lm-studio
+validate:
+  script: |
+    brew list --cask | grep -q "lm-studio" || ls /Applications/ | grep -q "LM Studio.app"
+configure:
+  script: |
+    echo "LM Studio configuration complete"
+    echo "Launch LM Studio to start using local AI models"
+    echo ""
+    echo "Getting started:"
+    echo "1. Browse and download models from the built-in model repository"
+    echo "2. Chat with models using the intuitive interface"
+    echo "3. Start local server for API access (OpenAI-compatible)"
+    echo "4. Configure GPU acceleration if available"
+    echo ""
+    echo "Popular models to try:"
+    echo "- Llama 2 7B (general purpose)"
+    echo "- Mistral 7B (fast and efficient)"
+    echo "- Code Llama (programming assistance)"
+    echo "- Phi-2 (smaller model for quick responses)"
+    echo ""
+    echo "API server: Start local server in LM Studio for programmatic access"
+    echo "Compatible with OpenAI API format for easy integration"
+uninstall:
+  script: |
+    echo "Uninstalling LM Studio..."
+    brew uninstall --cask lm-studio
+    echo "Note: Downloaded models will remain in ~/Library/Application Support/LMStudio"

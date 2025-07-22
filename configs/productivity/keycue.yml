@@ -1,0 +1,77 @@
+id: "keycue"
+name: "KeyCue"
+description: "Finds, learns and remembers keyboard shortcuts"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: true
+tags:
+  - keyboard
+  - shortcuts
+  - productivity
+  - learning
+  - help
+  - efficiency
+url: "https://www.ergonis.com/products/keycue/"
+notes: |
+  - Keyboard shortcut discovery and learning tool
+  - Shows available shortcuts for active application
+  - Helps discover hidden productivity features
+  - Customizable display and filtering options
+  - Supports system-wide and app-specific shortcuts
+  - Paid application with free trial available
+dependencies: []
+install:
+  script: |
+    echo "Installing KeyCue..."
+    brew install --cask keycue
+validate:
+  script: |
+    brew list --cask | grep -q "keycue" || ls /Applications/ | grep -q "KeyCue.app"
+configure:
+  script: |
+    echo "KeyCue configuration complete"
+    echo "Launch KeyCue to start discovering keyboard shortcuts"
+    echo ""
+    echo "Key features:"
+    echo "- Real-time display of available shortcuts"
+    echo "- Context-sensitive shortcut discovery"
+    echo "- Customizable activation and display settings"
+    echo "- Support for system and application shortcuts"
+    echo "- Learning mode to help memorize shortcuts"
+    echo "- Filtering options for specific shortcut types"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch KeyCue and complete initial setup"
+    echo "2. Configure activation method (default: hold ⌘ key)"
+    echo "3. Customize display preferences"
+    echo "4. Set up filtering options if desired"
+    echo "5. Start using in your favorite applications"
+    echo ""
+    echo "How to use:"
+    echo "- Hold the ⌘ key (or configured trigger) to show shortcuts"
+    echo "- Browse available shortcuts for the active app"
+    echo "- Release the key to hide the overlay"
+    echo "- Use the displayed shortcuts directly"
+    echo "- Practice regularly to build muscle memory"
+    echo ""
+    echo "Customization options:"
+    echo "- Change activation method (key combinations)"
+    echo "- Adjust display appearance and positioning"
+    echo "- Filter shortcuts by categories"
+    echo "- Set up app-specific configurations"
+    echo "- Configure timing and behavior settings"
+    echo ""
+    echo "Benefits:"
+    echo "- Discover hidden application features"
+    echo "- Increase productivity through shortcuts"
+    echo "- Reduce reliance on mouse navigation"
+    echo "- Learn new applications faster"
+    echo "- Improve overall workflow efficiency"
+    echo ""
+    echo "Note: KeyCue requires a license for continued use"
+    echo "Free trial available to evaluate features"
+uninstall:
+  script: |
+    echo "Uninstalling KeyCue..."
+    brew uninstall --cask keycue

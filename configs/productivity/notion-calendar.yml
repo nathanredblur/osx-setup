@@ -1,0 +1,87 @@
+id: "notion-calendar"
+name: "Notion Calendar"
+description: "Calendar app integrated with Notion workspace"
+type: "brew_cask"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - calendar
+  - notion
+  - productivity
+  - scheduling
+  - planning
+  - integration
+url: "https://www.notion.so/calendar"
+notes: |
+  - Calendar application integrated with Notion workspace
+  - Seamless connection between calendar events and Notion pages
+  - Beautiful and intuitive calendar interface
+  - Cross-platform synchronization
+  - Integration with Google Calendar and other services
+  - Free to use with Notion account
+dependencies: []
+install:
+  script: |
+    echo "Installing Notion Calendar..."
+    brew install --cask notion-calendar
+validate:
+  script: |
+    brew list --cask | grep -q "notion-calendar" || ls /Applications/ | grep -q "Notion Calendar.app"
+configure:
+  script: |
+    echo "Notion Calendar configuration complete"
+    echo "Launch Notion Calendar to connect with your Notion workspace"
+    echo ""
+    echo "Key features:"
+    echo "- Seamless integration with Notion workspace"
+    echo "- Beautiful and intuitive calendar interface"
+    echo "- Connect calendar events to Notion pages"
+    echo "- Multi-calendar support (Google, Outlook, etc.)"
+    echo "- Cross-platform synchronization"
+    echo "- Time blocking and productivity features"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch Notion Calendar from Applications"
+    echo "2. Sign in with your Notion account"
+    echo "3. Connect your existing calendars (Google, Outlook, etc.)"
+    echo "4. Set up calendar preferences and views"
+    echo "5. Start creating events and connecting to Notion pages"
+    echo ""
+    echo "Integration benefits:"
+    echo "- Link calendar events to Notion database entries"
+    echo "- Create meeting notes directly in Notion"
+    echo "- Sync project timelines with calendar events"
+    echo "- Access Notion pages from calendar events"
+    echo "- Unified productivity workflow"
+    echo ""
+    echo "Calendar features:"
+    echo "- Multiple calendar views (day, week, month)"
+    echo "- Event creation and editing"
+    echo "- Recurring events and reminders"
+    echo "- Time zone support for global teams"
+    echo "- Quick event creation from any view"
+    echo ""
+    echo "Productivity enhancements:"
+    echo "- Time blocking for focused work"
+    echo "- Meeting preparation with linked Notion pages"
+    echo "- Project timeline visualization"
+    echo "- Task scheduling and deadline tracking"
+    echo "- Team calendar sharing and collaboration"
+    echo ""
+    echo "Supported calendar services:"
+    echo "- Google Calendar"
+    echo "- Microsoft Outlook/Exchange"
+    echo "- Apple Calendar (iCal)"
+    echo "- CalDAV compatible services"
+    echo ""
+    echo "Use cases:"
+    echo "- Project management and timeline tracking"
+    echo "- Meeting scheduling with automatic note creation"
+    echo "- Personal productivity and time management"
+    echo "- Team collaboration and shared calendars"
+    echo "- Integration of planning and execution workflows"
+uninstall:
+  script: |
+    echo "Uninstalling Notion Calendar..."
+    brew uninstall --cask notion-calendar

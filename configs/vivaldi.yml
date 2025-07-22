@@ -1,0 +1,41 @@
+id: "vivaldi"
+name: "Vivaldi"
+description: "Feature-rich web browser with extensive customization options"
+type: "brew_cask"
+category: "Browsers"
+selected_by_default: false
+requires_license: false
+tags:
+  - browser
+  - web
+  - customization
+  - privacy
+  - productivity
+url: "https://vivaldi.com/"
+notes: |
+  - Highly customizable browser with unique features like tab stacking, workspaces, and built-in tools
+  - Built-in email client, calendar, and feed reader
+  - Advanced tab management and workspace organization
+  - Built-in ad blocker and privacy features
+  - Chromium-based with extensive customization options
+dependencies: []
+install:
+  script: |
+    echo "Installing Vivaldi..."
+    brew install --cask vivaldi
+validate:
+  script: |
+    brew list --cask | grep -q "vivaldi" || ls /Applications/ | grep -q "Vivaldi.app"
+configure:
+  script: |
+    echo "Vivaldi configuration complete"
+    echo "Launch Vivaldi and customize your browsing experience"
+    echo "Key features to explore:"
+    echo "- Tab stacking and workspaces"
+    echo "- Built-in email client and calendar"
+    echo "- Customizable UI and themes"
+    echo "- Privacy and security settings"
+uninstall:
+  script: |
+    echo "Uninstalling Vivaldi..."
+    brew uninstall --cask vivaldi

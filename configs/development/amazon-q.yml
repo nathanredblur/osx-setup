@@ -1,0 +1,99 @@
+id: "amazon-q"
+name: "Amazon Q"
+description: "AWS AI-powered coding assistant"
+type: "direct_download_dmg"
+category: "Development"
+selected_by_default: false
+requires_license: false
+tags:
+  - ai
+  - coding-assistant
+  - aws
+  - cloud
+  - development
+url: "https://aws.amazon.com/q/"
+notes: |
+  - AI-powered coding assistant by AWS
+  - Code generation and explanation capabilities
+  - Integration with AWS services and documentation
+  - Real-time code suggestions and completions
+  - Support for multiple programming languages
+  - Free tier available with AWS account
+dependencies: []
+install:
+  script: |
+    echo "Installing Amazon Q..."
+    echo "Note: Amazon Q is available through AWS Console or IDE extensions"
+    echo ""
+    echo "Installation options:"
+    echo "1. VS Code Extension: Search 'Amazon Q' in VS Code Extensions"
+    echo "2. JetBrains IDEs: Install Amazon Q plugin"
+    echo "3. AWS Console: Access through AWS Management Console"
+    echo "4. AWS CLI integration available"
+    echo ""
+    echo "For VS Code extension:"
+    if command -v code &> /dev/null; then
+      echo "Installing Amazon Q extension for VS Code..."
+      code --install-extension amazonwebservices.amazon-q-vscode
+    else
+      echo "VS Code not found. Install VS Code first or install extension manually"
+    fi
+    echo ""
+    echo "Amazon Q installation initiated"
+validate:
+  script: |
+    # Check if VS Code extension is installed
+    if command -v code &> /dev/null; then
+      if code --list-extensions | grep -q "amazonwebservices.amazon-q-vscode"; then
+        echo "Amazon Q VS Code extension is installed"
+        exit 0
+      fi
+    fi
+
+    # Check if user has AWS CLI configured (indicates potential Q usage)
+    if command -v aws &> /dev/null && aws configure list &> /dev/null; then
+      echo "AWS CLI configured - Amazon Q can be accessed via AWS Console"
+      exit 0
+    fi
+
+    # If neither found, consider not installed
+    exit 1
+configure:
+  script: |
+    echo "Amazon Q configuration complete"
+    echo ""
+    echo "Getting started with Amazon Q:"
+    echo "1. Sign in to your AWS account"
+    echo "2. Navigate to Amazon Q in the AWS Console"
+    echo "3. Or use the installed IDE extension"
+    echo ""
+    echo "Key features:"
+    echo "- AI-powered code generation and completion"
+    echo "- Code explanation and documentation"
+    echo "- AWS service integration and guidance"
+    echo "- Multi-language support (Python, Java, JavaScript, etc.)"
+    echo "- Security and best practices recommendations"
+    echo "- Real-time coding assistance"
+    echo ""
+    echo "IDE Integration:"
+    echo "- VS Code: Amazon Q extension installed"
+    echo "- JetBrains IDEs: Install Amazon Q plugin"
+    echo "- AWS Cloud9: Built-in integration"
+    echo ""
+    echo "Usage tips:"
+    echo "- Ask questions about AWS services"
+    echo "- Request code generation for specific tasks"
+    echo "- Get explanations for complex code"
+    echo "- Optimize code for AWS best practices"
+    echo ""
+    echo "Note: Requires AWS account for full functionality"
+    echo "Free tier includes basic features"
+uninstall:
+  script: |
+    echo "Uninstalling Amazon Q..."
+    if command -v code &> /dev/null; then
+      echo "Removing Amazon Q VS Code extension..."
+      code --uninstall-extension amazonwebservices.amazon-q-vscode
+    fi
+    echo "Amazon Q extensions removed"
+    echo "Note: AWS Console access remains available"

@@ -1,0 +1,56 @@
+id: "adguard"
+name: "AdGuard"
+description: "Advanced ad blocker and privacy protection"
+type: "mas"
+category: "Security-Privacy"
+selected_by_default: false
+requires_license: true
+tags:
+  - ad-blocker
+  - privacy
+  - security
+  - tracking-protection
+  - dns
+url: "https://adguard.com/"
+notes: |
+  - System-wide ad blocking and privacy protection
+  - Blocks ads in all browsers and applications
+  - Advanced tracking and malware protection
+  - Custom DNS filtering and family protection
+  - Stealth mode for enhanced privacy
+  - Free version available, premium for full features
+dependencies: ["mas_cli"]
+install:
+  script: |
+    echo "Installing AdGuard..."
+    mas install 1440147259
+validate:
+  script: |
+    mas list | grep -q "AdGuard" || ls /Applications/ | grep -q "AdGuard.app"
+configure:
+  script: |
+    echo "AdGuard configuration complete"
+    echo "Launch AdGuard and configure protection settings"
+    echo ""
+    echo "Key features:"
+    echo "- System-wide ad blocking (not just browsers)"
+    echo "- Tracking and malware protection"
+    echo "- DNS filtering and custom filters"
+    echo "- Stealth mode for enhanced privacy"
+    echo "- Parental controls and safe browsing"
+    echo "- Statistics and detailed logging"
+    echo ""
+    echo "Setup steps:"
+    echo "1. Grant necessary permissions in System Preferences"
+    echo "2. Configure ad blocking filters"
+    echo "3. Set up DNS protection"
+    echo "4. Enable stealth mode if desired"
+    echo "5. Customize blocking rules"
+    echo ""
+    echo "Note: AdGuard offers a free version with basic features"
+    echo "Upgrade to premium for advanced protection and features"
+    echo "You may need to configure browser extensions for optimal protection"
+uninstall:
+  script: |
+    echo "Uninstalling AdGuard..."
+    mas uninstall 1440147259

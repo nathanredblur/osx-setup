@@ -1,0 +1,57 @@
+id: "audacity"
+name: "Audacity"
+description: "Free, open-source audio editor"
+type: "brew_cask"
+category: "Media"
+selected_by_default: false
+requires_license: false
+tags:
+  - audio-editor
+  - recording
+  - editing
+  - podcast
+  - music
+url: "https://www.audacityteam.org/"
+notes: |
+  - Multi-track audio editor with extensive plugin support
+  - Free and open-source audio editing software
+  - Supports WAV, AIFF, MP3, OGG, and many other formats
+  - Advanced editing features like noise reduction and effects
+  - Plugin support for VST, LV2, and Nyquist effects
+  - Cross-platform with large community support
+dependencies: []
+install:
+  script: |
+    echo "Installing Audacity..."
+    brew install --cask audacity
+validate:
+  script: |
+    brew list --cask | grep -q "audacity" || ls /Applications/ | grep -q "Audacity.app"
+configure:
+  script: |
+    echo "Audacity configuration complete"
+    echo "Launch Audacity to start audio editing"
+    echo ""
+    echo "Key features:"
+    echo "- Multi-track recording and editing"
+    echo "- Wide format support (WAV, MP3, FLAC, etc.)"
+    echo "- Built-in effects and filters"
+    echo "- Noise reduction and audio cleanup tools"
+    echo "- Spectrogram view for detailed analysis"
+    echo "- Plugin support for extended functionality"
+    echo ""
+    echo "Getting started:"
+    echo "1. Set up your audio input device in Preferences"
+    echo "2. Configure recording quality and format"
+    echo "3. Learn basic editing shortcuts"
+    echo "4. Explore built-in effects and generators"
+    echo ""
+    echo "Common use cases:"
+    echo "- Podcast recording and editing"
+    echo "- Music production and mastering"
+    echo "- Audio cleanup and restoration"
+    echo "- Converting between audio formats"
+uninstall:
+  script: |
+    echo "Uninstalling Audacity..."
+    brew uninstall --cask audacity

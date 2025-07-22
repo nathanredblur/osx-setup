@@ -1,0 +1,59 @@
+id: "steam"
+name: "Steam"
+description: "Digital game distribution platform"
+type: "brew_cask"
+category: "Media"
+selected_by_default: false
+requires_license: false
+tags:
+  - gaming
+  - games
+  - distribution
+  - community
+  - social
+url: "https://store.steampowered.com/"
+notes: |
+  - Gaming platform with library management and community features
+  - Largest digital game distribution platform
+  - Social features, achievements, and community
+  - Steam Workshop for user-generated content
+  - In-home streaming and remote play capabilities
+  - Free to use, pay for games
+dependencies: []
+install:
+  script: |
+    echo "Installing Steam..."
+    brew install --cask steam
+validate:
+  script: |
+    brew list --cask | grep -q "steam" || ls /Applications/ | grep -q "Steam.app"
+configure:
+  script: |
+    echo "Steam configuration complete"
+    echo "Launch Steam and create an account or sign in"
+    echo ""
+    echo "Key features:"
+    echo "- Massive library of games"
+    echo "- Automatic game updates and cloud saves"
+    echo "- Friends, chat, and community features"
+    echo "- Steam Workshop for mods and user content"
+    echo "- In-home streaming and remote play"
+    echo "- Steam Deck compatibility"
+    echo ""
+    echo "Getting started:"
+    echo "1. Create a Steam account or sign in"
+    echo "2. Set up your profile and privacy settings"
+    echo "3. Add friends and join communities"
+    echo "4. Browse and purchase games"
+    echo "5. Configure game settings and library organization"
+    echo ""
+    echo "Useful features:"
+    echo "- Steam sales and seasonal events"
+    echo "- Family sharing for sharing games"
+    echo "- Steam Guard for account security"
+    echo "- Big Picture mode for TV gaming"
+uninstall:
+  script: |
+    echo "Uninstalling Steam..."
+    brew uninstall --cask steam
+    echo "Note: Game library and saves may remain in ~/Library/Application Support/Steam"

@@ -1,0 +1,59 @@
+id: "xcode_cli"
+name: "Xcode Command Line Tools"
+description: "Essential development tools for macOS"
+type: "shell_script"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - development
+  - essential
+  - compiler
+  - tools
+  - apple
+url: "https://developer.apple.com/xcode/"
+notes: |
+  - Required for most development tasks on macOS
+  - Includes compilers, debuggers, and other development utilities
+  - Installed via xcode-select --install command
+  - No App Store account required for command line tools
+  - Essential dependency for Homebrew and other development tools
+dependencies: []
+install:
+  script: |
+    echo "Installing Xcode Command Line Tools..."
+
+    # Check if already installed
+    if xcode-select -p &> /dev/null; then
+        echo "Xcode Command Line Tools are already installed"
+        exit 0
+    fi
+
+    echo "Installing Xcode Command Line Tools (this may take a while)..."
+    xcode-select --install
+
+    # Wait for installation to complete
+    echo "Waiting for installation to complete..."
+    echo "Please click 'Install' in the dialog that appears"
+
+    # Wait until tools are installed
+    while ! xcode-select -p &> /dev/null; do
+        sleep 5
+        echo "Still waiting for installation..."
+    done
+
+    echo "Xcode Command Line Tools installation completed"
+validate:
+  script: |
+    xcode-select -p &> /dev/null
+configure:
+  script: |
+    echo "Xcode Command Line Tools configuration complete"
+    echo "Tools installed at: $(xcode-select -p)"
+    echo "You can now use git, clang, make, and other development tools"
+uninstall:
+  script: |
+    echo "To uninstall Xcode Command Line Tools:"
+    echo "sudo rm -rf $(xcode-select -p)"
+    echo "sudo xcode-select --reset"
+    echo "Note: This will remove development capabilities from your system"

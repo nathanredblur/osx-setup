@@ -1,0 +1,78 @@
+id: "stremio"
+name: "Stremio"
+description: "Modern media player for video content"
+type: "brew_cask"
+category: "Media"
+selected_by_default: false
+requires_license: false
+tags:
+  - media-player
+  - streaming
+  - video
+  - movies
+  - tv-shows
+  - add-ons
+url: "https://www.stremio.com/"
+notes: |
+  - Modern media center for movies, TV shows, and video content
+  - Extensible platform with add-on system
+  - Cross-platform synchronization of watchlists
+  - Support for various video formats and sources
+  - Clean, user-friendly interface
+  - Free to use with optional premium features
+dependencies: []
+install:
+  script: |
+    echo "Installing Stremio..."
+    brew install --cask stremio
+validate:
+  script: |
+    brew list --cask | grep -q "stremio" || ls /Applications/ | grep -q "Stremio.app"
+configure:
+  script: |
+    echo "Stremio configuration complete"
+    echo "Launch Stremio to set up your media center"
+    echo ""
+    echo "Key features:"
+    echo "- Unified interface for all video content"
+    echo "- Add-on system for extending functionality"
+    echo "- Cross-device synchronization"
+    echo "- Calendar view for TV show episodes"
+    echo "- Watch progress tracking"
+    echo "- High-quality video streaming"
+    echo ""
+    echo "Getting started:"
+    echo "1. Launch Stremio from Applications"
+    echo "2. Create a Stremio account for sync features"
+    echo "3. Browse the add-on catalog"
+    echo "4. Install add-ons for your preferred content sources"
+    echo "5. Start building your library and watchlists"
+    echo ""
+    echo "Content organization:"
+    echo "- Library: Your saved movies and shows"
+    echo "- Board: Personalized content recommendations"
+    echo "- Calendar: Upcoming episodes and releases"
+    echo "- Search: Find content across all add-ons"
+    echo ""
+    echo "Popular add-ons:"
+    echo "- Official YouTube add-on for YouTube content"
+    echo "- Netflix add-on for Netflix originals info"
+    echo "- IMDB lists for movie recommendations"
+    echo "- Podcast add-ons for audio content"
+    echo ""
+    echo "Features:"
+    echo "- Hardware acceleration for smooth playback"
+    echo "- Subtitle support with multiple languages"
+    echo "- Chromecast and AirPlay streaming support"
+    echo "- Dark and light theme options"
+    echo "- Keyboard shortcuts for media control"
+    echo ""
+    echo "Privacy note:"
+    echo "- Stremio respects user privacy"
+    echo "- No ads in the core application"
+    echo "- Content depends on installed add-ons"
+    echo "- Always use legal content sources"
+uninstall:
+  script: |
+    echo "Uninstalling Stremio..."
+    brew uninstall --cask stremio

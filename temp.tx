@@ -1,0 +1,59 @@
+awscli: Official Amazon AWS command-line interface
+cmake: Cross-platform make
+docutils: Text processing system for reStructuredText
+duti: Select default apps for documents and URL schemes on macOS
+ffmpeg: Play, record, convert, and stream audio and video
+git: Distributed revision control system
+gobject-introspection: Generate introspection data for GObject libraries
+graphviz: Graph visualization software from AT&T and Bell Labs
+guile: GNU Ubiquitous Intelligent Language for Extensions
+mackup: Keep your Mac's application settings in sync
+mas: Mac App Store command-line interface
+mydumper: MySQL logical backup tool
+mysql: Open source relational database management system
+mysql-client: Open source relational database management system
+neovim: Ambitious Vim-fork focused on extensibility and agility
+nginx: HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server
+nodenv: Manage multiple NodeJS versions
+overmind: Process manager for Procfile-based applications and tmux
+phrase-cli: Tool to interact with the Phrase API
+pipx: Execute binaries from Python packages in isolated environments
+postgresql@11: Object-relational database system
+postgresql@14: Object-relational database system
+pyenv: Python version management
+python-yq: Command-line YAML and XML processor that wraps jq
+python@3.10: Interpreted, interactive, object-oriented programming language
+python@3.11: Interpreted, interactive, object-oriented programming language
+python@3.9: Interpreted, interactive, object-oriented programming language
+rbenv: Ruby version manager
+rclone: Rsync for cloud storage
+redis: Persistent key-value database, with built-in net interface
+rename: Perl-powered file rename script with many helpful built-ins
+ripgrep: Search tool like grep and The Silver Searcher
+shared-mime-info: Database of common MIME types
+telnet: User interface to the TELNET protocol
+yt-dlp: Feature-rich command-line audio/video downloader
+
+awscli: Official Amazon AWS command-line interface
+cairo: Vector graphics library with cross-device output support
+cmake: Cross-platform make
+docutils: Text processing system for reStructuredText
+duti: Select default apps for documents and URL schemes on macOS
+git: Distributed revision control system
+libb2: Secure hashing function
+mas: Mac App Store command-line interface
+mydumper: MySQL logical backup tool
+mysql: Open source relational database management system
+mysql-client: Open source relational database management system
+nodenv-nvmrc: Pick a node version from .nvmrc
+nodenv-update: Update nodenv plugins not installed with Homebrew
+overmind: Process manager for Procfile-based applications and tmux
+pyenv-virtualenv: Pyenv plugin to manage virtualenv
+python-yq: Command-line YAML and XML processor that wraps jq
+python@3.11: Interpreted, interactive, object-oriented programming language
+rbenv: Ruby version manager
+redis: Persistent key-value database, with built-in net interface
+shared-mime-info: Database of common MIME types
+tcl-tk@8: Tool Command Language
+tcpflow: TCP/IP packet demultiplexer
+tinyproxy: HTTP/HTTPS proxy for POSIX systems

@@ -1,59 +1,65 @@
-awscli: Official Amazon AWS command-line interface
-cmake: Cross-platform make
-docutils: Text processing system for reStructuredText
-duti: Select default apps for documents and URL schemes on macOS
-ffmpeg: Play, record, convert, and stream audio and video
-git: Distributed revision control system
-gobject-introspection: Generate introspection data for GObject libraries
-graphviz: Graph visualization software from AT&T and Bell Labs
-guile: GNU Ubiquitous Intelligent Language for Extensions
-mackup: Keep your Mac's application settings in sync
-mas: Mac App Store command-line interface
-mydumper: MySQL logical backup tool
-mysql: Open source relational database management system
-mysql-client: Open source relational database management system
-neovim: Ambitious Vim-fork focused on extensibility and agility
-nginx: HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server
-nodenv: Manage multiple NodeJS versions
-overmind: Process manager for Procfile-based applications and tmux
-phrase-cli: Tool to interact with the Phrase API
-pipx: Execute binaries from Python packages in isolated environments
-postgresql@11: Object-relational database system
-postgresql@14: Object-relational database system
-pyenv: Python version management
-python-yq: Command-line YAML and XML processor that wraps jq
-python@3.10: Interpreted, interactive, object-oriented programming language
-python@3.11: Interpreted, interactive, object-oriented programming language
-python@3.9: Interpreted, interactive, object-oriented programming language
-rbenv: Ruby version manager
-rclone: Rsync for cloud storage
-redis: Persistent key-value database, with built-in net interface
-rename: Perl-powered file rename script with many helpful built-ins
-ripgrep: Search tool like grep and The Silver Searcher
-shared-mime-info: Database of common MIME types
-telnet: User interface to the TELNET protocol
-yt-dlp: Feature-rich command-line audio/video downloader
+# List organized by categories
 
-awscli: Official Amazon AWS command-line interface
-cairo: Vector graphics library with cross-device output support
-cmake: Cross-platform make
-docutils: Text processing system for reStructuredText
+## System Utilities
+1. alt-tab: (AltTab) Enable Windows-like alt-tab
+2. bartender: (Bartender) Menu bar icon organiser
+3. blackhole-2ch: (BlackHole 2ch) Virtual Audio Driver
+4. finicky: (Finicky) Utility for customizing which browser to start
+5. keycue: (KeyCue) Finds, learns and remembers keyboard shortcuts
+6. monitorcontrol: (MonitorControl) Tool to control external monitor brightness & volume
+7. raycast: (Raycast) Control your tools with a few keystrokes
+8. rectangle: (Rectangle) Move and resize windows using keyboard shortcuts or snap areas
+9. reflex-app: (Reflex) Media key forwarder for Music (iTunes) and Spotify
+10. soundsource: (SoundSource) Sound and audio controller
+11. time-out: (Time Out) Customizable timing of breaks
+
+## Browsers and Communication
+1. discord: (Discord) Voice and text chat software
+2. google-chrome: (Google Chrome) Web browser
+3. microsoft-edge: (Microsoft Edge) Multi-platform web browser
+4. slack: (Slack) Team communication and collaboration software
+5. telegram: (Telegram for macOS) Messaging app with a focus on speed and security
+6. vivaldi: (Vivaldi) Web browser with built-in email client focusing on customization and control
+7. whatsapp: (WhatsApp) Native desktop client for WhatsApp
+
+## Storage and Files
+1. betterzip: (BetterZip) Utility to create and modify archives
+2. google-drive: (Google Drive) Client for the Google Drive storage service
+4. onedrive: (OneDrive) Cloud storage client
+
+
+## Development and Programming
+3. git: Distributed revision control system
+4. iterm2: (iTerm2) Terminal emulator as alternative to Apple's Terminal app
+6. sourcetree: (Atlassian SourceTree) Graphical client for Git version control
+8. visual-studio-code: (Microsoft Visual Studio Code, VS Code) Open-source code editor
+
+## Multimedia and Graphics
+2. cleanshot: (CleanShot) Screen capturing tool
+5. spotify: (Spotify) Music streaming service
+6. vlc: (VLC media player) Multimedia player
+8. yt-dlp: Feature-rich command-line audio/video downloader
+   require tambien https://chromewebstore.google.com/detail/the-stream-detector/iakkmkmhhckcmoiibcfjnooibphlobak
+
+## Maintenance and Security Utilities
+1. adguard: (AdGuard) Stand alone ad blocker
+2. cleanmymac: (CleanMyMac) Tool to remove unnecessary files and folders from disk
+
+## Text and Documentation Tools
+4. mas: Mac App Store command-line interface
+6. rename: Perl-powered file rename script with many helpful built-ins
+7. ripgrep: Search tool like grep and The Silver Searcher
+9. nginx: HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server
+
+
+future improvements
+mackup: Keep your Mac's application settings in sync
+https://github.com/lra/mackup?tab=readme-ov-file
+
+rclone: Rsync for cloud storage
+
+find docker alternative??
+ docker-desktop: (Docker Desktop, Docker Community Edition, Docker CE) App to build and share containerised applications and microservices
+
+settings
 duti: Select default apps for documents and URL schemes on macOS
-git: Distributed revision control system
-libb2: Secure hashing function
-mas: Mac App Store command-line interface
-mydumper: MySQL logical backup tool
-mysql: Open source relational database management system
-mysql-client: Open source relational database management system
-nodenv-nvmrc: Pick a node version from .nvmrc
-nodenv-update: Update nodenv plugins not installed with Homebrew
-overmind: Process manager for Procfile-based applications and tmux
-pyenv-virtualenv: Pyenv plugin to manage virtualenv
-python-yq: Command-line YAML and XML processor that wraps jq
-python@3.11: Interpreted, interactive, object-oriented programming language
-rbenv: Ruby version manager
-redis: Persistent key-value database, with built-in net interface
-shared-mime-info: Database of common MIME types
-tcl-tk@8: Tool Command Language
-tcpflow: TCP/IP packet demultiplexer
-tinyproxy: HTTP/HTTPS proxy for POSIX systems

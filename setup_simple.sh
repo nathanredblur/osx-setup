@@ -29,7 +29,11 @@ install_xcode_tools() {
     log_info "Installing Xcode Command Line Tools..."
     log_warn "A dialog will appear - click 'Install' to continue"
     
-    xcode-select --install
+    # xcode-select --install
+    # This temporary file prompts the 'softwareupdate' utility to list the Command Line Tools
+    touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
+    PROD=$(softwareupdate -l | grep "\*.*Command Line" | tail -n 1 | sed 's/^[^C]* //')
+    softwareupdate -i "$PROD" --verbose;
     
     log_info "Waiting for Xcode Command Line Tools installation..."
     log_info "This may take several minutes depending on your connection"
@@ -149,7 +153,7 @@ main() {
   
   # Install essential tools
   install_xcode_tools
-  install_homebrew
+  #install_homebrew
   
   # Verify and setup Python environment
   verify_python

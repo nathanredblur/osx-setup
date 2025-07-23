@@ -191,6 +191,15 @@ class InstallationEngine:
         """
         self.logger.info(f"Starting batch {operation} for {len(selected_items)} items...")
         
+        # Execute "start" special configuration if this is an install operation
+        if operation == "install" and "start" in configurations:
+            self.logger.info("🚀 Executing initialization (start configuration)...")
+            try:
+                start_result = self._handle_install_operation(configurations["start"])
+                self.logger.info(f"Start configuration completed: {start_result.result}")
+            except Exception as e:
+                self.logger.warning(f"Start configuration failed (continuing anyway): {e}")
+        
         # Validate configurations first
         errors, warnings = self.validator.validate_all(configurations)
         if errors:
@@ -267,6 +276,30 @@ class InstallationEngine:
                 self.failed_items.add(item_id)
         
         self.logger.info(f"Batch {operation} completed. Results: {self._get_results_summary(results)}")
+        
+        # Execute "end" special configuration if this is an install operation
+        if operation == "install" and "end" in configurations:
+            self.logger.info("🏁 Executing finalization (end configuration)...")
+            try:
+                end_result = self._handle_install_operation(configurations["end"])
+                self.logger.info(f"End configuration completed: {end_result.result}")
+                # Add end result to the results list
+                results.append(end_result)
+            except Exception as e:
+                self.logger.warning(f"End configuration failed: {e}")
+                # Still add a failed result to the list
+                end_result = ExecutionResult(
+                    operation="install",
+                    item_id="end",
+                    result=OperationResult.FAILED,
+                    return_code=1,
+                    stdout="",
+                    stderr=str(e),
+                    duration=0.0,
+                    error_message=str(e)
+                )
+                results.append(end_result)
+        
         return results
     
     def _handle_install_operation(self, item: ConfigItem) -> ExecutionResult:
@@ -322,22 +355,27 @@ class InstallationEngine:
         Returns:
             List of item IDs to process including dependencies
         """
-        items_needed = set(selected_items)
+        # Filter out special configurations from selected items (they are handled automatically)
+        special_config_ids = {"start", "end"}
+        filtered_selected_items = [item for item in selected_items if item not in special_config_ids]
+        
+        items_needed = set(filtered_selected_items)
         
         # Add all dependencies recursively
         def add_dependencies(item_id: str):
-            if item_id in configurations:
+            if item_id in configurations and item_id not in special_config_ids:
                 item = configurations[item_id]
                 for dep_id in item.dependencies:
-                    if dep_id not in items_needed:
+                    if dep_id not in items_needed and dep_id not in special_config_ids:
                         items_needed.add(dep_id)
                         add_dependencies(dep_id)
         
-        for item_id in selected_items:
+        for item_id in filtered_selected_items:
             add_dependencies(item_id)
         
-        # Return in dependency order
-        return [item_id for item_id in dependency_order if item_id in items_needed]
+        # Return in dependency order, excluding special configurations
+        return [item_id for item_id in dependency_order 
+                if item_id in items_needed and item_id not in special_config_ids]
     
     def _dependencies_satisfied(self, 
                                item: ConfigItem, 

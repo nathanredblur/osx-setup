@@ -76,10 +76,13 @@ class ConfigLoader:
         self.configurations.clear()
         self.categories.clear()
         
-        # Recursively find all .yml files
-        yml_files = list(self.configs_dir.rglob("*.yml"))
+        # Load special configurations first from _configs.yml
+        special_configs_count = self._load_special_configs()
         
-        print(f"Found {len(yml_files)} configuration files")
+        # Recursively find all .yml files (excluding _configs.yml)
+        yml_files = [f for f in self.configs_dir.rglob("*.yml") if f.name != "_configs.yml"]
+        
+        print(f"Found {len(yml_files)} configuration files + special configs")
         
         for yml_file in yml_files:
             try:
@@ -102,6 +105,63 @@ class ConfigLoader:
         print(f"Found categories: {sorted(self.categories)}")
         
         return self.configurations
+    
+    def _load_special_configs(self) -> int:
+        """
+        Load special configurations from _configs.yml file.
+        
+        Returns:
+            Number of special configurations loaded
+        """
+        special_file = self.configs_dir / "_configs.yml"
+        if not special_file.exists():
+            print("No special configurations file (_configs.yml) found")
+            return 0
+        
+        try:
+            with open(special_file, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+            
+            if not data:
+                print("Warning: Empty special configurations file")
+                return 0
+            
+            loaded_count = 0
+            
+            # Load each special configuration
+            for config_id, script_content in data.items():
+                if isinstance(script_content, str):
+                    # Create a ConfigItem for the special configuration
+                    config_item = ConfigItem(
+                        id=config_id,
+                        name=f"Setup {config_id.title()}",
+                        description=f"Special configuration that runs {config_id} installation process",
+                        type="shell_script",
+                        category="Special",
+                        selected_by_default=False,
+                        requires_license=False,
+                        tags=["special", config_id],
+                        url="",
+                        notes=f"Automatically handled {config_id} configuration",
+                        dependencies=[],
+                        install_script=script_content,
+                        validate_script="exit 0",  # Always valid for special configs
+                        configure_script=None,
+                        uninstall_script=None,
+                        file_path=str(special_file),
+                        config_dir=str(self.configs_dir)
+                    )
+                    
+                    self.configurations[config_id] = config_item
+                    # Don't add "Special" to categories - these configs are handled automatically
+                    loaded_count += 1
+                    print(f"Loaded special configuration: {config_id}")
+                    
+            return loaded_count
+            
+        except Exception as e:
+            print(f"Error loading special configurations: {e}")
+            return 0
     
     def _load_single_config(self, yml_file: Path) -> Optional[ConfigItem]:
         """

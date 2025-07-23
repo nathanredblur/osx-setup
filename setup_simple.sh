@@ -27,16 +27,21 @@ install_xcode_tools() {
     log_success "Xcode Command Line Tools already installed at: $(xcode-select -p)"
   else
     log_info "Installing Xcode Command Line Tools..."
-    log_warn "A dialog will appear - click 'Install' to continue"
+    log_warn "This may take several minutes depending on your connection"
     
     # xcode-select --install
-    # This temporary file prompts the 'softwareupdate' utility to list the Command Line Tools
+    # https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh
+    # https://github.com/why-jay/osx-init/blob/master/install.sh
     touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
-    PROD=$(softwareupdate -l | grep "\*.*Command Line" | tail -n 1 | sed 's/^[^C]* //')
+    PROD=$(softwareupdate -l |
+      grep "\*.*Command Line" |
+      head -n 1 | awk -F"*" '{print $2}' |
+      sed -e 's/^ *//' |
+      tr -d '\n')
     softwareupdate -i "$PROD" --verbose;
     
     log_info "Waiting for Xcode Command Line Tools installation..."
-    log_info "This may take several minutes depending on your connection"
+    
     
     # Wait for installation to complete
     while ! xcode-select -p &>/dev/null; do

@@ -30,13 +30,11 @@ from utils.validators import ConfigValidator
 from utils.installer import InstallationEngine
 from utils.logger import MacSnapLogger, get_logger, close_logger
 from ui.layout import run_macsnap_ui
-
-# Application metadata
-APP_NAME = "MacSnap Setup"
-APP_VERSION = "1.0.0"
-APP_DESCRIPTION = "Interactive terminal application for macOS system setup and software installation"
-REQUIRED_MACOS_VERSION = (10, 15)  # macOS 10.15 Catalina minimum
-CONFIGS_DIR = "configs"
+from constants import (
+    APP_NAME, APP_VERSION, APP_DESCRIPTION, 
+    REQUIRED_MACOS_VERSION, REQUIRED_PYTHON_VERSION,
+    CONFIGS_DIR
+)
 
 class MacSnapApp:
     """
@@ -156,8 +154,8 @@ class MacSnapApp:
             self.logger.warning(f"Could not determine macOS version: {e}")
         
         # Check Python version
-        if sys.version_info < (3, 8):
-            self.logger.error("MacSnap Setup requires Python 3.8 or later")
+        if sys.version_info < REQUIRED_PYTHON_VERSION:
+            self.logger.error(f"MacSnap Setup requires Python {'.'.join(map(str, REQUIRED_PYTHON_VERSION))} or later")
             self.logger.error(f"Current version: {sys.version}")
             return False
         

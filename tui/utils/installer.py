@@ -17,6 +17,7 @@ from typing import Dict, List, Set, Optional, Tuple, Any, Callable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from constants import DEFAULT_SCRIPT_TIMEOUT
 
 from .config_loader import ConfigItem
 from .validators import ConfigValidator
@@ -434,7 +435,7 @@ class InstallationEngine:
                     env=env,
                     capture_output=True,
                     text=True,
-                    timeout=300  # 5 minute timeout
+                    timeout=DEFAULT_SCRIPT_TIMEOUT
                 )
                 
                 duration = time.time() - start_time
@@ -478,7 +479,7 @@ class InstallationEngine:
                 result=OperationResult.FAILED,
                 return_code=124,  # Timeout exit code
                 stdout="",
-                stderr="Script execution timed out after 5 minutes",
+                stderr=f"Script execution timed out after {DEFAULT_SCRIPT_TIMEOUT//60} minutes",
                 duration=duration,
                 error_message="Execution timeout"
             )

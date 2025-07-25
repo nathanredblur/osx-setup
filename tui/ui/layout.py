@@ -740,14 +740,15 @@ def run_macsnap_ui(verbose: bool = False) -> bool:
     """
     try:
         from utils.config_loader import load_configs
+        from constants import CONFIGS_DIR
         import time
         import sys
         
         # Load configurations
-        loader = load_configs('configs')
+        loader = load_configs(CONFIGS_DIR)
         
         if not loader.configurations:
-            print("No configurations found. Please check the configs/ directory.")
+            print(f"No configurations found. Please check the {CONFIGS_DIR}/ directory.")
             return False
         
         # Create and run the Textual app

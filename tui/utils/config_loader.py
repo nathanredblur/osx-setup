@@ -13,6 +13,7 @@ import yaml
 from pathlib import Path
 from typing import Dict, List, Set, Optional, Any
 from dataclasses import dataclass
+from constants import CONFIGS_DIR, SPECIAL_CONFIGS_FILE
 
 
 @dataclass
@@ -47,7 +48,7 @@ class ConfigItem:
 class ConfigLoader:
     """Loads and manages configuration files from the configs/ directory."""
     
-    def __init__(self, configs_dir: str = "configs"):
+    def __init__(self, configs_dir: str = CONFIGS_DIR):
         """
         Initialize the ConfigLoader.
         
@@ -79,8 +80,8 @@ class ConfigLoader:
         # Load special configurations first from _configs.yml
         special_configs_count = self._load_special_configs()
         
-        # Recursively find all .yml files (excluding _configs.yml)
-        yml_files = [f for f in self.configs_dir.rglob("*.yml") if f.name != "_configs.yml"]
+        # Recursively find all .yml files (excluding special config file)
+        yml_files = [f for f in self.configs_dir.rglob("*.yml") if f.name != SPECIAL_CONFIGS_FILE]
         
         print(f"Found {len(yml_files)} configuration files + special configs")
         
@@ -113,9 +114,9 @@ class ConfigLoader:
         Returns:
             Number of special configurations loaded
         """
-        special_file = self.configs_dir / "_configs.yml"
+        special_file = self.configs_dir / SPECIAL_CONFIGS_FILE
         if not special_file.exists():
-            print("No special configurations file (_configs.yml) found")
+            print(f"No special configurations file ({SPECIAL_CONFIGS_FILE}) found")
             return 0
         
         try:
@@ -358,7 +359,7 @@ class ConfigLoader:
 
 
 # Convenience function for quick loading
-def load_configs(configs_dir: str = "configs") -> ConfigLoader:
+def load_configs(configs_dir: str = CONFIGS_DIR) -> ConfigLoader:
     """
     Quick function to load configurations.
     

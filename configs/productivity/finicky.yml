@@ -26,38 +26,38 @@ validate: |
   brew list --cask | grep -q "finicky" || ls /Applications/ | grep -q "Finicky.app"
 configure: |
   echo "Configuring Finicky..."
-  
+
   # Create basic configuration
   CONFIG_FILE="$HOME/.finicky.js"
-  
+
   if [ ! -f "$CONFIG_FILE" ]; then
       cat > "$CONFIG_FILE" << 'EOF'
-module.exports = {
-  defaultBrowser: "Safari",
-  handlers: [
-  {
-    // Open Gmail in Chrome
-    match: /^https:\/\/mail\.google\.com/,
-    browser: "Google Chrome"
-  },
-  {
-    // Open GitHub in preferred browser
-    match: /github\.com/,
-    browser: "Google Chrome"
-  },
-  {
-    // Open work domains in specific browser
-    match: /company\.com/,
-    browser: "Microsoft Edge"
-  }
-  ]
-};
-EOF
+  module.exports = {
+    defaultBrowser: "Safari",
+    handlers: [
+    {
+      // Open Gmail in Chrome
+      match: /^https:\/\/mail\.google\.com/,
+      browser: "Google Chrome"
+    },
+    {
+      // Open GitHub in preferred browser
+      match: /github\.com/,
+      browser: "Google Chrome"
+    },
+    {
+      // Open work domains in specific browser
+      match: /company\.com/,
+      browser: "Microsoft Edge"
+    }
+    ]
+  };
+  EOF
       echo "Created basic Finicky configuration at ~/.finicky.js"
   else
       echo "Finicky configuration already exists at ~/.finicky.js"
   fi
-  
+
   echo "Finicky configuration complete"
   echo "Launch Finicky and set it as your default browser in System Preferences"
   echo ""
@@ -71,4 +71,4 @@ EOF
 uninstall: |
   echo "Uninstalling Finicky..."
   brew uninstall --cask finicky
-  echo "Note: Configuration file ~/.finicky.js will remain" 
+  echo "Note: Configuration file ~/.finicky.js will remain"

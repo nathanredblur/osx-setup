@@ -20,7 +20,7 @@ notes: |
   - Safe file deletion with preview capabilities
   - Simple and intuitive interface
   - Free utility from The Omni Group
-dependencies: []
+dependencies: ["mas_cli"]
 install: |
   echo "Installing OmniDiskSweeper..."
   echo "Note: OmniDiskSweeper is available on the Mac App Store"

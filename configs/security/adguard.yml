@@ -2,7 +2,7 @@ id: "adguard"
 name: "AdGuard"
 description: "Advanced ad blocker and privacy protection"
 type: "mas"
-category: "Security-Privacy"
+category: "Security"
 selected_by_default: false
 requires_license: true
 tags:

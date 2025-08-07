@@ -1,0 +1,62 @@
+id: "boltai"
+name: "BoltAI"
+description: "Beautiful & powerful native ChatGPT app for Mac with AI commands and inline assistance"
+type: "brew_cask"
+category: "Development"
+selected_by_default: false
+requires_license: true
+tags:
+  - ai-assistant
+  - chatgpt
+  - productivity
+  - development
+  - writing
+url: "https://boltai.com/"
+notes: |
+  Native macOS AI client that integrates ChatGPT directly into your workflow:
+
+  🚀 Key Features:
+  - Native macOS app with high performance
+  - AI Commands: Access AI from any text field with shortcuts
+  - AI Inline: Generate content directly within any app
+  - Custom AI Assistants with tailored behaviors
+  - Built-in prompt library for common tasks
+  - Support for multiple AI models (OpenAI, Anthropic, etc.)
+  - Secure API key storage in Apple Keychain
+  - Privacy-focused with automatic data redaction
+
+  📋 Requirements:
+  - macOS 12.0 or later
+  - OpenAI API key (separate from ChatGPT Plus)
+  - Internet connection for AI queries
+
+  💰 Licensing:
+  - Perpetual license with one year of free updates
+  - 30-day money-back guarantee
+  - Team licenses available
+
+  🔧 Perfect for developers, content creators, and professionals
+dependencies: []
+install: |
+  echo "Installing BoltAI..."
+  brew install --cask boltai
+validate: |
+  brew list --cask | grep -q "boltai" || ls /Applications/ | grep -q "BoltAI.app"
+configure: |
+  echo "BoltAI installation complete!"
+  echo ""
+  echo "🚀 Next steps:"
+  echo "1. Launch BoltAI from Applications"
+  echo "2. Set up your OpenAI API key (get it from https://platform.openai.com/api-keys)"
+  echo "3. Configure your preferences and shortcuts"
+  echo "4. Explore the built-in AI Commands and Prompt Library"
+  echo ""
+  echo "💡 Tips:"
+  echo "- Use AI Commands with keyboard shortcuts for quick access"
+  echo "- Create custom AI Assistants for specific tasks"
+  echo "- Enable AI Inline for seamless text generation"
+  echo "- Check the documentation at https://boltai.com/resources"
+uninstall: |
+  echo "Uninstalling BoltAI..."
+  brew uninstall --cask boltai
+  echo "Note: Your settings and API key will remain in macOS Keychain"

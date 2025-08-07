@@ -20,7 +20,7 @@ notes: |
   - Visual and audio break notifications
   - Optional forced breaks for health compliance
   - Free version available with paid Pro features
-dependencies: []
+dependencies: ["mas_cli"]
 install: |
   echo "Installing Time Out..."
   echo "Note: Time Out is available on the Mac App Store"

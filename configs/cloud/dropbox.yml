@@ -2,7 +2,7 @@ id: "dropbox"
 name: "Dropbox"
 description: "Cloud storage and file synchronization service"
 type: "brew_cask"
-category: "Cloud-Network"
+category: "Cloud"
 selected_by_default: false
 requires_license: false
 tags:

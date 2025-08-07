@@ -2,7 +2,7 @@ id: "cloudflare-warp"
 name: "Cloudflare WARP"
 description: "Fast, secure, and private VPN service"
 type: "brew_cask"
-category: "Cloud-Network"
+category: "Cloud"
 selected_by_default: false
 requires_license: false
 tags:

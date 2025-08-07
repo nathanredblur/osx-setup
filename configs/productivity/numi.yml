@@ -20,7 +20,7 @@ notes: |
   - Variables and custom functions support
   - Text-based input with instant results
   - Free with optional premium features
-dependencies: []
+dependencies: ["mas_cli"]
 install: |
   echo "Installing Numi..."
   echo "Note: Numi is available on the Mac App Store"

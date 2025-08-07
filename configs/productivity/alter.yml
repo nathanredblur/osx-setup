@@ -1,6 +1,6 @@
 id: "alterhq"
 name: "Alter"
-type: "custom"
+type: "shell_script"
 category: "Productivity"
 description: "Alter is a revolutionary tool that transforms your Mac into an intelligent assistant by understanding your digital activity and providing contextual suggestions and automation."
 url: "https://alterhq.com/"

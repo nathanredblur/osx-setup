@@ -2,7 +2,7 @@ id: "onedrive"
 name: "OneDrive"
 description: "Cloud storage client for Microsoft OneDrive"
 type: "brew_cask"
-category: "Cloud-Network"
+category: "Cloud"
 selected_by_default: false
 requires_license: false
 tags:

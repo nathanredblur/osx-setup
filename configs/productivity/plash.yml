@@ -20,7 +20,7 @@ notes: |
   - Customizable opacity and interaction settings
   - Built by renowned developer Sindre Sorhus
   - Free with optional paid features
-dependencies: []
+dependencies: ["mas_cli"]
 install: |
   echo "Installing Plash..."
   echo "Note: Plash is available on the Mac App Store"

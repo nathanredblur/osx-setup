@@ -20,7 +20,7 @@ notes: |
   - Customizable refresh intervals and categories
   - Minimal resource usage and clean interface
   - Free with optional premium features
-dependencies: []
+dependencies: ["mas_cli"]
 install: |
   echo "Installing irVue..."
   echo "Note: irVue is available on the Mac App Store"

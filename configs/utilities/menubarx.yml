@@ -19,7 +19,7 @@ notes: |
   - Customizable shortcuts and appearance
   - Privacy-focused with ad blocking capabilities
   - Free with optional premium features
-dependencies: []
+dependencies: ["mas_cli"]
 install: |
   echo "Installing MenuBarX..."
   echo "Note: MenuBarX is available on the Mac App Store"

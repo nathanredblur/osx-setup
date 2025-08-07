@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "total_categories": 11,
+    "generated_at": "2025-08-07T14:47:41.312240"
+  },
+  "categories": [
+    {
+      "id": "browsers",
+      "name": "Browsers",
+      "count": 6
+    },
+    {
+      "id": "cloud",
+      "name": "Cloud",
+      "count": 4
+    },
+    {
+      "id": "communication",
+      "name": "Communication",
+      "count": 4
+    },
+    {
+      "id": "core-utilities",
+      "name": "Core Utilities",
+      "count": 11
+    },
+    {
+      "id": "development",
+      "name": "Development",
+      "count": 15
+    },
+    {
+      "id": "media",
+      "name": "Media",
+      "count": 14
+    },
+    {
+      "id": "productivity",
+      "name": "Productivity",
+      "count": 26
+    },
+    {
+      "id": "security",
+      "name": "Security",
+      "count": 1
+    },
+    {
+      "id": "system-tweaks",
+      "name": "System Tweaks",
+      "count": 3
+    },
+    {
+      "id": "terminal",
+      "name": "Terminal",
+      "count": 5
+    },
+    {
+      "id": "utilities",
+      "name": "Utilities",
+      "count": 12
+    }
+  ]
+}

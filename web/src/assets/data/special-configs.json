@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "total_special_configs": 2,
+    "generated_at": "2025-08-07T14:47:41.314117",
+    "description": "MacSnap special configurations from _*.yml files"
+  },
+  "special_configs": {
+    "start": {
+      "id": "start",
+      "name": "Setup Start",
+      "description": "Special configuration that runs start installation process",
+      "type": "shell_script",
+      "category": "Special",
+      "tags": [
+        "special",
+        "start"
+      ],
+      "notes": "Automatically handled start configuration",
+      "dependencies": [],
+      "install_script": "echo \"🚀 MacSnap Setup - Initialization Started\"\necho \"==========================================\"\necho \"\"\necho \"📋 System Information:\"\necho \"  • macOS Version: $(sw_vers -productVersion)\"\necho \"  • Architecture: $(uname -m)\"\necho \"  • User: $(whoami)\"\necho \"  • Date: $(date)\"\necho \"\"\n\necho \"🔍 Environment Check:\"\n\n# Check essential tools\nif command -v brew >/dev/null 2>&1; then\n  echo \"  ✅ Homebrew: $(brew --version | head -1)\"\nelse\n  echo \"  ❌ Homebrew: Not found\"\nfi\n\nif command -v git >/dev/null 2>&1; then\n  echo \"  ✅ Git: $(git --version)\"\nelse\n  echo \"  ⚠️  Git: Not found (will be installed)\"\nfi\n\nif xcode-select -p >/dev/null 2>&1; then\n  echo \"  ✅ Xcode Tools: $(xcode-select -p)\"\nelse\n  echo \"  ❌ Xcode Tools: Not found\"\nfi\n\necho \"\"\necho \"📁 Creating necessary directories...\"\n\n# Create logs directory\nmkdir -p \"$HOME/.macsnap/logs\"\necho \"  ✅ Created: ~/.macsnap/logs\"\n\n# Create backup directory\nmkdir -p \"$HOME/.macsnap/backups\"\necho \"  ✅ Created: ~/.macsnap/backups\"\n\n# Create downloads cache\nmkdir -p \"$HOME/.macsnap/cache\"\necho \"  ✅ Created: ~/.macsnap/cache\"\n\necho \"\"\necho \"⚙️ Initial system configuration...\"\n\n# Set some useful macOS defaults for installation process\n# Show hidden files in Finder during setup\ndefaults write com.apple.finder AppleShowAllFiles -bool true\n\n# Disable Gatekeeper temporarily for installations (user will be prompted)\necho \"  ℹ️  Some installations may require administrator privileges\"\n\necho \"\"\necho \"✅ Initialization completed successfully!\"\necho \"🎯 Ready to begin software installations...\"\necho \"\"\n\n# Create session log\nSESSION_LOG=\"$HOME/.macsnap/logs/session-$(date +%Y%m%d-%H%M%S).log\"\necho \"MacSnap Installation Session\" > \"$SESSION_LOG\"\necho \"Started: $(date)\" >> \"$SESSION_LOG\"\necho \"User: $(whoami)\" >> \"$SESSION_LOG\"\necho \"System: $(sw_vers -productVersion) ($(uname -m))\" >> \"$SESSION_LOG\"\necho \"Working Directory: $(pwd)\" >> \"$SESSION_LOG\"\necho \"----------------------------------------\" >> \"$SESSION_LOG\"\n\nexport MACSNAP_SESSION_LOG=\"$SESSION_LOG\"\necho \"📄 Session log: $SESSION_LOG\"\n",
+      "validate_script": "exit 0",
+      "configure_script": null,
+      "uninstall_script": null,
+      "file_path": "/Users/nathanredblur/my-projects/osx-setup/configs/_configs.yml"
+    },
+    "end": {
+      "id": "end",
+      "name": "Setup End",
+      "description": "Special configuration that runs end installation process",
+      "type": "shell_script",
+      "category": "Special",
+      "tags": [
+        "special",
+        "end"
+      ],
+      "notes": "Automatically handled end configuration",
+      "dependencies": [],
+      "install_script": "echo \"\"\necho \"🏁 MacSnap Setup - Finalization Started\"\necho \"========================================\"\necho \"\"\n\necho \"🧹 Performing final cleanup...\"\n\n# Cleanup Homebrew\nif command -v brew >/dev/null 2>&1; then\n  echo \"  🍺 Cleaning up Homebrew cache...\"\n  brew cleanup --prune=7 2>/dev/null || true\n  brew doctor 2>/dev/null | head -10 || true\nfi\n\n# Reset Finder to normal (hide hidden files again)\ndefaults write com.apple.finder AppleShowAllFiles -bool false\nkillall Finder 2>/dev/null || true\necho \"  👁️  Reset Finder view settings\"\n\n# Clear temporary files\necho \"  🗑️  Clearing temporary files...\"\nrm -rf /tmp/macsnap-* 2>/dev/null || true\nrm -rf \"$HOME/.macsnap/cache/\"*.tmp 2>/dev/null || true\n\necho \"\"\necho \"📊 Installation Summary:\"\n\n# Count installed applications\nAPP_COUNT=$(find /Applications -maxdepth 1 -name \"*.app\" | wc -l | tr -d ' ')\necho \"  📱 Applications in /Applications: $APP_COUNT\"\n\n# Check Homebrew packages\nif command -v brew >/dev/null 2>&1; then\n  BREW_COUNT=$(brew list --formula 2>/dev/null | wc -l | tr -d ' ')\n  CASK_COUNT=$(brew list --cask 2>/dev/null | wc -l | tr -d ' ')\n  echo \"  🍺 Homebrew formulas: $BREW_COUNT\"\n  echo \"  📦 Homebrew casks: $CASK_COUNT\"\nfi\n\necho \"\"\necho \"⚙️ System Optimizations:\"\n\n# Update locate database\necho \"  🔍 Updating locate database...\"\nsudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist 2>/dev/null || true\n\n# Rebuild Launch Services database\necho \"  🚀 Rebuilding Launch Services database...\"\n/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user 2>/dev/null || true\n\necho \"\"\necho \"💡 Post-Installation Recommendations:\"\necho \"  1. 🔄 Restart your Mac to ensure all changes take effect\"\necho \"  2. 🔐 Review System Preferences > Security & Privacy\"\necho \"  3. 📱 Launch newly installed applications to complete their setup\"\necho \"  4. ☁️  Sign in to cloud services (iCloud, Dropbox, etc.)\"\necho \"  5. 🔑 Configure SSH keys and development tools\"\necho \"  6. 🎨 Customize Dock, menu bar, and desktop settings\"\necho \"  7. 📋 Review installed browser extensions and plugins\"\necho \"\"\n\necho \"🎯 Quick Start Guide:\"\necho \"  • Spotlight Search (⌘+Space): Find and launch applications\"\necho \"  • System Preferences: Customize your Mac experience\"\necho \"  • Terminal/iTerm2: Access command-line tools\"\necho \"  • Homebrew: 'brew search <package>' to find more software\"\necho \"\"\n\n# Update session log if it exists\nif [[ -n \"$MACSNAP_SESSION_LOG\" && -f \"$MACSNAP_SESSION_LOG\" ]]; then\n  echo \"Completed: $(date)\" >> \"$MACSNAP_SESSION_LOG\"\n  echo \"Duration: $(($(date +%s) - $(stat -f %B \"$MACSNAP_SESSION_LOG\"))) seconds\" >> \"$MACSNAP_SESSION_LOG\"\n  echo \"----------------------------------------\" >> \"$MACSNAP_SESSION_LOG\"\n  echo \"Installation completed successfully\" >> \"$MACSNAP_SESSION_LOG\"\n  echo \"📄 Session log updated: $MACSNAP_SESSION_LOG\"\nfi\n\n# Generate installation report\nREPORT_FILE=\"$HOME/.macsnap/installation-report-$(date +%Y%m%d-%H%M%S).txt\"\n{\n  echo \"MacSnap Installation Report\"\n  echo \"==========================\"\n  echo \"Date: $(date)\"\n  echo \"System: $(sw_vers -productVersion) ($(uname -m))\"\n  echo \"\"\n  echo \"Installed Applications:\"\n  ls -1 /Applications | grep -E '\\.app$' | sed 's/\\.app$//' | sort\n  echo \"\"\n  if command -v brew >/dev/null 2>&1; then\n    echo \"Homebrew Packages:\"\n    brew list --formula 2>/dev/null | sort\n    echo \"\"\n    echo \"Homebrew Casks:\"\n    brew list --cask 2>/dev/null | sort\n  fi\n} > \"$REPORT_FILE\"\n\necho \"📊 Installation report: $REPORT_FILE\"\n\necho \"\"\necho \"✅ MacSnap Setup completed successfully!\"\necho \"🚀 Your Mac is now configured and ready to use!\"\necho \"\"\n",
+      "validate_script": "exit 0",
+      "configure_script": null,
+      "uninstall_script": null,
+      "file_path": "/Users/nathanredblur/my-projects/osx-setup/configs/_configs.yml"
+    }
+  }
+}

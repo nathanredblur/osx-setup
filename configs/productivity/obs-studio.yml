@@ -20,9 +20,8 @@ notes: |
   - Scene-based composition with unlimited sources
   - Free and open source
 dependencies: []
-install: |
-  echo "Installing OBS Studio..."
-  brew install --cask obs
+bundle: cask "obs"
+install:
 validate: |
   brew list --cask | grep -q "obs" || ls /Applications/ | grep -q "OBS.app"
 configure: |

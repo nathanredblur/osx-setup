@@ -20,9 +20,8 @@ notes: |
   - Developer-friendly tools and features
   - Regular security updates and improvements
 dependencies: []
-install: |
-  echo "Installing Firefox..."
-  brew install --cask firefox
+bundle: cask "firefox"
+install:
 validate: |
   brew list --cask | grep -q "firefox" || ls /Applications/ | grep -q "Firefox.app"
 configure: |

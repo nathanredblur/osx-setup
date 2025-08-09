@@ -21,9 +21,8 @@ notes: |
   - Minimal configuration required
   - Free for personal use with pro features available
 dependencies: []
-install: |
-  echo "Installing DBngin..."
-  brew install --cask dbngin
+bundle: cask "dbngin"
+install:
 validate: |
   brew list --cask | grep -q "dbngin" || ls /Applications/ | grep -q "DBngin.app"
 configure: |

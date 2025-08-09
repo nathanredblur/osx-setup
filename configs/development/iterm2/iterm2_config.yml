@@ -5,9 +5,8 @@ type: "brew_cask"
 category: "Development"
 selected_by_default: true
 dependencies: []
-install: |
-  echo "Installing iTerm2..."
-  brew install --cask iterm2
+bundle: cask "iterm2"
+install:
 validate: |
   brew list --cask | grep -q "^iterm2$"
 configure: |

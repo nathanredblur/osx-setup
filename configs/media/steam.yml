@@ -20,9 +20,8 @@ notes: |
   - In-home streaming and remote play capabilities
   - Free to use, pay for games
 dependencies: []
-install: |
-  echo "Installing Steam..."
-  brew install --cask steam
+bundle: cask "steam"
+install:
 validate: |
   brew list --cask | grep -q "steam" || ls /Applications/ | grep -q "Steam.app"
 configure: |

@@ -20,9 +20,8 @@ notes: |
   - Contact sheet creation and slideshow capabilities
   - Free for personal use, commercial license available
 dependencies: []
-install: |
-  echo "Installing XnViewMP..."
-  brew install --cask xnviewmp
+bundle: cask "xnviewmp"
+install:
 validate: |
   brew list --cask | grep -q "xnviewmp" || ls /Applications/ | grep -q "XnViewMP.app"
 configure: |

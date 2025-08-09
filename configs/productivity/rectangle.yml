@@ -17,9 +17,8 @@ notes: |
   - Nearly complete replacement for Spectacle
   - Integrates well with macOS
 dependencies: []
-install: |
-  echo "Installing Rectangle..."
-  brew install --cask rectangle
+bundle: cask "rectangle"
+install:
 validate: |
   brew list --cask | grep -q "rectangle" || ls /Applications/ | grep -q "Rectangle.app"
 configure: |

@@ -17,9 +17,8 @@ notes: |
   - End-to-end encryption for all messages and calls
   - Syncs with your mobile WhatsApp account
 dependencies: []
-install: |
-  echo "Installing WhatsApp..."
-  brew install --cask whatsapp
+bundle: cask "whatsapp"
+install:
 validate: |
   brew list --cask | grep -q "whatsapp" || ls /Applications/ | grep -q "WhatsApp.app"
 configure: |

@@ -20,9 +20,8 @@ notes: |
   - Batch operations and scripting capabilities
   - 30-day free trial, then requires license purchase
 dependencies: []
-install: |
-  echo "Installing BetterZip..."
-  brew install --cask betterzip
+bundle: cask "betterzip"
+install:
 validate: |
   brew list --cask | grep -q "betterzip" || ls /Applications/ | grep -q "BetterZip.app"
 configure: |

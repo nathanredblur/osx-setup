@@ -20,19 +20,8 @@ notes: |
   - Variables and custom functions support
   - Text-based input with instant results
   - Free with optional premium features
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing Numi..."
-  echo "Note: Numi is available on the Mac App Store"
-  echo "App Store ID: 1059503668"
-  echo ""
-  if command -v mas >/dev/null 2>&1; then
-    echo "Installing Numi via mas..."
-    mas install 1059503668
-  else
-    echo "mas-cli not found. Please install Numi manually from the App Store"
-    echo "Search for 'Numi' in the Mac App Store"
-  fi
+bundle: 'mas "Numi", id: 1059503668'
+install:
 validate: |
   # Check if installed via App Store
   if ls /Applications/ | grep -q "Numi.app"; then

@@ -20,9 +20,8 @@ notes: |
   - SSH tunnel and SSL connection support
   - Free tier with limitations, paid license for full features
 dependencies: []
-install: |
-  echo "Installing TablePlus..."
-  brew install --cask tableplus
+bundle: cask "tableplus"
+install:
 validate: |
   brew list --cask | grep -q "tableplus" || ls /Applications/ | grep -q "TablePlus.app"
 configure: |

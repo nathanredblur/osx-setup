@@ -19,10 +19,8 @@ notes: |
   - Custom DNS filtering and family protection
   - Stealth mode for enhanced privacy
   - Free version available, premium for full features
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing AdGuard..."
-  mas install 1440147259
+bundle: 'mas "AdGuard", id: 1440147259'
+install:
 validate: |
   mas list | grep -q "AdGuard" || ls /Applications/ | grep -q "AdGuard.app"
 configure: |

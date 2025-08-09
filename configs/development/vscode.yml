@@ -19,9 +19,8 @@ notes: |
   - Integrated terminal and command palette
   - Supports multiple programming languages
 dependencies: []
-install: |
-  echo "Installing Visual Studio Code..."
-  brew install --cask visual-studio-code
+bundle: cask "visual-studio-code"
+install:
 validate: |
   brew list --cask | grep -q "visual-studio-code" || ls /Applications/ | grep -q "Visual Studio Code.app"
 configure: |

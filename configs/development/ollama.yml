@@ -20,9 +20,8 @@ notes: |
   - Privacy-focused: everything runs on your machine
   - Easy model management and switching
 dependencies: []
-install: |
-  echo "Installing Ollama..."
-  brew install ollama
+bundle: brew "ollama"
+install:
 validate: |
   command -v ollama &> /dev/null
 configure: |

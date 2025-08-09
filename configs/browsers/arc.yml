@@ -20,9 +20,8 @@ notes: |
   - Unique tab management and organization
   - Free to use with premium features available
 dependencies: []
-install: |
-  echo "Installing Arc Browser..."
-  brew install --cask arc
+bundle: cask "arc"
+install:
 validate: |
   brew list --cask | grep -q "arc" || ls /Applications/ | grep -q "Arc.app"
 configure: |

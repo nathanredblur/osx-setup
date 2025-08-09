@@ -20,9 +20,8 @@ notes: |
   - Open source and lightweight
   - Alternative to macOS default Cmd+Tab behavior
 dependencies: []
-install: |
-  echo "Installing AltTab..."
-  brew install --cask alt-tab
+bundle: cask "alt-tab"
+install:
 validate: |
   brew list --cask | grep -q "alt-tab" || ls /Applications/ | grep -q "AltTab.app"
 configure: |

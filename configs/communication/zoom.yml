@@ -20,9 +20,8 @@ notes: |
   - Integration with calendar and productivity apps
   - Free tier available with paid plans for advanced features
 dependencies: []
-install: |
-  echo "Installing Zoom..."
-  brew install --cask zoom
+bundle: cask "zoom"
+install:
 validate: |
   brew list --cask | grep -q "zoom" || ls /Applications/ | grep -q "zoom.us.app"
 configure: |

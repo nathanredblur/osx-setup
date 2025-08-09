@@ -19,9 +19,8 @@ notes: |
   - Built-in ad blocker and privacy features
   - Chromium-based with extensive customization options
 dependencies: []
-install: |
-  echo "Installing Vivaldi..."
-  brew install --cask vivaldi
+bundle: cask "vivaldi"
+install:
 validate: |
   brew list --cask | grep -q "vivaldi" || ls /Applications/ | grep -q "Vivaldi.app"
 configure: |

@@ -19,9 +19,8 @@ notes: |
   - Dry-run mode to preview changes before applying
   - Case conversion and text manipulation features
 dependencies: []
-install: |
-  echo "Installing rename..."
-  brew install rename
+bundle: brew "rename"
+install:
 validate: |
   command -v rename &> /dev/null
 configure: |

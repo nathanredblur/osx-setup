@@ -19,9 +19,8 @@ notes: |
   - Premium software with 4-week free trial ($16 one-time purchase)
   - Regular updates and excellent customer support
 dependencies: []
-install: |
-  echo "Installing Bartender..."
-  brew install --cask bartender
+bundle: cask "bartender"
+install:
 validate: |
   brew list --cask | grep -q "bartender" || ls /Applications/ | grep -q "Bartender.app"
 configure: |

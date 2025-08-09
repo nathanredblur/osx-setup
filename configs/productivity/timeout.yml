@@ -20,19 +20,8 @@ notes: |
   - Visual and audio break notifications
   - Optional forced breaks for health compliance
   - Free version available with paid Pro features
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing Time Out..."
-  echo "Note: Time Out is available on the Mac App Store"
-  echo "App Store ID: 402592703"
-  echo ""
-  if command -v mas >/dev/null 2>&1; then
-    echo "Installing Time Out via mas..."
-    mas install 402592703
-  else
-    echo "mas-cli not found. Please install Time Out manually from the App Store"
-    echo "Search for 'Time Out' by Dejal Systems, LLC"
-  fi
+bundle: 'mas "Time Out", id: 402592703'
+install:
 validate: |
   # Check if installed via App Store
   if ls /Applications/ | grep -q "Time Out.app"; then

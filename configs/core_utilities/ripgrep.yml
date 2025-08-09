@@ -20,9 +20,8 @@ notes: |
   - Rich output formatting and color highlighting
   - Written in Rust for maximum performance
 dependencies: []
-install: |
-  echo "Installing ripgrep..."
-  brew install ripgrep
+bundle: brew "ripgrep"
+install:
 validate: |
   command -v rg &> /dev/null
 configure: |

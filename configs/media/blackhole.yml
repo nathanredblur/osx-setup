@@ -20,9 +20,8 @@ notes: |
   - Supports multiple audio channels and formats
   - Open source and free
 dependencies: []
-install: |
-  echo "Installing BlackHole 2ch..."
-  brew install --cask blackhole-2ch
+bundle: cask "blackhole-2ch"
+install:
 validate: |
   brew list --cask | grep -q "blackhole-2ch" || system_profiler SPAudioDataType | grep -q "BlackHole"
 configure: |

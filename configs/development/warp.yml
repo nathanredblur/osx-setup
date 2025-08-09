@@ -20,9 +20,8 @@ notes: |
   - Collaborative features and workflow sharing
   - Free for individuals, paid plans for teams
 dependencies: []
-install: |
-  echo "Installing Warp..."
-  brew install --cask warp
+bundle: cask "warp"
+install:
 validate: |
   brew list --cask | grep -q "warp" || ls /Applications/ | grep -q "Warp.app"
 configure: |

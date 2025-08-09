@@ -20,9 +20,8 @@ notes: |
   - Plugin ecosystem for extended functionality
   - Free Community Edition with core features
 dependencies: []
-install: |
-  echo "Installing PyCharm Community Edition..."
-  brew install --cask pycharm-ce
+bundle: cask "pycharm-ce"
+install:
 validate: |
   brew list --cask | grep -q "pycharm-ce" || ls /Applications/ | grep -q "PyCharm CE.app"
 configure: |

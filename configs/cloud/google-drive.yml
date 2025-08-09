@@ -20,9 +20,8 @@ notes: |
   - Integration with Gmail and other Google services
   - Cross-platform synchronization
 dependencies: []
-install: |
-  echo "Installing Google Drive..."
-  brew install --cask google-drive
+bundle: cask "google-drive"
+install:
 validate: |
   brew list --cask | grep -q "google-drive" || ls /Applications/ | grep -q "Google Drive.app"
 configure: |

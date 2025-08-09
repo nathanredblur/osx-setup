@@ -20,9 +20,8 @@ notes: |
   - Integration with Bitbucket, GitHub, and GitLab
   - Free to use with Atlassian account
 dependencies: ["git"]
-install: |
-  echo "Installing SourceTree..."
-  brew install --cask sourcetree
+bundle: cask "sourcetree"
+install:
 validate: |
   brew list --cask | grep -q "sourcetree" || ls /Applications/ | grep -q "Sourcetree.app"
 configure: |

@@ -25,9 +25,8 @@ notes: |
   - 3. Install a Nerd Font for best appearance
   - 4. Restart terminal to see changes
 dependencies: []
-install: |
-  echo "Installing Oh My Posh..."
-  brew install oh-my-posh
+bundle: brew "oh-my-posh"
+install:
 validate: |
   command -v oh-my-posh &> /dev/null
 configure: |

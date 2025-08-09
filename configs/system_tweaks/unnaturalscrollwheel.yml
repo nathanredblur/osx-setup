@@ -20,9 +20,8 @@ notes: |
   - Open source and free to use
   - Auto-starts on login when configured
 dependencies: []
-install: |
-  echo "Installing UnnaturalScrollWheel..."
-  brew install --cask unnaturalscrollwheels
+bundle: cask "unnaturalscrollwheels"
+install:
 validate: |
   brew list --cask | grep -q "unnaturalscrollwheels" || ls /Applications/ | grep -q "UnnaturalScrollWheels.app"
 configure: |

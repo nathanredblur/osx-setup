@@ -19,14 +19,8 @@ notes: |
   - Large library of songs and lessons available
   - Suitable for beginners and advanced players
 dependencies: []
-install: |
-  echo "Installing Synthesia..."
-  if brew install --cask synthesia; then
-    echo "SUCCESS: Synthesia installed successfully."
-  else
-    echo "ERROR: Synthesia installation failed."
-    exit 1
-  fi
+bundle: cask "synthesia"
+install:
 validate: |
   if brew list --cask | grep -q "^synthesia$"; then
     echo "Synthesia is installed."

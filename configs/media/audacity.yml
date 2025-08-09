@@ -20,9 +20,8 @@ notes: |
   - Plugin support for VST, LV2, and Nyquist effects
   - Cross-platform with large community support
 dependencies: []
-install: |
-  echo "Installing Audacity..."
-  brew install --cask audacity
+bundle: cask "audacity"
+install:
 validate: |
   brew list --cask | grep -q "audacity" || ls /Applications/ | grep -q "Audacity.app"
 configure: |

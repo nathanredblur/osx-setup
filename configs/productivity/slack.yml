@@ -19,9 +19,8 @@ notes: |
   - File sharing and collaborative editing
   - Free tier available with paid plans for advanced features
 dependencies: []
-install: |
-  echo "Installing Slack..."
-  brew install --cask slack
+bundle: cask "slack"
+install:
 validate: |
   brew list --cask | grep -q "slack" || ls /Applications/ | grep -q "Slack.app"
 configure: |

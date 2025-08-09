@@ -20,9 +20,8 @@ notes: |
   - System-wide audio enhancements
   - Requires license purchase for full functionality
 dependencies: []
-install: |
-  echo "Installing SoundSource..."
-  brew install --cask soundsource
+bundle: cask "soundsource"
+install:
 validate: |
   brew list --cask | grep -q "soundsource" || ls /Applications/ | grep -q "SoundSource.app"
 configure: |

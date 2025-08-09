@@ -19,9 +19,8 @@ notes: |
   - Lightweight and minimal system resource usage
   - Alternative to paid menu bar managers
 dependencies: []
-install: |
-  echo "Installing Ice..."
-  brew install --cask jordanbaird-ice
+bundle: cask "jordanbaird-ice"
+install:
 validate: |
   brew list --cask | grep -q "jordanbaird-ice" || ls /Applications/ | grep -q "Ice.app"
 configure: |

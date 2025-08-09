@@ -20,9 +20,8 @@ notes: |
   - Support for multiple monitors
   - Open source and free
 dependencies: []
-install: |
-  echo "Installing MonitorControl..."
-  brew install --cask monitorcontrol
+bundle: cask "monitorcontrol"
+install:
 validate: |
   brew list --cask | grep -q "monitorcontrol" || ls /Applications/ | grep -q "MonitorControl.app"
 configure: |

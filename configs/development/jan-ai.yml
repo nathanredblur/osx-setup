@@ -20,9 +20,8 @@ notes: |
   - Extensible architecture with plugins
   - Cross-platform compatibility
 dependencies: []
-install: |
-  echo "Installing Jan AI..."
-  brew install --cask jan
+bundle: cask "jan"
+install:
 validate: |
   brew list --cask | grep -q "jan" || ls /Applications/ | grep -q "Jan.app"
 configure: |

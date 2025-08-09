@@ -18,9 +18,8 @@ notes: |
   - Requires system admin privileges for installation
   - May need manual startup and permissions after installation
 dependencies: []
-install: |
-  echo "Installing Docker Desktop..."
-  brew install --cask docker
+bundle: cask "docker"
+install:
 validate: |
   brew list --cask | grep -q "docker" || ls /Applications/ | grep -q "Docker.app"
 configure: |

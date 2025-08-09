@@ -5,7 +5,6 @@ type: "brew"
 category: "Development"
 selected_by_default: false
 requires_license: false
-dependencies: [git, unzip, gzip, xz]
 tags:
   - version-manager
   - toolchain
@@ -25,17 +24,16 @@ notes: |
   - 2. Install a tool: proto install node
   - 3. Set global version: proto global node latest
   - 4. Create .prototools file in project: proto local node 18
-dependencies: []
-install: |
-  echo "Installing Proto..."
-  brew install proto
+dependencies: [git, unzip, gzip, xz]
+bundle: brew "proto"
+install:
 validate: |
   command -v proto &> /dev/null
 configure: |
   echo "Configuring Proto..."
   proto setup
 
-  
+
   echo "Installing Node.js..."
   proto install node
   proto global node lts/iron

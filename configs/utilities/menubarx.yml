@@ -19,19 +19,8 @@ notes: |
   - Customizable shortcuts and appearance
   - Privacy-focused with ad blocking capabilities
   - Free with optional premium features
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing MenuBarX..."
-  echo "Note: MenuBarX is available on the Mac App Store"
-  echo "App Store ID: 1582640640"
-  echo ""
-  if command -v mas >/dev/null 2>&1; then
-    echo "Installing MenuBarX via mas..."
-    mas install 1582640640
-  else
-    echo "mas-cli not found. Please install MenuBarX manually from the App Store"
-    echo "Search for 'MenuBarX' in the Mac App Store"
-  fi
+bundle: 'mas "MenuBarX", id: 1582640640'
+install:
 validate: |
   # Check if installed via App Store
   if ls /Applications/ | grep -q "MenuBarX.app"; then

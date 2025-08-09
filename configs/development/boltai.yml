@@ -37,9 +37,8 @@ notes: |
 
   🔧 Perfect for developers, content creators, and professionals
 dependencies: []
-install: |
-  echo "Installing BoltAI..."
-  brew install --cask boltai
+bundle: cask "boltai"
+install:
 validate: |
   brew list --cask | grep -q "boltai" || ls /Applications/ | grep -q "BoltAI.app"
 configure: |

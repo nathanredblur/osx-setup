@@ -19,9 +19,8 @@ notes: |
   - Integration with git and other diff tools
   - Written in Rust for high performance
 dependencies: ["git"]
-install: |
-  echo "Installing git-delta..."
-  brew install git-delta
+bundle: brew "git-delta"
+install:
 validate: |
   command -v delta &> /dev/null
 configure: |

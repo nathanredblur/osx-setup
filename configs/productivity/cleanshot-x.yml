@@ -20,9 +20,8 @@ notes: |
   - GIF creation and video editing capabilities
   - Requires subscription for full features
 dependencies: []
-install: |
-  echo "Installing CleanShot X..."
-  brew install --cask cleanshot
+bundle: cask "cleanshot"
+install:
 validate: |
   brew list --cask | grep -q "cleanshot" || ls /Applications/ | grep -q "CleanShot X.app"
 configure: |

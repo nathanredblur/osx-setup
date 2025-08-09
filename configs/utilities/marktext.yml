@@ -21,9 +21,8 @@ notes: |
   - Export to various formats including HTML and PDF
   - Free and open source
 dependencies: []
-install: |
-  echo "Installing MarkText..."
-  brew install --cask mark-text
+bundle: cask "mark-text"
+install:
 validate: |
   brew list --cask | grep -q "mark-text" || ls /Applications/ | grep -q "MarkText.app"
 configure: |

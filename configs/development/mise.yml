@@ -25,9 +25,8 @@ notes: |
   - 3. Set global version: mise global node@latest
   - 4. Create .tool-versions file in project: mise local node@18
 dependencies: []
-install: |
-  echo "Installing Mise..."
-  brew install mise
+bundle: brew "mise"
+install:
 validate: |
   command -v mise &> /dev/null
 configure: |

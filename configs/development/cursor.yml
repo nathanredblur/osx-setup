@@ -20,9 +20,8 @@ notes: |
   - Multi-file editing and context-aware suggestions
   - Background processing and intelligent code analysis
 dependencies: []
-install: |
-  echo "Installing Cursor..."
-  brew install --cask cursor
+bundle: cask "cursor"
+install:
 validate: |
   brew list --cask | grep -q "cursor" || ls /Applications/ | grep -q "Cursor.app"
 configure: |

@@ -17,9 +17,8 @@ notes: |
   - Supports custom scripts and extensions
   - Free tier with paid Pro features available
 dependencies: []
-install: |
-  echo "Installing Raycast..."
-  brew install --cask raycast
+bundle: cask "raycast"
+install:
 validate: |
   brew list --cask | grep -q "raycast" || ls /Applications/ | grep -q "Raycast.app"
 configure: |

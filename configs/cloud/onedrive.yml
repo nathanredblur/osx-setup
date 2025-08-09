@@ -20,9 +20,8 @@ notes: |
   - Cross-platform synchronization
   - Integration with Windows and Microsoft ecosystem
 dependencies: []
-install: |
-  echo "Installing OneDrive..."
-  brew install --cask onedrive
+bundle: cask "onedrive"
+install:
 validate: |
   brew list --cask | grep -q "onedrive" || ls /Applications/ | grep -q "OneDrive.app"
 configure: |

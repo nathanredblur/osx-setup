@@ -21,9 +21,8 @@ notes: |
   - Clean, user-friendly interface
   - Free to use with optional premium features
 dependencies: []
-install: |
-  echo "Installing Stremio..."
-  brew install --cask stremio
+bundle: cask "stremio"
+install:
 validate: |
   brew list --cask | grep -q "stremio" || ls /Applications/ | grep -q "Stremio.app"
 configure: |

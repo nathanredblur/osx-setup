@@ -20,9 +20,8 @@ notes: |
   - Cross-device synchronization and offline downloads (Premium)
   - Social features and playlist sharing
 dependencies: []
-install: |
-  echo "Installing Spotify..."
-  brew install --cask spotify
+bundle: cask "spotify"
+install:
 validate: |
   brew list --cask | grep -q "spotify" || ls /Applications/ | grep -q "Spotify.app"
 configure: |

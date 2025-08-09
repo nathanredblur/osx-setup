@@ -21,9 +21,8 @@ notes: |
   - Integration with Google Calendar and other services
   - Free to use with Notion account
 dependencies: []
-install: |
-  echo "Installing Notion Calendar..."
-  brew install --cask notion-calendar
+bundle: cask "notion-calendar"
+install:
 validate: |
   brew list --cask | grep -q "notion-calendar" || ls /Applications/ | grep -q "Notion Calendar.app"
 configure: |

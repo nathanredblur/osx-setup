@@ -19,9 +19,8 @@ notes: |
   - Requires shell integration for optimal functionality
   - Works with zsh, bash, fish, and other shells
 dependencies: []
-install: |
-  echo "Installing zoxide..."
-  brew install zoxide
+bundle: brew "zoxide"
+install:
 validate: |
   command -v zoxide &> /dev/null
 configure: |

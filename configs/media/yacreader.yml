@@ -21,9 +21,8 @@ notes: |
   - Smooth reading experience with various view modes
   - Free and open source
 dependencies: []
-install: |
-  echo "Installing YACReader..."
-  brew install --cask yacreader
+bundle: cask "yacreader"
+install:
 validate: |
   brew list --cask | grep -q "yacreader" || ls /Applications/ | grep -q "YACReader.app"
 configure: |

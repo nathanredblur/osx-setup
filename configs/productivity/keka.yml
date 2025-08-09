@@ -20,9 +20,8 @@ notes: |
   - High compression ratios
   - Free with optional paid version for App Store
 dependencies: []
-install: |
-  echo "Installing Keka..."
-  brew install --cask keka
+bundle: cask "keka"
+install:
 validate: |
   brew list --cask | grep -q "keka" || ls /Applications/ | grep -q "Keka.app"
 configure: |

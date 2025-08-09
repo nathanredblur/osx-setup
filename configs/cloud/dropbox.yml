@@ -20,9 +20,8 @@ notes: |
   - Integration with many third-party applications
   - Free tier with paid plans for more storage
 dependencies: []
-install: |
-  echo "Installing Dropbox..."
-  brew install --cask dropbox
+bundle: cask "dropbox"
+install:
 validate: |
   brew list --cask | grep -q "dropbox" || ls /Applications/ | grep -q "Dropbox.app"
 configure: |

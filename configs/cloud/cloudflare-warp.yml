@@ -21,9 +21,8 @@ notes: |
   - Improves connection speed and reliability
   - Zero-log privacy policy
 dependencies: []
-install: |
-  echo "Installing Cloudflare WARP..."
-  brew install --cask cloudflare-warp
+bundle: cask "cloudflare-warp"
+install:
 validate: |
   brew list --cask | grep -q "cloudflare-warp" || ls /Applications/ | grep -q "Cloudflare WARP.app"
 configure: |

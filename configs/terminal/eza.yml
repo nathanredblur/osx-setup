@@ -28,9 +28,8 @@ notes: |
   - 2. Install a Nerd Font for best icon display
   - 3. Restart terminal to use new aliases
 dependencies: []
-install: |
-  echo "Installing Eza..."
-  brew install eza
+bundle: brew "eza"
+install:
 validate: |
   command -v eza &> /dev/null
 configure: |

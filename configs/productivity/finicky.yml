@@ -19,9 +19,8 @@ notes: |
   - JavaScript-based configuration for complex rules
   - Open source and highly customizable
 dependencies: []
-install: |
-  echo "Installing Finicky..."
-  brew install --cask finicky
+bundle: cask "finicky"
+install:
 validate: |
   brew list --cask | grep -q "finicky" || ls /Applications/ | grep -q "Finicky.app"
 configure: |

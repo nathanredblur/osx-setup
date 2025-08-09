@@ -20,19 +20,9 @@ notes: |
   - Customizable refresh intervals and categories
   - Minimal resource usage and clean interface
   - Free with optional premium features
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing irVue..."
-  echo "Note: irVue is available on the Mac App Store"
-  echo "App Store ID: 1039633667"
-  echo ""
-  if command -v mas >/dev/null 2>&1; then
-    echo "Installing irVue via mas..."
-    mas install 1039633667
-  else
-    echo "mas-cli not found. Please install irVue manually from the App Store"
-    echo "Search for 'irvue' in the Mac App Store"
-  fi
+dependencies: []
+bundle: 'mas "irVue", id: 1039633667'
+install:
 validate: |
   # Check if installed via App Store
   if ls /Applications/ | grep -q "irvue.app"; then

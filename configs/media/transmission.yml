@@ -20,9 +20,8 @@ notes: |
   - Support for magnet links and torrent files
   - Open source and completely free
 dependencies: []
-install: |
-  echo "Installing Transmission..."
-  brew install --cask transmission
+bundle: cask "transmission"
+install:
 validate: |
   brew list --cask | grep -q "transmission" || ls /Applications/ | grep -q "Transmission.app"
 configure: |

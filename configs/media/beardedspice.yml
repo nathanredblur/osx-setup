@@ -21,9 +21,8 @@ notes: |
   - Lightweight and efficient operation
   - Free and open source
 dependencies: []
-install: |
-  echo "Installing BeardedSpice..."
-  brew install --cask beardedspice
+bundle: cask "beardedspice"
+install:
 validate: |
   brew list --cask | grep -q "beardedspice" || ls /Applications/ | grep -q "BeardedSpice.app"
 configure: |

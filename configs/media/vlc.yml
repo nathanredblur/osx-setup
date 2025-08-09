@@ -20,9 +20,8 @@ notes: |
   - Supports subtitles and multiple audio tracks
   - Cross-platform compatibility
 dependencies: []
-install: |
-  echo "Installing VLC Media Player..."
-  brew install --cask vlc
+bundle: cask "vlc"
+install:
 validate: |
   brew list --cask | grep -q "vlc" || ls /Applications/ | grep -q "VLC.app"
 configure: |

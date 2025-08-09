@@ -19,10 +19,8 @@ notes: |
   - Channels and groups with advanced moderation
   - Bots and automation features
   - Cross-platform synchronization
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing Telegram..."
-  mas install 747648890
+bundle: 'mas "Telegram", id: 747648890'
+install:
 validate: |
   mas list | grep -q "Telegram" || ls /Applications/ | grep -q "Telegram.app"
 configure: |

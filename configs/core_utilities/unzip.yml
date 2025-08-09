@@ -18,9 +18,8 @@ notes: |
   - Essential for handling downloaded archives
   - Integrates with other compression tools
 dependencies: []
-install: |
-  echo "Installing Unzip..."
-  brew install unzip
+bundle: brew "unzip"
+install:
 validate: |
   command -v unzip &> /dev/null
 configure: |

@@ -27,9 +27,8 @@ notes: |
   -    • Alt-C: Change directory
   - 3. Restart terminal to use new key bindings
 dependencies: []
-install: |
-  echo "Installing FZF..."
-  brew install fzf
+bundle: brew "fzf"
+install:
 validate: |
   command -v fzf &> /dev/null
 configure: |

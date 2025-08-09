@@ -21,9 +21,8 @@ notes: |
   - Metadata management and book organization
   - Free and open source with extensive features
 dependencies: []
-install: |
-  echo "Installing Calibre..."
-  brew install --cask calibre
+bundle: cask "calibre"
+install:
 validate: |
   brew list --cask | grep -q "calibre" || ls /Applications/ | grep -q "calibre.app"
 configure: |

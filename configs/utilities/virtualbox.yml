@@ -21,12 +21,8 @@ notes: |
   - Snapshot and rollback capabilities
   - Free for personal and educational use
 dependencies: []
-install: |
-  echo "Installing VirtualBox..."
-  brew install --cask virtualbox
-  echo ""
-  echo "Note: VirtualBox may require system permissions and kernel extensions"
-  echo "You may need to allow VirtualBox in System Preferences > Security & Privacy"
+bundle: cask "virtualbox"
+install:
 validate: |
   brew list --cask | grep -q "virtualbox" || ls /Applications/ | grep -q "VirtualBox.app"
 configure: |

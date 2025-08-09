@@ -21,9 +21,8 @@ notes: |
   - Extensible with plugins and themes
   - Free and open source
 dependencies: []
-install: |
-  echo "Installing LogSeq..."
-  brew install --cask logseq
+bundle: cask "logseq"
+install:
 validate: |
   brew list --cask | grep -q "logseq" || ls /Applications/ | grep -q "Logseq.app"
 configure: |

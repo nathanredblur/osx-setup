@@ -19,9 +19,8 @@ notes: |
   - Includes all Rectangle features plus advanced functionality
   - Supports AppleScript and custom actions
 dependencies: []
-install: |
-  echo "Installing Rectangle Pro..."
-  brew install --cask rectangle-pro
+bundle: cask "rectangle-pro"
+install:
 validate: |
   brew list --cask | grep -q "rectangle-pro" || ls /Applications/ | grep -q "Rectangle Pro.app"
 configure: |

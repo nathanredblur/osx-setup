@@ -20,19 +20,8 @@ notes: |
   - Safe file deletion with preview capabilities
   - Simple and intuitive interface
   - Free utility from The Omni Group
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing OmniDiskSweeper..."
-  echo "Note: OmniDiskSweeper is available on the Mac App Store"
-  echo "App Store ID: 416442386"
-  echo ""
-  if command -v mas >/dev/null 2>&1; then
-    echo "Installing OmniDiskSweeper via mas..."
-    mas install 416442386
-  else
-    echo "mas-cli not found. Please install OmniDiskSweeper manually from the App Store"
-    echo "Search for 'OmniDiskSweeper' by The Omni Group"
-  fi
+bundle: 'mas "OmniDiskSweeper", id: 416442386'
+install:
 validate: |
   # Check if installed via App Store
   if ls /Applications/ | grep -q "OmniDiskSweeper.app"; then

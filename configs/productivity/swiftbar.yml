@@ -27,9 +27,8 @@ notes: |
   -    • System monitors, weather, calendar, and more
   - 3. Create your own scripts or customize existing ones
 dependencies: []
-install: |
-  echo "Installing SwiftBar..."
-  brew install --cask swiftbar
+bundle: cask "swiftbar"
+install:
 validate: |
   brew list --cask | grep -q "swiftbar" || ls /Applications/ | grep -q "SwiftBar.app"
 configure: |

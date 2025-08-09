@@ -20,9 +20,8 @@ notes: |
   - GPU acceleration support
   - Privacy-focused: everything runs on your machine
 dependencies: []
-install: |
-  echo "Installing LM Studio..."
-  brew install --cask lm-studio
+bundle: cask "lm-studio"
+install:
 validate: |
   brew list --cask | grep -q "lm-studio" || ls /Applications/ | grep -q "LM Studio.app"
 configure: |

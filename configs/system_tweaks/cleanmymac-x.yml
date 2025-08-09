@@ -20,9 +20,8 @@ notes: |
   - System performance optimization
   - Requires subscription for full features
 dependencies: []
-install: |
-  echo "Installing CleanMyMac X..."
-  brew install --cask cleanmymac
+bundle: cask "cleanmymac"
+install:
 validate: |
   brew list --cask | grep -q "cleanmymac" || ls /Applications/ | grep -q "CleanMyMac X.app"
 configure: |

@@ -21,9 +21,8 @@ notes: |
   - Support for keyboard and headphone controls
   - Free utility for better media control
 dependencies: []
-install: |
-  echo "Installing Reflex..."
-  brew install --cask reflex
+bundle: cask "reflex"
+install:
 validate: |
   brew list --cask | grep -q "reflex" || ls /Applications/ | grep -q "Reflex.app"
 configure: |

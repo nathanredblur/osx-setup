@@ -20,19 +20,8 @@ notes: |
   - Customizable opacity and interaction settings
   - Built by renowned developer Sindre Sorhus
   - Free with optional paid features
-dependencies: ["mas_cli"]
-install: |
-  echo "Installing Plash..."
-  echo "Note: Plash is available on the Mac App Store"
-  echo "App Store ID: 1494023538"
-  echo ""
-  if command -v mas >/dev/null 2>&1; then
-    echo "Installing Plash via mas..."
-    mas install 1494023538
-  else
-    echo "mas-cli not found. Please install Plash manually from the App Store"
-    echo "Search for 'Plash' by Sindre Sorhus in the Mac App Store"
-  fi
+bundle: 'mas "Plash", id: 1494023538'
+install:
 validate: |
   # Check if installed via App Store
   if ls /Applications/ | grep -q "Plash.app"; then

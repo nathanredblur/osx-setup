@@ -19,9 +19,8 @@ notes: |
   - Rich presence and game integration
   - Free with optional Nitro subscription for enhanced features
 dependencies: []
-install: |
-  echo "Installing Discord..."
-  brew install --cask discord
+bundle: cask "discord"
+install:
 validate: |
   brew list --cask | grep -q "discord" || ls /Applications/ | grep -q "Discord.app"
 configure: |

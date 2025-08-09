@@ -19,9 +19,8 @@ notes: |
   - Supports SSL/TLS, HTTP/2, and WebSocket protocols
   - Highly configurable with modular architecture
 dependencies: []
-install: |
-  echo "Installing Nginx..."
-  brew install nginx
+bundle: brew "nginx"
+install:
 validate: |
   command -v nginx &> /dev/null && brew services list | grep -q nginx
 configure: |

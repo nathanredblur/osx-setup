@@ -19,9 +19,8 @@ notes: |
   - Supports hundreds of common command-line tools
   - Available in multiple languages
 dependencies: []
-install: |
-  echo "Installing tldr..."
-  brew install tldr
+bundle: brew "tldr"
+install:
 validate: |
   command -v tldr &> /dev/null
 configure: |

@@ -19,9 +19,8 @@ notes: |
   - Vertical tabs and productivity features
   - Enterprise-grade security and management capabilities
 dependencies: []
-install: |
-  echo "Installing Microsoft Edge..."
-  brew install --cask microsoft-edge
+bundle: cask "microsoft-edge"
+install:
 validate: |
   brew list --cask | grep -q "microsoft-edge" || ls /Applications/ | grep -q "Microsoft Edge.app"
 configure: |

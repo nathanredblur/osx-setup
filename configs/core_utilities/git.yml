@@ -24,9 +24,8 @@ notes: |
   - 3. Set pull behavior: git config --global pull.rebase true
   - 4. Enable auto-stash: git config --global rebase.autoStash true
 dependencies: []
-install: |
-  echo "Installing Git..."
-  brew install git
+bundle: brew "git"
+install:
 validate: |
   command -v git &> /dev/null
 configure: |

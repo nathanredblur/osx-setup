@@ -21,9 +21,8 @@ notes: |
   - Syntax highlighting and search functionality
   - Free and open source
 dependencies: []
-install: |
-  echo "Installing MassCode..."
-  brew install --cask masscode
+bundle: cask "masscode"
+install:
 validate: |
   brew list --cask | grep -q "masscode" || ls /Applications/ | grep -q "massCode.app"
 configure: |

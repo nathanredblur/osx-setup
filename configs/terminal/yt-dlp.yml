@@ -21,9 +21,8 @@ notes: |
   - Recommended Chrome extension: The Stream Detector
   - Chrome extension URL: https://chromewebstore.google.com/detail/the-stream-detector/iakkmkmhhckcmoiibcfjnooibphlobak
 dependencies: []
-install: |
-  echo "Installing yt-dlp..."
-  brew install yt-dlp
+bundle: brew "yt-dlp"
+install:
 validate: |
   command -v yt-dlp &> /dev/null
 configure: |

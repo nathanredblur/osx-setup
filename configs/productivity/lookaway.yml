@@ -20,9 +20,8 @@ notes: |
   - 7-day free trial, then $38 one-time purchase
   - Integrates with macOS Focus modes
 dependencies: []
-install: |
-  echo "Installing LookAway..."
-  brew install --cask lookaway
+bundle: cask "lookaway"
+install:
 validate: |
   brew list --cask | grep -q "lookaway" || ls /Applications/ | grep -q "LookAway.app"
 configure: |

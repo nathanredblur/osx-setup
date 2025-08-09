@@ -21,9 +21,8 @@ notes: |
   - Supports system-wide and app-specific shortcuts
   - Paid application with free trial available
 dependencies: []
-install: |
-  echo "Installing KeyCue..."
-  brew install --cask keycue
+bundle: cask "keycue"
+install:
 validate: |
   brew list --cask | grep -q "keycue" || ls /Applications/ | grep -q "KeyCue.app"
 configure: |

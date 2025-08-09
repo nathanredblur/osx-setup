@@ -18,9 +18,8 @@ notes: |
   - Command-line utility for automated compression
   - Essential for handling compressed files
 dependencies: []
-install: |
-  echo "Installing Gzip..."
-  brew install gzip
+bundle: brew "gzip"
+install:
 validate: |
   command -v gzip &> /dev/null
 configure: |

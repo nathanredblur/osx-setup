@@ -19,9 +19,8 @@ notes: |
   - Essential for handling .xz and .lzma files
   - Commonly used in Linux distributions and software packages
 dependencies: []
-install: |
-  echo "Installing XZ..."
-  brew install xz
+bundle: brew "xz"
+install:
 validate: |
   command -v xz &> /dev/null
 configure: |

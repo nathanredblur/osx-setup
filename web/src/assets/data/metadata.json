@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-08-07T14:47:41.312007",
+  "generated_at": "2025-08-08T19:57:35.110254",
   "description": "MacSnap configuration database - converted from YAML files",
   "version": "1.0.0",
   "total_configs": 103,
@@ -14,29 +14,29 @@
     "direct_download_dmg": 10
   },
   "items_by_category": {
-    "System Tweaks": 3,
-    "Communication": 4,
     "Terminal": 5,
-    "Development": 15,
+    "Productivity": 26,
     "Security": 1,
-    "Browsers": 6,
     "Media": 14,
-    "Core Utilities": 11,
+    "System Tweaks": 3,
     "Cloud": 4,
+    "Development": 15,
+    "Communication": 4,
     "Utilities": 12,
-    "Productivity": 26
+    "Browsers": 6,
+    "Core Utilities": 11
   },
   "categories": [
-    "System Tweaks",
-    "Communication",
     "Terminal",
-    "Development",
+    "Productivity",
     "Security",
-    "Browsers",
     "Media",
-    "Core Utilities",
+    "System Tweaks",
     "Cloud",
+    "Development",
+    "Communication",
     "Utilities",
-    "Productivity"
+    "Browsers",
+    "Core Utilities"
   ]
 }

@@ -28,8 +28,10 @@ class ConfigItem:
     requires_license: bool = False
     tags: List[str] = None
     url: Optional[str] = None
+    image: Optional[str] = None  # Application logo/icon URL
     notes: Optional[str] = None
     dependencies: List[str] = None
+    bundle: Optional[str] = None  # Homebrew Bundle format
     install_script: Optional[str] = None
     validate_script: Optional[str] = None
     configure_script: Optional[str] = None
@@ -194,8 +196,10 @@ class ConfigLoader:
                     requires_license=data.get('requires_license', False),
                     tags=data.get('tags', []),
                     url=data.get('url'),
+                    image=data.get('image'),
                     notes=data.get('notes'),
                     dependencies=data.get('dependencies', []),
+                    bundle=data.get('bundle'),
                     file_path=str(yml_file),
                     config_dir=str(self.configs_dir)
                 )
@@ -220,17 +224,11 @@ class ConfigLoader:
                 print(f"Missing required field {e} in {yml_file}")
                 return None
                 
-        except Exception as e:
-            print(f"Error loading {yml_file}: {e}")
-            return None
-    
-
-                
         except yaml.YAMLError as e:
             print(f"YAML parsing error in {yml_file}: {e}")
             return None
         except Exception as e:
-            print(f"Unexpected error loading {yml_file}: {e}")
+            print(f"Error loading {yml_file}: {e}")
             return None
     
     def get_categories(self) -> List[str]:

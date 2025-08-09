@@ -1,7 +1,7 @@
 {
   "metadata": {
     "total_special_configs": 2,
-    "generated_at": "2025-08-07T14:47:41.314117",
+    "generated_at": "2025-08-08T19:57:35.112721",
     "description": "MacSnap special configurations from _*.yml files"
   },
   "special_configs": {
@@ -9,8 +9,10 @@
       "id": "start",
       "name": "Setup Start",
       "description": "Special configuration that runs start installation process",
+      "image": null,
       "type": "shell_script",
       "category": "Special",
+      "bundle": null,
       "tags": [
         "special",
         "start"
@@ -27,8 +29,10 @@
       "id": "end",
       "name": "Setup End",
       "description": "Special configuration that runs end installation process",
+      "image": null,
       "type": "shell_script",
       "category": "Special",
+      "bundle": null,
       "tags": [
         "special",
         "end"

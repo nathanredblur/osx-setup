@@ -1,46 +1,55 @@
-# Astro Starter Kit: Basics
+# Mac Setup Store (Astro + React + Tailwind)
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+This web app simulates an “app store” for building a personalized macOS setup, inspired by the attached UI. All UI is in English.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Tech
 
-## 🚀 Project Structure
+- Astro (TypeScript) with React islands
+- Tailwind CSS, Lucide icons
+- Client search: Fuse.js
+- State: Zustand (persisted to `localStorage`)
+- File export: File System Access API with blob fallback
 
-Inside of your Astro project, you'll see the following folders and files:
+## Commands
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+- `pnpm install`
+- `pnpm dev` – start dev server
+- `pnpm build` – production build
+- `pnpm preview` – preview build
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Project Plan Checklist
 
-## 🧞 Commands
+- [x] Initialize Astro project and Tailwind
+- [x] Enable React islands
+- [x] Create base layout with styles
+- [x] Sidebar with Apps/Tweeks/Settings
+- [x] Pages: `/`, `/tweeks`, `/settings`
+- [x] Summary panel skeleton with CTA “create setup”
+- [x] Filters bar skeleton (search, category, tag, toggles)
+- [x] App grid and basic `AppCard`
+- [x] Local stores scaffolding (selection, filters)
+- [x] Utilities: fuzzy search, file export, validators, bundle/script generators (initial)
+- [ ] Wire real data from `src/assets/data/*.json`
+- [ ] Implement fuzzy search and filters with Zustand state
+- [ ] Persist selection and filters to `localStorage`
+- [ ] App detail Drawer/Modal
+- [ ] Summary stats (by type, paid, with settings)
+- [ ] Generator: create setup (brew bundle + scripts)
+- [ ] Toast/notifications
+- [ ] Settings page (theme, defaults, cache, reload catalog)
+- [ ] Tweeks page toggles connected to state
+- [ ] Polished UI and accessibility
 
-All commands are run from the root of the project, from a terminal:
+## Data
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+Local JSON catalog lives at `src/assets/data/`.
 
-## 👀 Want to learn more?
+## Structure
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Key directories:
+
+- `src/react/*` – React components (Sidebar, Apps view, Filters, Summary, Cards)
+- `src/stores/*` – Zustand stores
+- `src/lib/*` – utilities (fuzzy, file, validators, bundle, script)
+- `src/pages/*` – Astro pages
+- `public/icons/*` – fallback icons

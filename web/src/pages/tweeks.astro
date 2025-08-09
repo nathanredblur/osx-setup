@@ -1,14 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import SidebarNav from "../react/SidebarNav";
-import AppsView from "../react/AppsView";
+import TweeksView from "../react/TweeksView";
 ---
 
 <Layout>
   <div class="flex h-screen">
     <SidebarNav client:load />
-    <div class="flex-1 overflow-hidden">
-      <AppsView client:load />
+    <div class="flex-1 overflow-auto">
+      <TweeksView client:load />
     </div>
   </div>
 </Layout>

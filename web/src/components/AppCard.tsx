@@ -1,69 +1,67 @@
-import React from "react";
-import { Cog, ExternalLink, DollarSign } from "lucide-react";
-import { useSelectionStore } from "@/stores/selection";
-import type { ProgramMeta } from "@/types/data.d.ts";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {Badge} from '@/components/ui/badge';
+import {Button} from '@/components/ui/button';
+import {useSelectionStore} from '@/stores/selection';
+import type {ProgramMeta} from '@/types/data.d.ts';
+import {Cog, DollarSign, ExternalLink} from 'lucide-react';
+import React from 'react';
 
-type Props = { program: ProgramMeta };
+type Props = {program: ProgramMeta};
 
-const AppCard: React.FC<Props> = ({ program }) => {
-  const toggle = useSelectionStore((s) => s.toggle);
-  const selected = useSelectionStore((s) => Boolean(s.selectedIds[program.id]));
+const AppCard: React.FC<Props> = ({program}) => {
+  const toggle = useSelectionStore(s => s.toggle);
+  const selected = useSelectionStore(s => Boolean(s.selectedIds[program.id]));
 
   return (
-    <div className="group rounded-2xl border border-neutral-800/60 bg-[#0f131a] text-neutral-200 overflow-hidden hover:border-blue-500/60 hover:shadow-lg transition cursor-pointer min-w-[350px]">
-      <div className="p-5 grid grid-cols-[64px_1fr] gap-4 items-center">
+    <div className="group cursor-pointer overflow-hidden rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition duration-150 hover:border-blue-500/60 hover:shadow-lg hover:ring-2 hover:ring-blue-500/20 dark:border-neutral-800/60 dark:bg-[#0f131a] dark:text-neutral-200 dark:hover:border-blue-400/60 dark:hover:bg-[#121826] dark:hover:ring-blue-400/25">
+      <div className="grid grid-cols-[64px_1fr] items-center gap-4 p-5">
         <img
-          src={program.icon || "/icons/default-app.svg"}
+          src={program.icon || '/icons/default-app.svg'}
           alt="icon"
-          className="w-16 h-16 rounded-xl object-cover bg-neutral-800/50"
+          className="h-16 w-16 rounded-xl bg-neutral-100 object-cover dark:bg-neutral-800/50"
         />
-        <div className="min-w-0 flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-[15px] leading-5 break-words">
-              {program.name}
-            </h3>
+            <h3 className="text-[15px] leading-5 font-semibold break-words">{program.name}</h3>
             <div className="flex items-center gap-2">
               {program.url && (
                 <a
                   href={program.url}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="p-2 rounded-md bg-neutral-800/60 hover:bg-neutral-700/60"
+                  onClick={e => e.stopPropagation()}
+                  className="rounded-md bg-neutral-100 p-2 hover:bg-neutral-200 dark:bg-neutral-800/60 dark:hover:bg-neutral-700/60"
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="h-4 w-4" />
                 </a>
               )}
               <Button
                 variant="outline"
                 className={
-                  selected ? "h-8 border-blue-500 text-blue-400" : "h-8"
+                  selected ? 'h-8 border-blue-500 text-blue-600 dark:text-blue-400' : 'h-8'
                 }
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   toggle(program);
                 }}
               >
-                {selected ? "Selected" : "Select"}
+                {selected ? 'Selected' : 'Select'}
               </Button>
             </div>
           </div>
           <div className="flex items-center gap-2 text-neutral-400">
             {program.version && (
-              <Badge className="border-neutral-700/60 text-[10px]">
+              <Badge className="border-neutral-300 text-[10px] dark:border-neutral-700/60">
                 {program.version}
               </Badge>
             )}
             {program.paid && (
-              <Badge className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
-                <DollarSign className="w-3 h-3" /> Paid
+              <Badge className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                <DollarSign className="h-3 w-3" /> Paid
               </Badge>
             )}
             {program.hasSettings && (
-              <Badge className="border-sky-500/40 text-sky-300 bg-sky-500/10">
-                <Cog className="w-3 h-3" /> Settings
+              <Badge className="border-sky-300 bg-sky-500/10 text-sky-700 dark:border-sky-500/40 dark:text-sky-300">
+                <Cog className="h-3 w-3" /> Settings
               </Badge>
             )}
           </div>

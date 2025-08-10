@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import type { ProgramMeta } from "../react/types.d.ts";
+import type { ProgramMeta } from "@/types/data.d.ts";
 
 export function createProgramsFuse(items: ProgramMeta[]): Fuse<ProgramMeta> {
   return new Fuse(items, {

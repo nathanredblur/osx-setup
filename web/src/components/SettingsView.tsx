@@ -1,35 +1,21 @@
 import React, { useEffect, useState } from "react";
 
-function applyTheme(theme: "system" | "light" | "dark") {
-  if (theme === "system") {
-    document.documentElement.classList.toggle(
-      "dark",
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    );
-  } else {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }
-}
-
 const SettingsView: React.FC = () => {
-  const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
+  const [theme, setThemeState] = useState<"theme-light" | "dark" | "system">(
+    "theme-light"
+  );
 
   useEffect(() => {
-    // read persisted theme on mount (client only)
-    if (typeof window !== "undefined") {
-      const saved =
-        (window.localStorage.getItem("pref.theme") as any) || "system";
-      setTheme(saved);
-      applyTheme(saved);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    setThemeState(isDarkMode ? "dark" : "theme-light");
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      applyTheme(theme);
-      window.localStorage.setItem("pref.theme", theme);
-    }
+  React.useEffect(() => {
+    const isDark =
+      theme === "dark" ||
+      (theme === "system" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
   }, [theme]);
 
   return (
@@ -42,15 +28,15 @@ const SettingsView: React.FC = () => {
             className={`px-3 py-2 rounded-md bg-neutral-200 dark:bg-neutral-700 ${
               theme === "system" ? "ring-2 ring-blue-500" : ""
             }`}
-            onClick={() => setTheme("system")}
+            onClick={() => setThemeState("system")}
           >
             System
           </button>
           <button
             className={`px-3 py-2 rounded-md bg-neutral-200 dark:bg-neutral-700 ${
-              theme === "light" ? "ring-2 ring-blue-500" : ""
+              theme === "theme-light" ? "ring-2 ring-blue-500" : ""
             }`}
-            onClick={() => setTheme("light")}
+            onClick={() => setThemeState("theme-light")}
           >
             Light
           </button>
@@ -58,7 +44,7 @@ const SettingsView: React.FC = () => {
             className={`px-3 py-2 rounded-md bg-neutral-200 dark:bg-neutral-700 ${
               theme === "dark" ? "ring-2 ring-blue-500" : ""
             }`}
-            onClick={() => setTheme("dark")}
+            onClick={() => setThemeState("dark")}
           >
             Dark
           </button>

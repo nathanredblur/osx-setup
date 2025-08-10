@@ -1,7 +1,7 @@
 import React from "react";
-import type { ProgramMeta } from "../types.d.ts";
-import { singleInstallCommand } from "../../lib/bundle";
-import { useToast } from "../toast/Toast";
+import type { ProgramMeta } from "@/types/data.d.ts";
+import { singleInstallCommand } from "@/lib/bundle";
+import { useToast } from "@/components/Toast";
 
 type Props = {
   program: ProgramMeta | null;

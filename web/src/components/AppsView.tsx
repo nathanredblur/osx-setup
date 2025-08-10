@@ -1,9 +1,9 @@
 import React from "react";
 import FiltersBar from "./FiltersBar";
 import SummaryPanel from "./SummaryPanel";
-import AppGrid from "./grid/AppGrid";
-import { DataProvider } from "./data/DataContext";
-import { ToastProvider } from "./toast/Toast";
+import AppGrid from "@/components/AppGrid";
+import { DataProvider } from "@/context/DataContext";
+import { ToastProvider } from "@/components/Toast";
 
 const AppsView: React.FC = () => {
   return (

@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { useSelectionStore } from "../stores/selection";
-import { createBrewBundle } from "../lib/bundle";
-import { saveTextFile } from "../lib/file";
-import { useToast } from "./toast/Toast";
-import { useCatalog } from "./data/DataContext";
+import { useSelectionStore } from "@/stores/selection";
+import { createBrewBundle } from "@/lib/bundle";
+import { saveTextFile } from "@/lib/file";
+import { useToast } from "@/components/Toast";
+import { useCatalog } from "@/context/DataContext";
 
 const SummaryPanel: React.FC = () => {
   const selected = useSelectionStore((s) => s.selectedIds);

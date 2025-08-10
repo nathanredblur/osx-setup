@@ -5,8 +5,10 @@ export interface FiltersState {
   query: string;
   category: string | null;
   // removed tag/onlyPaid/onlyWithSettings per new spec
+  view: "all" | "selected";
   setQuery: (q: string) => void;
   setCategory: (c: string | null) => void;
+  setView: (v: "all" | "selected") => void;
   clear: () => void;
 }
 
@@ -15,9 +17,11 @@ export const useFiltersStore = create<FiltersState>()(
     (set) => ({
       query: "",
       category: null,
+      view: "all",
       setQuery: (q) => set({ query: q }),
       setCategory: (c) => set({ category: c }),
-      clear: () => set({ query: "", category: null }),
+      setView: (v) => set({ view: v }),
+      clear: () => set({ query: "", category: null, view: "all" }),
     }),
     { name: "store.filters" }
   )

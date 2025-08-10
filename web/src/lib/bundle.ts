@@ -1,4 +1,4 @@
-import type { ProgramMeta } from "../react/types.d.ts";
+import type { ProgramMeta } from "@/types/data.d.ts";
 
 export function createBrewBundle(programs: ProgramMeta[]): string {
   const lines: string[] = [

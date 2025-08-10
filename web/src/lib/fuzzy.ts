@@ -3,7 +3,12 @@ import type { ProgramMeta } from "../react/types.d.ts";
 
 export function createProgramsFuse(items: ProgramMeta[]): Fuse<ProgramMeta> {
   return new Fuse(items, {
-    keys: ["name", "slug", "tags", "category"],
+    keys: [
+      { name: "name", weight: 0.6 },
+      { name: "slug", weight: 0.3 },
+      { name: "tags", weight: 0.3 },
+      { name: "category", weight: 0.2 },
+    ],
     threshold: 0.35,
     ignoreLocation: true,
   });

@@ -10,11 +10,13 @@ const AppsView: React.FC = () => {
     <DataProvider>
       <ToastProvider>
         <div className="h-full flex">
-          <SummaryPanel />
           <div className="flex-1 flex flex-col overflow-hidden">
             <FiltersBar />
-            <div className="flex-1 overflow-auto">
-              <AppGrid />
+            <div className="flex-1 overflow-hidden flex">
+              <div className="flex-1 overflow-auto">
+                <AppGrid />
+              </div>
+              <SummaryPanel />
             </div>
           </div>
         </div>

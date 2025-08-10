@@ -8,26 +8,23 @@ import { useSelectionStore } from "../../stores/selection";
 
 const AppGrid: React.FC = () => {
   const { programs, loading } = useCatalog();
-  const { query, category, tag, onlyPaid, onlyWithSettings } =
-    useFiltersStore();
+  const { query, category } = useFiltersStore();
   const [detailId, setDetailId] = useState<string | null>(null);
   const toggle = useSelectionStore((s) => s.toggle);
 
   const filtered = useMemo(() => {
     let list = programs;
     if (category) list = list.filter((p) => p.category === category);
-    if (tag) list = list.filter((p) => (p.tags || []).includes(tag));
-    if (onlyPaid) list = list.filter((p) => !!p.paid);
-    if (onlyWithSettings) list = list.filter((p) => !!p.hasSettings);
+    // tag/paid/settings filters removed; fuzzy search covers tags
     if (query.trim()) {
       const fuse = createProgramsFuse(list);
       list = fuzzySearch(fuse, query);
     }
     return list;
-  }, [programs, query, category, tag, onlyPaid, onlyWithSettings]);
+  }, [programs, query, category]);
 
   return (
-    <div className="p-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="p-4 grid gap-5 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {loading && (
         <div className="col-span-full text-sm text-neutral-500">
           Loading catalog…

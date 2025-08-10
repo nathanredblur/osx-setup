@@ -10,50 +10,61 @@ const AppCard: React.FC<Props> = ({ program }) => {
   const selected = useSelectionStore((s) => Boolean(s.selectedIds[program.id]));
 
   return (
-    <div className="group rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden hover:shadow-md transition cursor-pointer">
-      <div className="p-4 flex gap-3">
+    <div className="group rounded-xl border border-neutral-800/60 bg-[#0f131a] text-neutral-200 overflow-hidden hover:border-blue-500/60 hover:shadow-lg transition cursor-pointer">
+      <div className="p-5 flex gap-4">
         <img
           src={program.icon || "/icons/default-app.svg"}
           alt="icon"
-          className="w-12 h-12 rounded-md object-cover bg-neutral-200 dark:bg-neutral-800"
+          className="w-14 h-14 rounded-lg object-cover bg-neutral-800/50"
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium truncate">{program.name}</h3>
+            <h3 className="font-semibold truncate text-[15px]">
+              {program.name}
+            </h3>
             {program.version && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-800/60 border border-neutral-700/60">
                 {program.version}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-2 text-neutral-500">
-            {program.paid && <DollarSign className="w-4 h-4" />}
-            {program.url && (
-              <a
-                href={program.url}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ExternalLink className="w-4 h-4" />
-              </a>
+          <div className="flex items-center gap-2 mt-2 text-neutral-400">
+            {program.paid && (
+              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
+                <DollarSign className="w-3 h-3" /> Paid
+              </span>
             )}
-            {program.hasSettings && <Cog className="w-4 h-4" />}
+            {program.hasSettings && (
+              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border border-sky-500/40 text-sky-300 bg-sky-500/10">
+                <Cog className="w-3 h-3" /> Settings
+              </span>
+            )}
           </div>
         </div>
-        <div className="flex items-start">
+        <div className="flex items-start gap-2">
+          {program.url && (
+            <a
+              href={program.url}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="p-2 rounded-md bg-neutral-800/60 hover:bg-neutral-700/60"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          )}
           <button
-            className={`px-2 py-1 text-sm rounded-md border hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
+            className={`px-3 py-1.5 text-xs rounded-md border transition ${
               selected
-                ? "border-blue-600 text-blue-600"
-                : "border-neutral-300 dark:border-neutral-700"
+                ? "border-blue-500 text-blue-400 bg-blue-500/10"
+                : "border-neutral-700 text-neutral-300 hover:bg-neutral-800/60"
             }`}
             onClick={(e) => {
               e.stopPropagation();
               toggle(program);
             }}
           >
-            {selected ? "Unselect" : "Select"}
+            {selected ? "Selected" : "Select"}
           </button>
         </div>
       </div>

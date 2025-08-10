@@ -3,19 +3,22 @@ import FiltersBar from "./FiltersBar";
 import SummaryPanel from "./SummaryPanel";
 import AppGrid from "./grid/AppGrid";
 import { DataProvider } from "./data/DataContext";
+import { ToastProvider } from "./toast/Toast";
 
 const AppsView: React.FC = () => {
   return (
     <DataProvider>
-      <div className="h-full flex">
-        <SummaryPanel />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <FiltersBar />
-          <div className="flex-1 overflow-auto">
-            <AppGrid />
+      <ToastProvider>
+        <div className="h-full flex">
+          <SummaryPanel />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <FiltersBar />
+            <div className="flex-1 overflow-auto">
+              <AppGrid />
+            </div>
           </div>
         </div>
-      </div>
+      </ToastProvider>
     </DataProvider>
   );
 };

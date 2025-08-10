@@ -1,5 +1,8 @@
 import React, { useMemo } from "react";
 import { useSelectionStore } from "../stores/selection";
+import { createBrewBundle } from "../lib/bundle";
+import { saveTextFile } from "../lib/file";
+import { useToast } from "./toast/Toast";
 
 const SummaryPanel: React.FC = () => {
   const selected = useSelectionStore((s) => s.selectedIds);
@@ -22,6 +25,19 @@ const SummaryPanel: React.FC = () => {
     }
     return counts;
   }, [selected]);
+
+  const toast = useToast();
+
+  async function handleCreateSetup() {
+    const items = Object.values(selected);
+    if (items.length === 0) {
+      toast("Nothing selected");
+      return;
+    }
+    const script = createBrewBundle(items);
+    await saveTextFile("mac-setup.sh", script);
+    toast("Setup script generated");
+  }
 
   return (
     <aside className="w-72 shrink-0 border-r border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 h-full flex flex-col">
@@ -57,7 +73,10 @@ const SummaryPanel: React.FC = () => {
         </div>
       </div>
       <div className="mt-auto p-4">
-        <button className="w-full py-3 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-semibold">
+        <button
+          onClick={handleCreateSetup}
+          className="w-full py-3 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-semibold"
+        >
           create setup
         </button>
       </div>

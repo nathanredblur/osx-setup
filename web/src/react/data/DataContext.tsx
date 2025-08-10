@@ -31,6 +31,17 @@ function mapType(input?: string): "brew" | "cask" | "mas" | undefined {
   return undefined;
 }
 
+function parseBundle(bundle: string | null | undefined) {
+  if (!bundle) return { token: undefined, masId: undefined };
+  // examples: "brew \"mise\"", "cask \"jan\"", "mas \"AdGuard\", id: 1440147259"
+  const tokenMatch = bundle.match(/\b(?:brew|cask)\s+\"([^\"]+)\"/);
+  const masIdMatch = bundle.match(/\bid:\s*(\d{6,})/);
+  return {
+    token: tokenMatch ? tokenMatch[1] : undefined,
+    masId: masIdMatch ? masIdMatch[1] : undefined,
+  };
+}
+
 function toProgramMeta(entry: any): ProgramMeta {
   const type = mapType(entry.type);
   const hasSettings = Boolean(
@@ -40,18 +51,28 @@ function toProgramMeta(entry: any): ProgramMeta {
       (entry.dependencies && entry.dependencies.length > 0)
   );
   const paid = Boolean(entry.requires_license);
+  const { token, masId } = parseBundle(entry.bundle);
   return {
     id: entry.id,
     name: entry.name,
     slug: entry.id,
+    token,
+    masId,
     icon: entry.image || undefined,
     version: undefined,
     url: entry.url || undefined,
+    description: entry.description || undefined,
     paid,
     hasSettings,
     type,
     tags: entry.tags || [],
     category: entry.category,
+    notes: entry.notes || undefined,
+    dependencies: entry.dependencies || [],
+    installScript: entry.install_script ?? null,
+    validateScript: entry.validate_script ?? null,
+    configureScript: entry.configure_script ?? null,
+    uninstallScript: entry.uninstall_script ?? null,
   };
 }
 

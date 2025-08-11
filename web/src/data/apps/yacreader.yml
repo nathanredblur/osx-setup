@@ -1,0 +1,76 @@
+id: 'yacreader'
+name: 'YACReader'
+description: 'Comic book reader and library manager'
+type: 'cask'
+category: 'Media'
+selected_by_default: false
+requires_license: false
+tags:
+  - comics
+  - manga
+  - ebooks
+  - reader
+  - library
+  - cbr-cbz
+url: 'https://www.yacreader.com/'
+notes: |
+  - Comprehensive comic book reader and library manager
+  - Support for major comic formats (CBR, CBZ, PDF, etc.)
+  - Library organization with metadata and cover art
+  - Reading list and favorites management
+  - Smooth reading experience with various view modes
+  - Free and open source
+dependencies: []
+bundle: cask "yacreader"
+install:
+validate: |
+  brew list --cask | grep -q "yacreader" || ls /Applications/ | grep -q "YACReader.app"
+configure: |
+  echo "YACReader configuration complete"
+  echo "Launch YACReader to start reading comics and manga"
+  echo ""
+  echo "Key features:"
+  echo "- Support for CBR, CBZ, CB7, CBT, PDF formats"
+  echo "- Library management with automatic metadata"
+  echo "- Cover flow and grid view for browsing"
+  echo "- Reading lists and favorites organization"
+  echo "- Full-screen reading mode"
+  echo "- Bookmark and reading progress tracking"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch YACReader from Applications"
+  echo "2. Import your comic book folders into library"
+  echo "3. Let YACReader scan and organize your collection"
+  echo "4. Browse comics with cover flow or list view"
+  echo "5. Double-click to start reading"
+  echo ""
+  echo "Reading features:"
+  echo "- Page-by-page or continuous reading"
+  echo "- Fit to width, height, or best fit options"
+  echo "- Zoom and pan for detailed viewing"
+  echo "- Right-to-left reading for manga"
+  echo "- Full-screen mode for immersive reading"
+  echo "- Keyboard shortcuts for navigation"
+  echo ""
+  echo "Library management:"
+  echo "- Automatic cover art and metadata detection"
+  echo "- Series and story arc organization"
+  echo "- Reading lists for custom collections"
+  echo "- Search and filter capabilities"
+  echo "- Tags and rating system"
+  echo ""
+  echo "Supported formats:"
+  echo "- CBR (Comic Book RAR)"
+  echo "- CBZ (Comic Book ZIP)"
+  echo "- CB7 (Comic Book 7z)"
+  echo "- CBT (Comic Book TAR)"
+  echo "- PDF documents"
+  echo ""
+  echo "Tips:"
+  echo "- Organize comics in folders by series"
+  echo "- Use consistent naming for better detection"
+  echo "- Enable automatic library scanning"
+  echo "- Explore reading modes for best experience"
+uninstall: |
+  echo "Uninstalling YACReader..."
+  brew uninstall --cask yacreader

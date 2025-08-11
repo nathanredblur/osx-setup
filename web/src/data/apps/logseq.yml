@@ -1,0 +1,88 @@
+id: 'logseq'
+name: 'LogSeq'
+description: 'Local-first knowledge management and collaboration platform'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: false
+requires_license: false
+tags:
+  - knowledge-management
+  - note-taking
+  - graph
+  - markdown
+  - privacy
+  - local-first
+url: 'https://logseq.com/'
+notes: |
+  - Local-first knowledge management platform
+  - Block-based note-taking with bidirectional linking
+  - Graph database for knowledge visualization
+  - Privacy-focused with local storage
+  - Extensible with plugins and themes
+  - Free and open source
+dependencies: []
+bundle: cask "logseq"
+install:
+validate: |
+  brew list --cask | grep -q "logseq" || ls /Applications/ | grep -q "Logseq.app"
+configure: |
+  echo "LogSeq configuration complete"
+  echo "Launch LogSeq to start building your knowledge base"
+  echo ""
+  echo "Key features:"
+  echo "- Local-first approach - your data stays on your device"
+  echo "- Block-based note-taking with linking"
+  echo "- Bidirectional links and backlinks"
+  echo "- Graph visualization of knowledge"
+  echo "- Daily journaling and templates"
+  echo "- Plugin ecosystem for extensibility"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch LogSeq from Applications"
+  echo "2. Choose a local folder for your graph"
+  echo "3. Start with daily journal or create pages"
+  echo "4. Use [[Page Name]] to create links"
+  echo "5. Explore the graph view to see connections"
+  echo ""
+  echo "Core concepts:"
+  echo "- Blocks: Individual units of information"
+  echo "- Pages: Collections of related blocks"
+  echo "- Links: Connections between pages and blocks"
+  echo "- Graph: Visual representation of your knowledge"
+  echo "- Journal: Daily pages for ongoing thoughts"
+  echo ""
+  echo "Note-taking features:"
+  echo "- Markdown syntax support"
+  echo "- Block references and embeds"
+  echo "- Tags for categorization"
+  echo "- TODO items and task management"
+  echo "- Code blocks with syntax highlighting"
+  echo ""
+  echo "Organization:"
+  echo "- Hierarchical page structure"
+  echo "- Tag-based organization"
+  echo "- Search across all content"
+  echo "- Linked references panel"
+  echo "- Graph database queries"
+  echo ""
+  echo "Privacy and data:"
+  echo "- All data stored locally on your device"
+  echo "- No cloud synchronization by default"
+  echo "- Optional Git integration for version control"
+  echo "- Encrypt sensitive information"
+  echo ""
+  echo "Extensibility:"
+  echo "- Plugin marketplace for additional features"
+  echo "- Custom themes and styling"
+  echo "- JavaScript API for custom plugins"
+  echo "- Import/export in various formats"
+  echo ""
+  echo "Use cases:"
+  echo "- Personal knowledge management"
+  echo "- Research and study notes"
+  echo "- Project documentation"
+  echo "- Daily journaling and reflection"
+  echo "- Team collaboration (with sync solutions)"
+uninstall: |
+  echo "Uninstalling LogSeq..."
+  brew uninstall --cask logseq

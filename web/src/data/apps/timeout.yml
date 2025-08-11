@@ -1,0 +1,77 @@
+id: "timeout"
+name: "Time Out"
+description: "Customizable break reminder to reduce eye strain and RSI"
+type: "mas"
+category: "Productivity"
+selected_by_default: false
+requires_license: false
+tags:
+  - breaks
+  - health
+  - productivity
+  - eye-strain
+  - rsi
+  - wellness
+url: "https://www.dejal.com/timeout/"
+notes: |
+  - Customizable break reminder application
+  - Helps prevent eye strain and repetitive stress injuries
+  - Flexible scheduling with normal and micro breaks
+  - Visual and audio break notifications
+  - Optional forced breaks for health compliance
+  - Free version available with paid Pro features
+bundle: 'mas "Time Out", id: 402592703'
+install:
+validate: |
+  # Check if installed via App Store
+  if ls /Applications/ | grep -q "Time Out.app"; then
+    exit 0
+  fi
+
+  # Check in system Applications
+  if ls "/Applications/Time Out.app" &> /dev/null; then
+    exit 0
+  fi
+
+  exit 1
+configure: |
+  echo "Time Out configuration complete"
+  echo "Launch Time Out to set up your break schedule"
+  echo ""
+  echo "Key features:"
+  echo "- Customizable break intervals and durations"
+  echo "- Normal breaks (longer, less frequent)"
+  echo "- Micro breaks (short, frequent eye rest)"
+  echo "- Visual countdown and notifications"
+  echo "- Optional forced breaks for compliance"
+  echo "- Break activity suggestions"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Time Out from Applications"
+  echo "2. Configure your break preferences"
+  echo "3. Set normal break interval (e.g., every 50 minutes)"
+  echo "4. Set micro break interval (e.g., every 10 minutes)"
+  echo "5. Choose break duration and activities"
+  echo ""
+  echo "Recommended settings:"
+  echo "- Normal breaks: 15 minutes every 2 hours"
+  echo "- Micro breaks: 30 seconds every 20 minutes"
+  echo "- Enable countdown timers"
+  echo "- Use gentle notifications initially"
+  echo ""
+  echo "Health benefits:"
+  echo "- Reduces eye strain and dry eyes"
+  echo "- Prevents repetitive stress injuries"
+  echo "- Improves posture and circulation"
+  echo "- Increases overall productivity"
+  echo "- Promotes mindful work habits"
+  echo ""
+  echo "Time Out will run in the menu bar"
+  echo "You can pause, skip, or postpone breaks as needed"
+uninstall: |
+  echo "Uninstalling Time Out..."
+  if command -v mas >/dev/null 2>&1; then
+    echo "Note: Use Mac App Store to uninstall or:"
+    echo "mas uninstall 402592703"
+  fi
+  echo "Or manually delete from Applications folder"

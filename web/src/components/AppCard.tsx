@@ -17,7 +17,7 @@ const AppCard: React.FC<Props> = ({program, onClick}) => {
       onClick={onClick}
     >
       <img
-        src={program.icon || '/icons/default-app.svg'}
+        src={program.image || '/icons/default-app.svg'}
         alt="icon"
         className="h-20 w-20 rounded-xl bg-neutral-100 object-cover dark:bg-neutral-800/50"
       />
@@ -26,17 +26,17 @@ const AppCard: React.FC<Props> = ({program, onClick}) => {
           <h3 className="text-[15px] leading-5 font-semibold break-words">{program.name}</h3>
         </div>
         <div className="flex items-center gap-2 text-neutral-400">
-          {program.version && (
+          {program.type === 'shell_script' && (
             <Badge className="border-neutral-300 text-[10px] dark:border-neutral-700/60">
-              {program.version}
+              Script
             </Badge>
           )}
-          {program.paid && (
+          {program.requires_license && (
             <Badge className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
               <DollarSign className="h-3 w-3" /> Paid
             </Badge>
           )}
-          {program.hasSettings && (
+          {!!program.configure && (
             <Badge className="border-sky-300 bg-sky-500/10 text-sky-700 dark:border-sky-500/40 dark:text-sky-300">
               <Cog className="h-3 w-3" /> Settings
             </Badge>

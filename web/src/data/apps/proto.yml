@@ -1,0 +1,69 @@
+id: "proto"
+name: "Proto"
+description: "Pluggable multi-language version manager with first-class support for toolchains and development environments"
+type: "brew"
+category: "Development"
+selected_by_default: false
+requires_license: false
+tags:
+  - version-manager
+  - toolchain
+  - development
+  - multi-language
+  - plugins
+url: "https://moonrepo.dev/proto"
+notes: |
+  - Pluggable multi-language version manager
+  - First-class support for toolchains and development environments
+  - Plugin system for extending language support
+  - Fast performance with Rust implementation
+  - Supports Node.js, Python, Go, Rust, and more
+  - 
+  - 📌 After installation:
+  - 1. Add to shell profile: eval "$(proto activate zsh)"
+  - 2. Install a tool: proto install node
+  - 3. Set global version: proto global node latest
+  - 4. Create .prototools file in project: proto local node 18
+dependencies: [git, unzip, gzip, xz]
+bundle: brew "proto"
+install:
+validate: |
+  command -v proto &> /dev/null
+configure: |
+  echo "Configuring Proto..."
+  proto setup
+
+
+  echo "Installing Node.js..."
+  proto install node
+  proto global node lts/iron
+  proto pin node lts/iron
+
+  echo "Installing npm..."
+  proto install npm
+  proto global npm latest
+
+  echo "Installing pnpm..."
+  proto install pnpm
+  proto global pnpm latest
+
+  echo "Installing Yarn..."
+  proto install yarn
+  proto global yarn latest
+
+  echo "Installing uv..."
+  proto install uv
+  proto global uv latest
+
+  echo "Installing Python..."
+  proto install python
+  proto global python latest
+
+
+  echo "Add to shell profile: eval \"\$(proto activate zsh)\""
+  echo "Install a tool: proto install node"
+  echo "Set global version: proto global node latest"
+  echo "Create .prototools file in projects: proto local node 18"
+uninstall: |
+  echo "Uninstalling Proto..."
+  brew uninstall proto

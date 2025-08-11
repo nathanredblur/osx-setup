@@ -1,0 +1,31 @@
+id: 'whatsapp'
+name: 'WhatsApp'
+description:
+  'Official WhatsApp desktop app for macOS with end-to-end encryption, group calls, and seamless
+  syncing across devices'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: false
+requires_license: false
+tags:
+  - communication
+  - messaging
+  - social
+  - calls
+url: 'https://www.whatsapp.com/download'
+notes: |
+  - Requires WhatsApp to be set up on your mobile device first
+  - Supports group calls with up to 8 people on video and 32 on audio
+  - End-to-end encryption for all messages and calls
+  - Syncs with your mobile WhatsApp account
+dependencies: []
+bundle: cask "whatsapp"
+install:
+validate: |
+  brew list --cask | grep -q "whatsapp" || ls /Applications/ | grep -q "WhatsApp.app"
+configure: |
+  echo "WhatsApp configuration complete"
+  echo "Launch WhatsApp and scan the QR code with your phone to link devices"
+uninstall: |
+  echo "Uninstalling WhatsApp..."
+  brew uninstall --cask whatsapp

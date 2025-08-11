@@ -1,0 +1,35 @@
+id: 'warp'
+name: 'Warp'
+description:
+  'Modern, Rust-based terminal with AI integration, blocks-based navigation, and intelligent
+  autocompletion'
+type: 'cask'
+category: 'Development'
+selected_by_default: true
+requires_license: false
+tags:
+  - terminal
+  - productivity
+  - ai
+  - development
+url: 'https://www.warp.dev/'
+notes: |
+  - Modern terminal reimagined for the 21st century
+  - AI-powered command generation and debugging
+  - Blocks-based navigation for easier command history
+  - IDE-like editing with mouse cursor support
+  - Built-in completions for 400+ CLI tools
+  - Collaborative features and workflow sharing
+  - Free for individuals, paid plans for teams
+dependencies: []
+bundle: cask "warp"
+install:
+validate: |
+  brew list --cask | grep -q "warp" || ls /Applications/ | grep -q "Warp.app"
+configure: |
+  echo "Warp configuration complete"
+  echo "Launch Warp and sign up for an account to access AI features"
+  echo "Consider setting Warp as your default terminal in System Preferences"
+uninstall: |
+  echo "Uninstalling Warp..."
+  brew uninstall --cask warp

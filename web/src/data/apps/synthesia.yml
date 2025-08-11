@@ -1,0 +1,39 @@
+id: 'synthesia'
+name: 'Synthesia'
+description: 'Learn how to play the piano using falling notes.'
+type: 'cask'
+category: 'Media'
+selected_by_default: false
+requires_license: true
+tags:
+  - music
+  - learning
+  - piano
+  - education
+  - games
+url: 'https://www.synthesiagame.com/'
+notes: |
+  - Interactive piano learning game with falling notes
+  - Supports MIDI keyboards for realistic playing experience
+  - Premium features require license purchase
+  - Large library of songs and lessons available
+  - Suitable for beginners and advanced players
+dependencies: []
+bundle: cask "synthesia"
+install:
+validate: |
+  if brew list --cask | grep -q "^synthesia$"; then
+    echo "Synthesia is installed."
+    exit 0 # Installed
+  else
+    echo "Synthesia is NOT installed."
+    exit 1 # Not installed
+  fi
+uninstall: |
+  echo "Uninstalling Synthesia..."
+  if brew uninstall --cask synthesia; then
+    echo "SUCCESS: Synthesia uninstalled successfully."
+  else
+    echo "ERROR: Synthesia uninstallation failed."
+    exit 1
+  fi

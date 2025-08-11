@@ -1,0 +1,56 @@
+id: 'obs-studio'
+name: 'OBS Studio'
+description: 'Live streaming and recording software'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: false
+requires_license: false
+tags:
+  - streaming
+  - recording
+  - broadcast
+  - video
+  - live
+url: 'https://obsproject.com/'
+notes: |
+  - Professional live streaming and recording software
+  - Multi-source video mixing and real-time effects
+  - Support for all major streaming platforms
+  - Extensive plugin ecosystem
+  - Scene-based composition with unlimited sources
+  - Free and open source
+dependencies: []
+bundle: cask "obs"
+install:
+validate: |
+  brew list --cask | grep -q "obs" || ls /Applications/ | grep -q "OBS.app"
+configure: |
+  echo "OBS Studio configuration complete"
+  echo "Launch OBS Studio to start streaming and recording"
+  echo ""
+  echo "Key features:"
+  echo "- Live streaming to Twitch, YouTube, Facebook, and more"
+  echo "- High-performance real-time video recording"
+  echo "- Multi-source mixing with scenes and transitions"
+  echo "- Audio mixer with per-source filters"
+  echo "- Video effects and filters"
+  echo "- Plugin support for extended functionality"
+  echo ""
+  echo "Getting started:"
+  echo "1. Run the Auto-Configuration Wizard"
+  echo "2. Set up your scenes and sources"
+  echo "3. Configure audio settings and microphone"
+  echo "4. Add video sources (screen capture, camera, etc.)"
+  echo "5. Set up streaming service integration"
+  echo ""
+  echo "Common sources:"
+  echo "- Display Capture: Screen recording"
+  echo "- Video Capture Device: Webcam/camera"
+  echo "- Audio Input/Output Capture: Microphone/system audio"
+  echo "- Window Capture: Specific application windows"
+  echo "- Browser Source: Web pages and interactive content"
+  echo ""
+  echo "Note: You may need to grant screen recording permissions"
+uninstall: |
+  echo "Uninstalling OBS Studio..."
+  brew uninstall --cask obs

@@ -1,0 +1,40 @@
+id: "git"
+name: "Git"
+description: "Distributed version control system for tracking changes in source code during software development"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - version-control
+  - development
+  - essential
+  - collaboration
+url: "https://git-scm.com/"
+notes: |
+  - Distributed version control system
+  - Essential for modern software development
+  - Supports branching, merging, and distributed workflows
+  - Integrates with GitHub, GitLab, and other platforms
+  - Command-line and GUI tools available
+  - 
+  - 📌 After installation:
+  - 1. Configure: git config --global user.name "Your Name"
+  - 2. Configure: git config --global user.email "your.email@example.com"
+  - 3. Set pull behavior: git config --global pull.rebase true
+  - 4. Enable auto-stash: git config --global rebase.autoStash true
+dependencies: []
+bundle: brew "git"
+install:
+validate: |
+  command -v git &> /dev/null
+configure: |
+  echo "Git configuration complete"
+  echo "Configure Git with your details:"
+  echo "  git config --global user.name \"Your Name\""
+  echo "  git config --global user.email \"your.email@example.com\""
+  echo "  git config --global pull.rebase true"
+  echo "  git config --global rebase.autoStash true"
+uninstall: |
+  echo "Uninstalling Git..."
+  brew uninstall git

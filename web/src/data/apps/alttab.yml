@@ -1,0 +1,39 @@
+id: 'alttab'
+name: 'AltTab'
+description: 'Windows-style Alt-Tab for macOS'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: false
+requires_license: false
+tags:
+  - window-management
+  - productivity
+  - alt-tab
+  - switcher
+  - navigation
+url: 'https://alt-tab-macos.netlify.app/'
+notes: |
+  - Provides Windows-style window switching with thumbnails
+  - Shows preview thumbnails of all open windows
+  - Customizable appearance and behavior
+  - Supports keyboard shortcuts and mouse interaction
+  - Open source and lightweight
+  - Alternative to macOS default Cmd+Tab behavior
+dependencies: []
+bundle: cask "alt-tab"
+install:
+validate: |
+  brew list --cask | grep -q "alt-tab" || ls /Applications/ | grep -q "AltTab.app"
+configure: |
+  echo "AltTab configuration complete"
+  echo "Launch AltTab and grant necessary permissions"
+  echo "Configuration options:"
+  echo "- Customize keyboard shortcuts (default: Alt+Tab)"
+  echo "- Adjust thumbnail size and layout"
+  echo "- Set window preview behavior"
+  echo "- Configure mouse interaction"
+  echo ""
+  echo "Note: You may need to grant Accessibility permissions in System Preferences"
+uninstall: |
+  echo "Uninstalling AltTab..."
+  brew uninstall --cask alt-tab

@@ -1,25 +1,10 @@
-import type { APIRoute } from "astro";
+import type {APIContext} from 'astro';
+import {getCollection} from 'astro:content';
 
-export const GET: APIRoute = async () => {
-  const programs = await import("@/assets/data/programs.json");
-  const categories = await import("@/assets/data/categories.json");
-  const tags = await import("@/assets/data/tags.json");
-  const metadata = await import("@/assets/data/metadata.json");
-  const special = await import("@/assets/data/special-configs.json");
-  return new Response(
-    JSON.stringify(
-      {
-        programs: programs.default || programs,
-        categories,
-        tags,
-        metadata,
-        special,
-      },
-      null,
-      2
-    ),
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+const apps = await getCollection('apps');
+
+export const GET = async (context: APIContext) => {
+  return new Response(JSON.stringify(apps), {
+    headers: {'Content-Type': 'application/json'},
+  });
 };

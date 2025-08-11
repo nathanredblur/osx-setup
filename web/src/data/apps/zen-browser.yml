@@ -1,0 +1,85 @@
+id: 'zen-browser'
+name: 'Zen Browser'
+description: 'Beautiful, fast, and privacy-focused Firefox-based browser'
+type: 'cask'
+category: 'Browsers'
+selected_by_default: false
+requires_license: false
+tags:
+  - browser
+  - firefox
+  - privacy
+  - beautiful
+  - customization
+url: 'https://www.zen-browser.app/'
+notes: |
+  - Firefox-based browser with focus on beauty and privacy
+  - Highly customizable interface with themes
+  - Built-in ad blocker and privacy features
+  - Vertical tabs and workspaces
+  - Split screen and picture-in-picture support
+  - Open source and community driven
+dependencies: []
+bundle: cask "zen"
+install: |
+  echo "Installing Zen Browser..."
+  echo "Downloading Zen Browser from official website..."
+
+  # Create temporary directory
+  tmp_dir=$(mktemp -d)
+  cd "$tmp_dir"
+
+  # Download the latest version
+  echo "Fetching download URL..."
+  download_url="https://github.com/zen-browser/desktop/releases/latest/download/zen.macos-x64.dmg"
+
+  echo "Downloading Zen Browser..."
+  curl -L -o "zen-browser.dmg" "$download_url"
+
+  # Mount and install
+  echo "Mounting DMG..."
+  hdiutil attach "zen-browser.dmg" -nobrowse -quiet
+
+  echo "Installing Zen Browser..."
+  cp -R "/Volumes/Zen Browser/Zen Browser.app" "/Applications/"
+
+  echo "Cleaning up..."
+  hdiutil detach "/Volumes/Zen Browser" -quiet
+  rm -rf "$tmp_dir"
+
+  echo "Zen Browser installation completed"
+validate: |
+  ls /Applications/ | grep -q "Zen Browser.app"
+configure: |
+  echo "Zen Browser configuration complete"
+  echo "Launch Zen Browser to complete setup"
+  echo ""
+  echo "Key features:"
+  echo "- Beautiful, customizable interface"
+  echo "- Vertical tabs and workspaces"
+  echo "- Built-in privacy protection and ad blocking"
+  echo "- Firefox compatibility with extensions"
+  echo "- Split screen and picture-in-picture"
+  echo "- Multiple themes and customization options"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Zen Browser from Applications"
+  echo "2. Import bookmarks and settings from other browsers"
+  echo "3. Explore themes in Settings > Appearance"
+  echo "4. Set up workspaces for different contexts"
+  echo "5. Configure privacy and security settings"
+  echo ""
+  echo "Unique features:"
+  echo "- Vertical tab sidebar for better space usage"
+  echo "- Workspaces to organize different browsing contexts"
+  echo "- Beautiful animations and smooth interface"
+  echo "- Privacy-first approach with built-in protections"
+  echo "- Regular updates from active community"
+  echo ""
+  echo "Firefox compatibility:"
+  echo "- Use Firefox Add-ons and extensions"
+  echo "- Import Firefox profiles and data"
+  echo "- Same rendering engine with enhanced UI"
+uninstall: |
+  echo "Uninstalling Zen Browser..."
+  rm -rf "/Applications/Zen Browser.app"

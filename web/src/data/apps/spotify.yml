@@ -1,0 +1,38 @@
+id: 'spotify'
+name: 'Spotify'
+description: 'Music streaming service'
+type: 'cask'
+category: 'Media'
+selected_by_default: false
+requires_license: false
+tags:
+  - music
+  - streaming
+  - audio
+  - entertainment
+  - playlist
+url: 'https://www.spotify.com/'
+notes: |
+  - Popular music streaming platform with offline capabilities
+  - Free tier with ads, premium subscription for ad-free experience
+  - Millions of songs, podcasts, and audiobooks
+  - Personalized recommendations and discover features
+  - Cross-device synchronization and offline downloads (Premium)
+  - Social features and playlist sharing
+dependencies: []
+bundle: cask "spotify"
+install:
+validate: |
+  brew list --cask | grep -q "spotify" || ls /Applications/ | grep -q "Spotify.app"
+configure: |
+  echo "Spotify configuration complete"
+  echo "Launch Spotify and sign in or create an account"
+  echo "Features available:"
+  echo "- Stream millions of songs and podcasts"
+  echo "- Create and share playlists"
+  echo "- Discover new music with personalized recommendations"
+  echo "- Connect with friends and share music"
+  echo "- Upgrade to Premium for offline downloads and no ads"
+uninstall: |
+  echo "Uninstalling Spotify..."
+  brew uninstall --cask spotify

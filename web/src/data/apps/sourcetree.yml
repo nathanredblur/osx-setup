@@ -1,0 +1,52 @@
+id: 'sourcetree'
+name: 'SourceTree'
+description: 'Git GUI client'
+type: 'cask'
+category: 'Development'
+selected_by_default: false
+requires_license: false
+tags:
+  - git
+  - gui
+  - version-control
+  - atlassian
+  - development
+url: 'https://www.sourcetreeapp.com/'
+notes: |
+  - Visual Git client with advanced branching and merging
+  - Intuitive interface for Git repository management
+  - Support for Git and Mercurial repositories
+  - Advanced diff viewer and merge conflict resolution
+  - Integration with Bitbucket, GitHub, and GitLab
+  - Free to use with Atlassian account
+dependencies: ['git']
+bundle: cask "sourcetree"
+install:
+validate: |
+  brew list --cask | grep -q "sourcetree" || ls /Applications/ | grep -q "Sourcetree.app"
+configure: |
+  echo "SourceTree configuration complete"
+  echo "Launch SourceTree and complete the initial setup"
+  echo ""
+  echo "Setup steps:"
+  echo "1. Create or sign in to your Atlassian account"
+  echo "2. Configure Git settings and SSH keys"
+  echo "3. Add your existing repositories"
+  echo "4. Connect to remote services (GitHub, Bitbucket, GitLab)"
+  echo ""
+  echo "Key features:"
+  echo "- Visual Git workflow with drag-and-drop"
+  echo "- Advanced branching and merging tools"
+  echo "- Built-in diff viewer and merge conflict resolution"
+  echo "- Git-flow and Git LFS support"
+  echo "- Integration with popular Git hosting services"
+  echo "- Repository bookmarks and organization"
+  echo ""
+  echo "Getting started:"
+  echo "- Clone repositories from remote services"
+  echo "- Use visual branching for Git-flow workflows"
+  echo "- Review changes with advanced diff tools"
+  echo "- Manage commits, pushes, and pulls graphically"
+uninstall: |
+  echo "Uninstalling SourceTree..."
+  brew uninstall --cask sourcetree

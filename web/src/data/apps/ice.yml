@@ -1,0 +1,34 @@
+id: 'ice'
+name: 'Ice'
+description:
+  'Powerful menu bar management tool that helps organize and control your menu bar icons with
+  elegant hiding and showing features'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: false
+requires_license: false
+tags:
+  - menubar
+  - organization
+  - productivity
+  - free
+  - system-enhancement
+url: 'https://github.com/jordanbaird/Ice'
+notes: |
+  - Free and open-source menu bar manager
+  - Hide and show menu bar icons with keyboard shortcuts
+  - Elegant sliding animations and transitions
+  - Lightweight and minimal system resource usage
+  - Alternative to paid menu bar managers
+dependencies: []
+bundle: cask "jordanbaird-ice"
+install:
+validate: |
+  brew list --cask | grep -q "jordanbaird-ice" || ls /Applications/ | grep -q "Ice.app"
+configure: |
+  echo "Ice configuration complete"
+  echo "Launch Ice and grant accessibility permissions when prompted"
+  echo "Configure your menu bar organization preferences"
+uninstall: |
+  echo "Uninstalling Ice..."
+  brew uninstall --cask jordanbaird-ice

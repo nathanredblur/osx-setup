@@ -1,0 +1,39 @@
+id: "oh-my-posh"
+name: "Oh My Posh"
+description: "Cross-platform prompt theme engine for any shell with beautiful themes and customization options"
+type: "brew"
+category: "Terminal"
+selected_by_default: true
+requires_license: false
+tags:
+  - shell
+  - prompt
+  - themes
+  - customization
+  - terminal
+url: "https://ohmyposh.dev/"
+notes: |
+  - Cross-platform prompt theme engine for any shell
+  - Hundreds of built-in themes available
+  - Supports PowerShell, Bash, Zsh, Fish, and more
+  - Git integration and status display
+  - Customizable segments for different information
+  - 
+  - 📌 After installation:
+  - 1. Install a theme from: https://ohmyposh.dev/docs/themes
+  - 2. Add to shell config (~/.zshrc): eval "$(oh-my-posh init zsh --config ~/.poshthemes/jandedobbeleer.omp.json)"
+  - 3. Install a Nerd Font for best appearance
+  - 4. Restart terminal to see changes
+dependencies: []
+bundle: brew "oh-my-posh"
+install:
+validate: |
+  command -v oh-my-posh &> /dev/null
+configure: |
+  echo "Oh My Posh configuration complete"
+  echo "Visit https://ohmyposh.dev/docs/themes to choose a theme"
+  echo "Add to your shell config: eval \"\$(oh-my-posh init zsh --config ~/.poshthemes/jandedobbeleer.omp.json)\""
+  echo "Install a Nerd Font for best appearance"
+uninstall: |
+  echo "Uninstalling Oh My Posh..."
+  brew uninstall oh-my-posh

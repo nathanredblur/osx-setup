@@ -1,15 +1,10 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import type { ProgramMeta } from "@/types/data.d.ts";
+import type {ProgramMeta} from '@/types/data.d.ts';
+import type {CollectionEntry} from 'astro:content';
+import React, {createContext, useContext, useEffect, useMemo, useState} from 'react';
 
 type DataShape = {
   programs: ProgramMeta[];
-  categories: { id: string; name: string }[];
+  categories: string[];
   tags: string[];
   loading: boolean;
   error: string | null;
@@ -23,62 +18,15 @@ const DataContext = createContext<DataShape>({
   error: null,
 });
 
-function mapType(input?: string): "brew" | "cask" | "mas" | undefined {
-  if (!input) return undefined;
-  if (input === "brew") return "brew";
-  if (input === "mas") return "mas";
-  if (input === "brew_cask" || input === "direct_download_dmg") return "cask";
-  return undefined;
-}
+const getCategories = (data: ProgramMeta[]) => {
+  return [...new Set(data.map(entry => entry.category))];
+};
 
-function parseBundle(bundle: string | null | undefined) {
-  if (!bundle) return { token: undefined, masId: undefined };
-  // examples: "brew \"mise\"", "cask \"jan\"", "mas \"AdGuard\", id: 1440147259"
-  const tokenMatch = bundle.match(/\b(?:brew|cask)\s+\"([^\"]+)\"/);
-  const masIdMatch = bundle.match(/\bid:\s*(\d{6,})/);
-  return {
-    token: tokenMatch ? tokenMatch[1] : undefined,
-    masId: masIdMatch ? masIdMatch[1] : undefined,
-  };
-}
+const getTags = (data: ProgramMeta[]) => {
+  return [...new Set(data.map(entry => entry.tags).flat())];
+};
 
-function toProgramMeta(entry: any): ProgramMeta {
-  const type = mapType(entry.type);
-  const hasSettings = Boolean(
-    entry.install_script ||
-      entry.configure_script ||
-      entry.uninstall_script ||
-      (entry.dependencies && entry.dependencies.length > 0)
-  );
-  const paid = Boolean(entry.requires_license);
-  const { token, masId } = parseBundle(entry.bundle);
-  return {
-    id: entry.id,
-    name: entry.name,
-    slug: entry.id,
-    token,
-    masId,
-    icon: entry.image || undefined,
-    version: undefined,
-    url: entry.url || undefined,
-    description: entry.description || undefined,
-    paid,
-    hasSettings,
-    type,
-    tags: entry.tags || [],
-    category: entry.category,
-    notes: entry.notes || undefined,
-    dependencies: entry.dependencies || [],
-    installScript: entry.install_script ?? null,
-    validateScript: entry.validate_script ?? null,
-    configureScript: entry.configure_script ?? null,
-    uninstallScript: entry.uninstall_script ?? null,
-  };
-}
-
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const DataProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [state, setState] = useState<DataShape>({
     programs: [],
     categories: [],
@@ -91,14 +39,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/data.json");
-        const json = await res.json();
-        const programsObj = json.programs?.programs || json.programs || {};
-        const programsArr = Object.values(programsObj).map(toProgramMeta);
-        const categories = (json.categories?.categories || []).map(
-          (c: any) => ({ id: c.id, name: c.name })
-        );
-        const tags = (json.tags?.tags || []).map((t: any) => t.name);
+        const res = await fetch('/api/data.json');
+        const data: CollectionEntry<'apps'>[] = await res.json();
+        const programsArr = data.map(entry => entry.data);
+
+        const categories = getCategories(programsArr);
+        const tags = getTags(programsArr);
         if (!cancelled)
           setState({
             programs: programsArr,
@@ -109,10 +55,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           });
       } catch (e: any) {
         if (!cancelled)
-          setState((s) => ({
+          setState(s => ({
             ...s,
             loading: false,
-            error: e?.message || "Failed to load data",
+            error: e?.message || 'Failed to load data',
           }));
       }
     })();

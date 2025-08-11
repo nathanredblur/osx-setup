@@ -1,0 +1,45 @@
+id: "eza"
+name: "Eza"
+description: "Modern replacement for ls with colors, icons, and improved formatting for better file listing experience"
+type: "brew"
+category: "Terminal"
+selected_by_default: true
+requires_license: false
+tags:
+  - file-listing
+  - terminal
+  - utilities
+  - colors
+  - icons
+url: "https://github.com/eza-community/eza"
+notes: |
+  - Modern replacement for ls with enhanced features
+  - Color-coded file types and permissions
+  - Icons for different file types (with Nerd Fonts)
+  - Git integration showing file status
+  - Tree view and detailed information display
+  - 
+  - 📌 After installation:
+  - 1. Add aliases to ~/.zshrc:
+  -    alias ls='eza'
+  -    alias ll='eza -l'
+  -    alias la='eza -la'
+  -    alias tree='eza --tree'
+  - 2. Install a Nerd Font for best icon display
+  - 3. Restart terminal to use new aliases
+dependencies: []
+bundle: brew "eza"
+install:
+validate: |
+  command -v eza &> /dev/null
+configure: |
+  echo "Eza configuration complete"
+  echo "Add aliases to ~/.zshrc:"
+  echo "  alias ls='eza'"
+  echo "  alias ll='eza -l'"
+  echo "  alias la='eza -la'"
+  echo "  alias tree='eza --tree'"
+  echo "Install a Nerd Font for best icon display"
+uninstall: |
+  echo "Uninstalling Eza..."
+  brew uninstall eza

@@ -1,0 +1,69 @@
+id: 'dropbox'
+name: 'Dropbox'
+description: 'Cloud storage and file synchronization service'
+type: 'cask'
+category: 'Cloud'
+selected_by_default: false
+requires_license: false
+tags:
+  - cloud-storage
+  - sync
+  - backup
+  - collaboration
+  - file-sharing
+url: 'https://www.dropbox.com/'
+notes: |
+  - Popular cloud storage and file synchronization service
+  - Cross-platform file access and sharing
+  - Automatic backup and version history
+  - Collaboration features for teams
+  - Integration with many third-party applications
+  - Free tier with paid plans for more storage
+dependencies: []
+bundle: cask "dropbox"
+install:
+validate: |
+  brew list --cask | grep -q "dropbox" || ls /Applications/ | grep -q "Dropbox.app"
+configure: |
+  echo "Dropbox configuration complete"
+  echo "Launch Dropbox and sign in to start syncing files"
+  echo ""
+  echo "Key features:"
+  echo "- 2GB free storage (expandable with paid plans)"
+  echo "- Automatic file synchronization across devices"
+  echo "- File sharing with public and private links"
+  echo "- Version history and file recovery"
+  echo "- Collaborative editing and commenting"
+  echo "- Integration with productivity apps"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Dropbox from Applications"
+  echo "2. Create account or sign in to existing account"
+  echo "3. Choose local Dropbox folder location"
+  echo "4. Select folders to sync (selective sync)"
+  echo "5. Install Dropbox on other devices for full sync"
+  echo ""
+  echo "File management:"
+  echo "- Drag files to ~/Dropbox folder for automatic upload"
+  echo "- Access files online at dropbox.com"
+  echo "- Share files via right-click context menu"
+  echo "- Restore deleted files from web interface"
+  echo "- Version history available for 30+ days"
+  echo ""
+  echo "Collaboration features:"
+  echo "- Share folders with team members"
+  echo "- Comment and annotate on files"
+  echo "- Real-time collaborative editing"
+  echo "- Access control and permissions"
+  echo "- Team spaces and organization tools"
+  echo ""
+  echo "Integration:"
+  echo "- Microsoft Office and Google Workspace"
+  echo "- Adobe Creative Suite and Figma"
+  echo "- Slack, Zoom, and communication tools"
+  echo "- Hundreds of third-party applications"
+  echo ""
+  echo "Dropbox will appear in Finder sidebar and menu bar"
+uninstall: |
+  echo "Uninstalling Dropbox..."
+  brew uninstall --cask dropbox

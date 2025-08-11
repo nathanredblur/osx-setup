@@ -1,0 +1,41 @@
+id: 'betterzip'
+name: 'BetterZip'
+description: 'Archive utility with preview'
+type: 'cask'
+category: 'Utilities'
+selected_by_default: false
+requires_license: true
+tags:
+  - archive
+  - zip
+  - compression
+  - utilities
+  - file-management
+url: 'https://macitbetter.com/'
+notes: |
+  - Archive utility that allows previewing and partial extraction
+  - Supports many formats: ZIP, RAR, 7-ZIP, TAR, GZIP, etc.
+  - Preview files without extracting the entire archive
+  - Password protection and encryption support
+  - Batch operations and scripting capabilities
+  - 30-day free trial, then requires license purchase
+dependencies: []
+bundle: cask "betterzip"
+install:
+validate: |
+  brew list --cask | grep -q "betterzip" || ls /Applications/ | grep -q "BetterZip.app"
+configure: |
+  echo "BetterZip configuration complete"
+  echo "Launch BetterZip to start using advanced archive features"
+  echo "Key features:"
+  echo "- Preview archive contents without extraction"
+  echo "- Extract specific files without full extraction"
+  echo "- Create archives with various formats"
+  echo "- Password protection and encryption"
+  echo "- Integration with Finder and other apps"
+  echo ""
+  echo "Note: BetterZip offers a 30-day free trial"
+  echo "Purchase license at: https://macitbetter.com/"
+uninstall: |
+  echo "Uninstalling BetterZip..."
+  brew uninstall --cask betterzip

@@ -1,0 +1,68 @@
+id: 'cloudflare-warp'
+name: 'Cloudflare WARP'
+description: 'Fast, secure, and private VPN service'
+type: 'cask'
+category: 'Cloud'
+selected_by_default: false
+requires_license: false
+tags:
+  - vpn
+  - dns
+  - privacy
+  - cloudflare
+  - security
+  - network
+url: 'https://1.1.1.1/'
+notes: |
+  - Fast and secure VPN service by Cloudflare
+  - Built on the 1.1.1.1 DNS resolver
+  - Free tier with paid WARP+ for enhanced performance
+  - Protects traffic on unsecured networks
+  - Improves connection speed and reliability
+  - Zero-log privacy policy
+dependencies: []
+bundle: cask "cloudflare-warp"
+install:
+validate: |
+  brew list --cask | grep -q "cloudflare-warp" || ls /Applications/ | grep -q "Cloudflare WARP.app"
+configure: |
+  echo "Cloudflare WARP configuration complete"
+  echo "Launch Cloudflare WARP to set up your secure connection"
+  echo ""
+  echo "Key features:"
+  echo "- Fast, secure VPN powered by Cloudflare's network"
+  echo "- Built on the 1.1.1.1 DNS resolver (fastest DNS)"
+  echo "- Zero-log privacy policy"
+  echo "- Protection on public Wi-Fi networks"
+  echo "- Improved website loading speeds"
+  echo "- Free tier with optional WARP+ subscription"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Cloudflare WARP from Applications"
+  echo "2. Create a Cloudflare account or sign in"
+  echo "3. Enable WARP protection"
+  echo "4. Optionally upgrade to WARP+ for faster speeds"
+  echo "5. Configure connection preferences"
+  echo ""
+  echo "Connection modes:"
+  echo "- 1.1.1.1 DNS only: Faster DNS resolution"
+  echo "- WARP: Full VPN protection and acceleration"
+  echo "- WARP+: Enhanced performance with Argo routing"
+  echo ""
+  echo "Benefits:"
+  echo "- Encrypt all internet traffic"
+  echo "- Hide IP address and location"
+  echo "- Protect against malicious websites"
+  echo "- Faster browsing with optimized routing"
+  echo "- Block malware and adult content (optional)"
+  echo ""
+  echo "Usage scenarios:"
+  echo "- Public Wi-Fi protection"
+  echo "- Bypass network restrictions"
+  echo "- Improve connection reliability"
+  echo "- Enhanced privacy and security"
+  echo ""
+  echo "WARP will appear in your menu bar for quick access"
+uninstall: |
+  echo "Uninstalling Cloudflare WARP..."
+  brew uninstall --cask cloudflare-warp

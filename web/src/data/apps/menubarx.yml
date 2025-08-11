@@ -1,0 +1,90 @@
+id: "menubarx"
+name: "MenuBarX"
+description: "Powerful menu bar browser for web apps"
+type: "mas"
+category: "Utilities"
+selected_by_default: false
+requires_license: false
+tags:
+  - menu-bar
+  - browser
+  - web-apps
+  - productivity
+  - utilities
+url: "https://menubarx.app/"
+notes: |
+  - Menu bar browser for quick access to web applications
+  - Pin any website or web app to your menu bar
+  - Floating window mode for multitasking
+  - Customizable shortcuts and appearance
+  - Privacy-focused with ad blocking capabilities
+  - Free with optional premium features
+bundle: 'mas "MenuBarX", id: 1582640640'
+install:
+validate: |
+  # Check if installed via App Store
+  if ls /Applications/ | grep -q "MenuBarX.app"; then
+    exit 0
+  fi
+
+  # Check for variations in app name
+  if ls /Applications/ | grep -i "menubarx" >/dev/null 2>&1; then
+    exit 0
+  fi
+
+  exit 1
+configure: |
+  echo "MenuBarX configuration complete"
+  echo "Launch MenuBarX to start pinning web apps to your menu bar"
+  echo ""
+  echo "Key features:"
+  echo "- Menu bar browser for instant web app access"
+  echo "- Pin multiple websites and web applications"
+  echo "- Floating window mode for picture-in-picture"
+  echo "- Built-in ad blocker and privacy protection"
+  echo "- Customizable keyboard shortcuts"
+  echo "- Desktop notifications from web apps"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch MenuBarX from Applications"
+  echo "2. Add your first web app or website"
+  echo "3. Customize appearance and behavior"
+  echo "4. Set up keyboard shortcuts if desired"
+  echo "5. Access pinned sites from the menu bar"
+  echo ""
+  echo "Popular use cases:"
+  echo "- Social media (Twitter, LinkedIn, Instagram)"
+  echo "- Messaging apps (WhatsApp Web, Telegram)"
+  echo "- Productivity tools (Notion, Trello, Asana)"
+  echo "- Communication (Slack, Discord, Teams)"
+  echo "- Entertainment (YouTube Music, Spotify Web)"
+  echo ""
+  echo "Customization options:"
+  echo "- Website icons and names"
+  echo "- Window size and position"
+  echo "- Keyboard shortcuts for quick access"
+  echo "- Notification settings"
+  echo "- Privacy and ad blocking preferences"
+  echo ""
+  echo "Benefits:"
+  echo "- Quick access without opening full browser"
+  echo "- Reduce browser tab clutter"
+  echo "- Always-accessible web applications"
+  echo "- Lightweight alternative to native apps"
+  echo "- Enhanced productivity workflow"
+  echo ""
+  echo "Advanced features:"
+  echo "- Picture-in-picture floating windows"
+  echo "- Custom CSS injection for website styling"
+  echo "- JavaScript execution for automation"
+  echo "- Multi-account support for same services"
+  echo ""
+  echo "MenuBarX will appear in your menu bar"
+  echo "Right-click menu bar icons for more options"
+uninstall: |
+  echo "Uninstalling MenuBarX..."
+  if command -v mas >/dev/null 2>&1; then
+    echo "Note: Use Mac App Store to uninstall or:"
+    echo "mas uninstall 1582640640"
+  fi
+  echo "Or manually delete from Applications folder"

@@ -1,0 +1,97 @@
+id: 'aldente'
+name: 'AlDente'
+description: 'macOS battery charge limiter for battery health'
+type: 'cask'
+category: 'Utilities'
+selected_by_default: false
+requires_license: false
+tags:
+  - battery
+  - health
+  - charging
+  - macbook
+  - optimization
+  - longevity
+url: 'https://apphousekitchen.com/'
+notes: |
+  - Battery charge limiter to extend MacBook battery lifespan
+  - Prevents overcharging and battery degradation
+  - Customizable charge limits and thresholds
+  - Menu bar integration with battery status
+  - Free version with optional Pro features
+  - Essential tool for MacBook longevity
+dependencies: []
+bundle: cask "alt-tab"
+install:
+validate: |
+  # Check for AlDente in Applications
+  if ls /Applications/ | grep -i "aldente" >/dev/null 2>&1; then
+    exit 0
+  fi
+
+  # Check if AlDente is running (appears in menu bar)
+  if pgrep -f "AlDente" >/dev/null 2>&1; then
+    exit 0
+  fi
+
+  echo "AlDente not detected"
+  exit 1
+configure: |
+  echo "AlDente configuration complete"
+  echo "Launch AlDente to optimize your MacBook battery health"
+  echo ""
+  echo "Key features:"
+  echo "- Battery charge limiting to prevent overcharging"
+  echo "- Customizable charge thresholds (20-100%)"
+  echo "- Menu bar battery status and controls"
+  echo "- Battery health monitoring and statistics"
+  echo "- Charging schedule and automation"
+  echo "- Temperature monitoring and alerts"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch AlDente from Applications"
+  echo "2. Set your desired charge limit (recommended: 80%)"
+  echo "3. Configure charging preferences and schedules"
+  echo "4. Monitor battery health over time"
+  echo "5. Adjust settings based on usage patterns"
+  echo ""
+  echo "Battery health benefits:"
+  echo "- Prevents battery degradation from overcharging"
+  echo "- Extends overall battery lifespan significantly"
+  echo "- Reduces heat generation during charging"
+  echo "- Maintains optimal battery chemistry"
+  echo "- Saves money on battery replacements"
+  echo ""
+  echo "Recommended settings:"
+  echo "- Charge limit: 80% for daily use"
+  echo "- Allow charging to 100% before travel"
+  echo "- Enable temperature monitoring"
+  echo "- Use scheduled charging for overnight"
+  echo "- Monitor battery cycle count regularly"
+  echo ""
+  echo "Pro features (paid version):"
+  echo "- Advanced scheduling and automation"
+  echo "- Detailed battery statistics and history"
+  echo "- Custom charging profiles"
+  echo "- Heat protection and thermal management"
+  echo "- Calibration and maintenance tools"
+  echo ""
+  echo "Usage scenarios:"
+  echo "- Daily work: 80% limit for desk work"
+  echo "- Travel preparation: 100% charge before trips"
+  echo "- Long-term storage: 50% charge level"
+  echo "- Gaming/intensive use: Monitor temperature"
+  echo ""
+  echo "Battery science:"
+  echo "- Lithium-ion batteries last longer at 20-80% charge"
+  echo "- Heat and 100% charge accelerate degradation"
+  echo "- Frequent partial charges are better than full cycles"
+  echo "- Battery longevity improves significantly with limits"
+  echo ""
+  echo "AlDente will appear in your menu bar"
+  echo "Your MacBook battery will thank you for using AlDente!"
+uninstall: |
+  echo "Uninstalling AlDente..."
+  find /Applications -name "*AlDente*" -delete 2>/dev/null || true
+  # Kill running AlDente processes
+  pkill -f "AlDente" 2>/dev/null || true

@@ -1,0 +1,33 @@
+id: "xz"
+name: "XZ"
+description: "High-ratio lossless data compression utility using the LZMA compression algorithm"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - compression
+  - utilities
+  - essential
+  - archiving
+  - lzma
+url: "https://tukaani.org/xz/"
+notes: |
+  - High-ratio lossless data compression utility
+  - Uses LZMA compression algorithm for excellent compression ratios
+  - Command-line utility for automated compression
+  - Essential for handling .xz and .lzma files
+  - Commonly used in Linux distributions and software packages
+dependencies: []
+bundle: brew "xz"
+install:
+validate: |
+  command -v xz &> /dev/null
+configure: |
+  echo "XZ configuration complete"
+  echo "Use: xz filename (to compress)"
+  echo "Use: xz -d filename.xz (to decompress)"
+  echo "Use: unxz filename.xz (alternative decompression)"
+uninstall: |
+  echo "Uninstalling XZ..."
+  brew uninstall xz

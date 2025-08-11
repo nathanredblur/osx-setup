@@ -1,0 +1,57 @@
+id: 'unnaturalscrollwheel'
+name: 'UnnaturalScrollWheel'
+description: 'Invert scroll direction for mouse while keeping trackpad natural'
+type: 'cask'
+category: 'System Tweaks'
+selected_by_default: false
+requires_license: false
+tags:
+  - scroll
+  - mouse
+  - trackpad
+  - system-preferences
+  - input
+url: 'https://github.com/ther0n/UnnaturalScrollWheels'
+notes: |
+  - Allows independent scroll direction settings for mouse and trackpad
+  - Keeps trackpad natural scrolling while making mouse scroll traditional
+  - Lightweight system preference modification
+  - Addresses common user preference conflicts
+  - Open source and free to use
+  - Auto-starts on login when configured
+dependencies: []
+bundle: cask "unnaturalscrollwheels"
+install:
+validate: |
+  brew list --cask | grep -q "unnaturalscrollwheels" || ls /Applications/ | grep -q "UnnaturalScrollWheels.app"
+configure: |
+  echo "UnnaturalScrollWheel configuration complete"
+  echo "Launch UnnaturalScrollWheel to configure scroll preferences"
+  echo ""
+  echo "Key features:"
+  echo "- Independent scroll direction for mouse and trackpad"
+  echo "- System preference integration"
+  echo "- Auto-start on login option"
+  echo "- Lightweight and efficient"
+  echo "- No performance impact"
+  echo ""
+  echo "Setup instructions:"
+  echo "1. Launch UnnaturalScrollWheel from Applications"
+  echo "2. Grant necessary system permissions if prompted"
+  echo "3. Configure scroll direction preferences:"
+  echo "   - Keep trackpad natural (content moves with finger)"
+  echo "   - Set mouse to traditional (wheel up = scroll up)"
+  echo "4. Enable 'Start at Login' if desired"
+  echo "5. Test scroll behavior in various applications"
+  echo ""
+  echo "Common use cases:"
+  echo "- MacBook users with external mouse"
+  echo "- Users switching between devices with different scroll conventions"
+  echo "- Preference for traditional mouse wheel behavior"
+  echo "- Mixed input device environments"
+  echo ""
+  echo "Note: Changes take effect immediately"
+  echo "You can adjust settings anytime through the app"
+uninstall: |
+  echo "Uninstalling UnnaturalScrollWheel..."
+  brew uninstall --cask unnaturalscrollwheels

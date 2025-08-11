@@ -1,0 +1,29 @@
+id: 'raycast'
+name: 'Raycast'
+description: 'Blazingly fast, totally extendable launcher'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: true
+requires_license: false
+tags:
+  - launcher
+  - productivity
+  - shortcuts
+  - automation
+url: 'https://www.raycast.com/'
+notes: |
+  - Modern launcher with extensive extension ecosystem
+  - Built-in features for clipboard history, window management, and calculations
+  - Supports custom scripts and extensions
+  - Free tier with paid Pro features available
+dependencies: []
+bundle: cask "raycast"
+install:
+validate: |
+  brew list --cask | grep -q "raycast" || ls /Applications/ | grep -q "Raycast.app"
+configure: |
+  echo "Raycast configuration complete"
+  echo "Launch Raycast and complete the setup process"
+uninstall: |
+  echo "Uninstalling Raycast..."
+  brew uninstall --cask raycast

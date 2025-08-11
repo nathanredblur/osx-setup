@@ -1,0 +1,63 @@
+id: "git-delta"
+name: "Git Delta"
+description: "A syntax-highlighting pager for git, diff, and grep output"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - git
+  - diff
+  - syntax-highlighting
+  - pager
+  - development
+url: "https://github.com/dandavison/delta"
+notes: |
+  - Enhances git diff output with syntax highlighting and side-by-side view
+  - Supports line-by-line and side-by-side diff formats
+  - Customizable themes and color schemes
+  - Integration with git and other diff tools
+  - Written in Rust for high performance
+dependencies: ["git"]
+bundle: brew "git-delta"
+install:
+validate: |
+  command -v delta &> /dev/null
+configure: |
+  echo "Configuring git-delta..."
+
+  # Configure git to use delta as the default pager
+  git config --global core.pager "delta"
+  git config --global interactive.diffFilter "delta --color-only"
+  git config --global delta.navigate true
+  git config --global delta.light false
+  git config --global delta.side-by-side true
+  git config --global merge.conflictstyle diff3
+  git config --global diff.colorMoved default
+
+  echo "git-delta configuration complete"
+  echo "Git has been configured to use delta for:"
+  echo "- git diff"
+  echo "- git log -p"
+  echo "- git show"
+  echo "- git add -p"
+  echo ""
+  echo "Key features enabled:"
+  echo "- Syntax highlighting for code"
+  echo "- Side-by-side diff view"
+  echo "- Navigation with n/N keys"
+  echo "- Enhanced merge conflict display"
+  echo ""
+  echo "To use delta directly: delta file1.txt file2.txt"
+  echo "To temporarily disable: git --no-pager diff"
+uninstall: |
+  echo "Uninstalling git-delta..."
+
+  # Remove git configuration
+  git config --global --unset core.pager
+  git config --global --unset interactive.diffFilter
+  git config --global --unset delta.navigate
+  git config --global --unset delta.light
+  git config --global --unset delta.side-by-side
+
+  brew uninstall git-delta

@@ -1,0 +1,38 @@
+id: 'slack'
+name: 'Slack'
+description: 'Team communication and collaboration software'
+type: 'cask'
+category: 'Communication'
+selected_by_default: false
+requires_license: false
+tags:
+  - communication
+  - collaboration
+  - business
+  - team
+  - productivity
+url: 'https://slack.com/'
+notes: |
+  - Business messaging app for team collaboration with channels, DMs, and integrations
+  - Supports voice and video calls, screen sharing
+  - Extensive app integrations and workflow automation
+  - File sharing and collaborative editing
+  - Free tier available with paid plans for advanced features
+dependencies: []
+bundle: cask "slack"
+install:
+validate: |
+  brew list --cask | grep -q "slack" || ls /Applications/ | grep -q "Slack.app"
+configure: |
+  echo "Slack configuration complete"
+  echo "Launch Slack and sign in to your workspace"
+  echo "Key features to explore:"
+  echo "- Organize conversations in channels"
+  echo "- Direct messaging and group chats"
+  echo "- Voice and video calls"
+  echo "- File sharing and collaboration"
+  echo "- App integrations and workflows"
+  echo "- Custom notifications and status"
+uninstall: |
+  echo "Uninstalling Slack..."
+  brew uninstall --cask slack

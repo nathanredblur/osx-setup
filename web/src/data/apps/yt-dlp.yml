@@ -1,0 +1,47 @@
+id: "yt-dlp"
+name: "yt-dlp"
+description: "Feature-rich command-line audio/video downloader"
+type: "brew"
+category: "Terminal"
+selected_by_default: false
+requires_license: false
+tags:
+  - downloader
+  - youtube
+  - video
+  - audio
+  - command-line
+url: "https://github.com/yt-dlp/yt-dlp"
+notes: |
+  - YouTube downloader with enhanced features and active development
+  - Supports hundreds of video sites beyond YouTube
+  - High-quality audio and video extraction
+  - Batch downloading and playlist support
+  - Extensive format and quality options
+  - Recommended Chrome extension: The Stream Detector
+  - Chrome extension URL: https://chromewebstore.google.com/detail/the-stream-detector/iakkmkmhhckcmoiibcfjnooibphlobak
+dependencies: []
+bundle: brew "yt-dlp"
+install:
+validate: |
+  command -v yt-dlp &> /dev/null
+configure: |
+  echo "yt-dlp configuration complete"
+  echo "Usage examples:"
+  echo "  yt-dlp 'https://www.youtube.com/watch?v=VIDEO_ID'  # Download video"
+  echo "  yt-dlp -x --audio-format mp3 'VIDEO_URL'           # Extract audio as MP3"
+  echo "  yt-dlp -f 'best[height<=720]' 'VIDEO_URL'          # Download specific quality"
+  echo "  yt-dlp --list-formats 'VIDEO_URL'                  # List available formats"
+  echo ""
+  echo "Browser integration:"
+  echo "Install The Stream Detector extension for easy downloading:"
+  echo "https://chromewebstore.google.com/detail/the-stream-detector/iakkmkmhhckcmoiibcfjnooibphlobak"
+  echo ""
+  echo "Common options:"
+  echo "  --extract-audio        Extract audio only"
+  echo "  --audio-format mp3     Convert audio to MP3"
+  echo "  --write-description    Save video description"
+  echo "  --write-thumbnail      Download video thumbnail"
+uninstall: |
+  echo "Uninstalling yt-dlp..."
+  brew uninstall yt-dlp

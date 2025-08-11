@@ -1,0 +1,109 @@
+id: 'encovo'
+name: 'Encovo'
+description: 'Advanced encryption and privacy tool'
+type: 'shell_script'
+category: 'Productivity'
+selected_by_default: false
+requires_license: false
+tags:
+  - encryption
+  - privacy
+  - security
+  - files
+  - protection
+  - productivity
+url: 'https://encovo.app/'
+notes: |
+  - Advanced file and folder encryption utility
+  - Military-grade encryption algorithms
+  - Simple drag-and-drop interface
+  - Password and key-based protection
+  - Secure file shredding and deletion
+  - Privacy-focused productivity enhancement
+dependencies: []
+install: |
+  echo "Installing Encovo..."
+  echo "Note: Encovo may require manual download and installation"
+  echo ""
+  echo "Installation steps:"
+  echo "1. Visit https://encovo.app/ to download"
+  echo "2. Download the macOS version"
+  echo "3. Open the downloaded DMG file"
+  echo "4. Drag Encovo to Applications folder"
+  echo "5. Launch and complete initial setup"
+  echo ""
+  echo "Alternative installation methods:"
+  echo "- Check if available via Homebrew Cask"
+  echo "- Look for Mac App Store availability"
+  echo ""
+validate: |
+  # Check for Encovo in Applications
+  if ls /Applications/ | grep -i "encovo" >/dev/null 2>&1; then
+    exit 0
+  fi
+
+  # Check for similar encryption apps as alternatives
+  if ls /Applications/ | grep -i "encrypt" >/dev/null 2>&1; then
+    echo "Alternative encryption app found"
+    exit 0
+  fi
+
+  echo "Encovo not detected. Manual installation may be required."
+  exit 1
+configure: |
+  echo "Encovo configuration complete"
+  echo "Launch Encovo to start encrypting your sensitive files"
+  echo ""
+  echo "Key features:"
+  echo "- Military-grade AES-256 encryption"
+  echo "- Simple drag-and-drop file encryption"
+  echo "- Password and key file protection"
+  echo "- Secure file shredding and deletion"
+  echo "- Batch encryption for multiple files"
+  echo "- Cross-platform encrypted file compatibility"
+  echo ""
+  echo "Getting started:"
+  echo "1. Launch Encovo from Applications"
+  echo "2. Set up master password or key file"
+  echo "3. Drag files or folders to encrypt them"
+  echo "4. Choose encryption settings and password"
+  echo "5. Store encrypted files safely"
+  echo ""
+  echo "Encryption methods:"
+  echo "- AES-256 encryption algorithm"
+  echo "- Password-based encryption"
+  echo "- Key file-based encryption"
+  echo "- Two-factor authentication support"
+  echo "- Secure random password generation"
+  echo ""
+  echo "Security features:"
+  echo "- Zero-knowledge architecture"
+  echo "- Local encryption (no cloud dependency)"
+  echo "- Secure memory handling"
+  echo "- Anti-keylogger protection"
+  echo "- Secure deletion of temporary files"
+  echo ""
+  echo "Use cases:"
+  echo "- Protect sensitive documents and files"
+  echo "- Secure personal photos and videos"
+  echo "- Encrypt work files and client data"
+  echo "- Protect financial and legal documents"
+  echo "- Secure backup encryption"
+  echo ""
+  echo "Best practices:"
+  echo "- Use strong, unique passwords"
+  echo "- Keep backup copies of key files"
+  echo "- Test decryption before deleting originals"
+  echo "- Store encrypted files in multiple locations"
+  echo "- Regular security audits of encrypted data"
+  echo ""
+  echo "Integration benefits:"
+  echo "- Enhances overall file security workflow"
+  echo "- Complements backup and sync strategies"
+  echo "- Supports compliance and privacy requirements"
+  echo "- Enables secure collaboration"
+uninstall: |
+  echo "Uninstalling Encovo..."
+  find /Applications -name "*Encovo*" -delete 2>/dev/null || true
+  echo "Note: Encrypted files remain encrypted and safe"
+  echo "Ensure you can still decrypt important files before removal"

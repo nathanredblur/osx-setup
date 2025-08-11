@@ -1,0 +1,32 @@
+id: "gzip"
+name: "Gzip"
+description: "File compression utility that uses the GZIP compression algorithm for efficient file compression and decompression"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - compression
+  - utilities
+  - essential
+  - archiving
+url: "https://formulae.brew.sh/formula/gzip"
+notes: |
+  - File compression utility using GZIP algorithm
+  - Efficient compression for single files
+  - Widely used in web servers and file transfers
+  - Command-line utility for automated compression
+  - Essential for handling compressed files
+dependencies: []
+bundle: brew "gzip"
+install:
+validate: |
+  command -v gzip &> /dev/null
+configure: |
+  echo "Gzip configuration complete"
+  echo "Use: gzip filename (to compress)"
+  echo "Use: gunzip filename.gz (to decompress)"
+  echo "Use: gzip -d filename.gz (alternative decompression)"
+uninstall: |
+  echo "Uninstalling Gzip..."
+  brew uninstall gzip

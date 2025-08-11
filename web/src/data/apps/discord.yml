@@ -1,0 +1,37 @@
+id: 'discord'
+name: 'Discord'
+description: 'Voice and text chat software'
+type: 'cask'
+category: 'Communication'
+selected_by_default: false
+requires_license: false
+tags:
+  - communication
+  - gaming
+  - voice-chat
+  - community
+  - streaming
+url: 'https://discord.com/'
+notes: |
+  - Popular gaming and community chat platform with voice, video, and screen sharing
+  - Supports text channels, voice channels, and direct messages
+  - Built-in screen sharing and streaming capabilities
+  - Rich presence and game integration
+  - Free with optional Nitro subscription for enhanced features
+dependencies: []
+bundle: cask "discord"
+install:
+validate: |
+  brew list --cask | grep -q "discord" || ls /Applications/ | grep -q "Discord.app"
+configure: |
+  echo "Discord configuration complete"
+  echo "Launch Discord and create an account or sign in"
+  echo "Key features to explore:"
+  echo "- Join servers and communities"
+  echo "- Voice and video calls"
+  echo "- Screen sharing and streaming"
+  echo "- Rich presence with game integration"
+  echo "- Custom emoji and server roles"
+uninstall: |
+  echo "Uninstalling Discord..."
+  brew uninstall --cask discord

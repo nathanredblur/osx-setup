@@ -1,0 +1,35 @@
+id: 'xnviewmp'
+name: 'XnViewMP'
+description:
+  'Powerful cross-platform image viewer, browser, and converter supporting 500+ formats with batch
+  processing capabilities'
+type: 'cask'
+category: 'Media'
+selected_by_default: false
+requires_license: false
+tags:
+  - image-viewer
+  - media
+  - converter
+  - batch-processing
+  - photography
+url: 'https://www.xnview.com/en/xnviewmp/'
+notes: |
+  - Supports 500+ image formats (including RAW, HEIC, AVIF, JPEG-XL)
+  - Powerful batch conversion and processing tools
+  - Image browser with thumbnail view and metadata support
+  - Basic image editing features (resize, rotate, crop, filters)
+  - Contact sheet creation and slideshow capabilities
+  - Free for personal use, commercial license available
+dependencies: []
+bundle: cask "xnviewmp"
+install:
+validate: |
+  brew list --cask | grep -q "xnviewmp" || ls /Applications/ | grep -q "XnViewMP.app"
+configure: |
+  echo "XnViewMP configuration complete"
+  echo "Launch XnViewMP and configure your preferred file associations"
+  echo "Consider setting as default image viewer in System Preferences"
+uninstall: |
+  echo "Uninstalling XnViewMP..."
+  brew uninstall --cask xnviewmp

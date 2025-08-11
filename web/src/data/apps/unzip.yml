@@ -1,0 +1,31 @@
+id: "unzip"
+name: "Unzip"
+description: "Archive extraction utility for ZIP files with support for various compression formats"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - archive
+  - compression
+  - utilities
+  - essential
+url: "https://formulae.brew.sh/formula/unzip"
+notes: |
+  - Archive extraction utility for ZIP files
+  - Supports password-protected archives
+  - Command-line utility for automated extraction
+  - Essential for handling downloaded archives
+  - Integrates with other compression tools
+dependencies: []
+bundle: brew "unzip"
+install:
+validate: |
+  command -v unzip &> /dev/null
+configure: |
+  echo "Unzip configuration complete"
+  echo "Use: unzip filename.zip"
+  echo "Extract to specific directory: unzip filename.zip -d /path/to/directory"
+uninstall: |
+  echo "Uninstalling Unzip..."
+  brew uninstall unzip

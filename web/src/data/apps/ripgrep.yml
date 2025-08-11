@@ -1,0 +1,42 @@
+id: "ripgrep"
+name: "Ripgrep"
+description: "Search tool like grep and The Silver Searcher"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - search
+  - grep
+  - utilities
+  - command-line
+  - regex
+url: "https://github.com/BurntSushi/ripgrep"
+notes: |
+  - Fast line-oriented search tool that recursively searches directories
+  - Faster than grep and ag (The Silver Searcher)
+  - Respects .gitignore files and hidden file patterns
+  - Supports Unicode and various text encodings
+  - Rich output formatting and color highlighting
+  - Written in Rust for maximum performance
+dependencies: []
+bundle: brew "ripgrep"
+install:
+validate: |
+  command -v rg &> /dev/null
+configure: |
+  echo "ripgrep configuration complete"
+  echo "Usage examples:"
+  echo "  rg 'pattern'                    # Search for pattern in current directory"
+  echo "  rg 'pattern' /path/to/search    # Search in specific directory"
+  echo "  rg -i 'pattern'                 # Case-insensitive search"
+  echo "  rg -n 'pattern'                 # Show line numbers"
+  echo "  rg -A 3 -B 3 'pattern'          # Show 3 lines before and after matches"
+  echo "  rg --type py 'pattern'          # Search only in Python files"
+  echo "  rg --hidden 'pattern'           # Include hidden files"
+  echo ""
+  echo "ripgrep (rg) is now available and ready to use!"
+  echo "It's faster than grep and respects .gitignore files automatically"
+uninstall: |
+  echo "Uninstalling ripgrep..."
+  brew uninstall ripgrep

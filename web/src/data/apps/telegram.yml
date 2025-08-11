@@ -1,0 +1,37 @@
+id: "telegram"
+name: "Telegram"
+description: "Cloud-based instant messaging"
+type: "mas"
+category: "Communication"
+selected_by_default: false
+requires_license: false
+tags:
+  - messaging
+  - chat
+  - communication
+  - cloud
+  - security
+url: "https://telegram.org/"
+notes: |
+  - Secure messaging with cloud sync and extensive features
+  - End-to-end encrypted secret chats
+  - Large file sharing capabilities (up to 2GB)
+  - Channels and groups with advanced moderation
+  - Bots and automation features
+  - Cross-platform synchronization
+bundle: 'mas "Telegram", id: 747648890'
+install:
+validate: |
+  mas list | grep -q "Telegram" || ls /Applications/ | grep -q "Telegram.app"
+configure: |
+  echo "Telegram configuration complete"
+  echo "Launch Telegram and sign in with your phone number"
+  echo "Key features:"
+  echo "- Send messages, photos, videos, and files"
+  echo "- Create groups and channels"
+  echo "- Use bots for automation and games"
+  echo "- Secret chats with end-to-end encryption"
+  echo "- Cloud storage for all your chats and media"
+uninstall: |
+  echo "Uninstalling Telegram..."
+  mas uninstall 747648890

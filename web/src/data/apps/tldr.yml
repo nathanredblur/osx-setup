@@ -1,0 +1,45 @@
+id: "tldr"
+name: "tldr"
+description: "Simplified and community-driven man pages"
+type: "brew"
+category: "Core Utilities"
+selected_by_default: true
+requires_license: false
+tags:
+  - documentation
+  - man-pages
+  - command-line
+  - help
+  - utilities
+url: "https://tldr.sh/"
+notes: |
+  - Provides concise, practical examples for command-line tools
+  - Community-driven documentation with real-world usage examples
+  - Much faster and more practical than traditional man pages
+  - Supports hundreds of common command-line tools
+  - Available in multiple languages
+dependencies: []
+bundle: brew "tldr"
+install:
+validate: |
+  command -v tldr &> /dev/null
+configure: |
+  echo "Configuring tldr..."
+
+  # Update the tldr database
+  echo "Updating tldr database..."
+  tldr --update
+
+  echo "tldr configuration complete"
+  echo "Usage examples:"
+  echo "  tldr tar    - Get examples for tar command"
+  echo "  tldr git    - Get examples for git command"
+  echo "  tldr curl   - Get examples for curl command"
+
+  # Show a sample
+  echo ""
+  echo "Sample usage:"
+  tldr tldr 2>/dev/null || echo "tldr database updating in background..."
+uninstall: |
+  echo "Uninstalling tldr..."
+  brew uninstall tldr

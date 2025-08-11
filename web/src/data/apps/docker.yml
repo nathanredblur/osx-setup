@@ -1,0 +1,30 @@
+id: 'docker'
+name: 'Docker Desktop'
+description: 'Containerization platform for developers'
+type: 'cask'
+category: 'Development'
+selected_by_default: false
+requires_license: false
+tags:
+  - containerization
+  - development
+  - devops
+  - virtualization
+url: 'https://www.docker.com/products/docker-desktop/'
+notes: |
+  - Containerization platform for building and sharing applications
+  - Includes Docker Engine, CLI, and Kubernetes support
+  - Free for personal use, paid plans for business use
+  - Requires system admin privileges for installation
+  - May need manual startup and permissions after installation
+dependencies: []
+bundle: cask "docker"
+install:
+validate: |
+  brew list --cask | grep -q "docker" || ls /Applications/ | grep -q "Docker.app"
+configure: |
+  echo "Docker Desktop configuration complete"
+  echo "Note: You may need to start Docker Desktop manually and grant permissions"
+uninstall: |
+  echo "Uninstalling Docker Desktop..."
+  brew uninstall --cask docker

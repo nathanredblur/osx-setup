@@ -1,0 +1,39 @@
+id: "antidote"
+name: "Antidote"
+description: "Fast and modern Zsh plugin manager with lazy loading and improved performance over traditional managers"
+type: "brew"
+category: "Terminal"
+selected_by_default: true
+requires_license: false
+tags:
+  - zsh
+  - plugin-manager
+  - shell
+  - performance
+  - terminal
+url: "https://getantidote.github.io/"
+notes: |
+  - Fast and modern Zsh plugin manager
+  - Lazy loading and improved performance
+  - Compatible with Oh My Zsh plugins
+  - Static file generation for faster shell startup
+  - Bundle management and automatic updates
+  - 
+  - 📌 After installation:
+  - 1. Initialize in ~/.zshrc: source $(brew --prefix)/share/antidote/antidote.zsh
+  - 2. Create ~/.zsh_plugins.txt with desired plugins
+  - 3. Run: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh
+  - 4. Source plugins in ~/.zshrc: source ~/.zsh_plugins.zsh
+dependencies: []
+bundle: brew "antidote"
+install:
+validate: |
+  type antidote &> /dev/null
+configure: |
+  echo "Antidote configuration complete"
+  echo "Initialize in ~/.zshrc: source \$(brew --prefix)/share/antidote/antidote.zsh"
+  echo "Create ~/.zsh_plugins.txt with your desired plugins"
+  echo "Generate bundles: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh"
+uninstall: |
+  echo "Uninstalling Antidote..."
+  brew uninstall antidote

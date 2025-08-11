@@ -1,0 +1,41 @@
+id: 'onedrive'
+name: 'OneDrive'
+description: 'Cloud storage client for Microsoft OneDrive'
+type: 'cask'
+category: 'Cloud'
+selected_by_default: false
+requires_license: false
+tags:
+  - cloud-storage
+  - microsoft
+  - sync
+  - backup
+  - collaboration
+url: 'https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage'
+notes: |
+  - Microsoft's cloud storage service with Office integration
+  - 5GB free storage, more with Microsoft 365 subscription
+  - Real-time collaboration on Office documents
+  - File versioning and recovery features
+  - Cross-platform synchronization
+  - Integration with Windows and Microsoft ecosystem
+dependencies: []
+bundle: cask "onedrive"
+install:
+validate: |
+  brew list --cask | grep -q "onedrive" || ls /Applications/ | grep -q "OneDrive.app"
+configure: |
+  echo "OneDrive configuration complete"
+  echo "Launch OneDrive and sign in with your Microsoft account"
+  echo "Key features:"
+  echo "- Sync files across all your devices"
+  echo "- Real-time collaboration in Office apps"
+  echo "- File sharing with customizable permissions"
+  echo "- Version history and file recovery"
+  echo "- Integration with Microsoft 365 apps"
+  echo ""
+  echo "Note: OneDrive folder will be created in your home directory"
+uninstall: |
+  echo "Uninstalling OneDrive..."
+  brew uninstall --cask onedrive
+  echo "Note: OneDrive folder and synced files will remain on your system"

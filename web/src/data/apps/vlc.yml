@@ -1,0 +1,38 @@
+id: 'vlc'
+name: 'VLC Media Player'
+description: 'Open-source multimedia player'
+type: 'cask'
+category: 'Media'
+selected_by_default: true
+requires_license: false
+tags:
+  - media-player
+  - video
+  - audio
+  - multimedia
+  - codec
+url: 'https://www.videolan.org/vlc/'
+notes: |
+  - Plays virtually any media format without additional codecs
+  - Open-source and completely free
+  - Advanced playback controls and filters
+  - Network streaming capabilities
+  - Supports subtitles and multiple audio tracks
+  - Cross-platform compatibility
+dependencies: []
+bundle: cask "vlc"
+install:
+validate: |
+  brew list --cask | grep -q "vlc" || ls /Applications/ | grep -q "VLC.app"
+configure: |
+  echo "VLC Media Player configuration complete"
+  echo "Launch VLC to start playing your media files"
+  echo "Key features:"
+  echo "- Supports all major video and audio formats"
+  echo "- Network streaming and IPTV"
+  echo "- Advanced audio and video filters"
+  echo "- Subtitle support and synchronization"
+  echo "- Playlist management and media library"
+uninstall: |
+  echo "Uninstalling VLC Media Player..."
+  brew uninstall --cask vlc

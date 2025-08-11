@@ -1,0 +1,35 @@
+id: 'lookaway'
+name: 'LookAway'
+description:
+  'Smart break reminder app that reduces eye strain and promotes healthy work habits with
+  customizable timers and notifications'
+type: 'cask'
+category: 'Productivity'
+selected_by_default: false
+requires_license: true
+tags:
+  - health
+  - wellness
+  - breaks
+  - eye-strain
+  - productivity
+url: 'https://lookaway.app/'
+notes: |
+  - Reduces eye strain and digital fatigue
+  - Mindful breaks without breaking your flow
+  - Customizable timers, sounds, and backgrounds
+  - Automatically pauses during meetings, calls, and video playback
+  - 7-day free trial, then $38 one-time purchase
+  - Integrates with macOS Focus modes
+dependencies: []
+bundle: cask "lookaway"
+install:
+validate: |
+  brew list --cask | grep -q "lookaway" || ls /Applications/ | grep -q "LookAway.app"
+configure: |
+  echo "LookAway configuration complete"
+  echo "Launch LookAway and configure your break preferences"
+  echo "Note: LookAway offers a 7-day free trial, then requires license purchase"
+uninstall: |
+  echo "Uninstalling LookAway..."
+  brew uninstall --cask lookaway

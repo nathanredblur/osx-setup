@@ -1,7 +1,7 @@
 id: 'adguard'
 name: 'AdGuard'
 description: 'Advanced ad blocker and privacy protection'
-type: 'mas'
+type: 'cask'
 category: 'Security'
 selected_by_default: false
 requires_license: true
@@ -20,7 +20,7 @@ notes: |
   - Custom DNS filtering and family protection
   - Stealth mode for enhanced privacy
   - Free version available, premium for full features
-bundle: 'mas "AdGuard", id: 1440147259'
+bundle: 'cask "adguard"'
 install:
 validate: |
   mas list | grep -q "AdGuard" || ls /Applications/ | grep -q "AdGuard.app"

@@ -1,12 +1,18 @@
 import {useToast} from '@/components/Toast';
 import {useCatalog} from '@/context/DataContext';
-import {createBrewBundle} from '@/lib/bundle';
-import {saveTextFile} from '@/lib/file';
+import {
+  downloadAllAsZip,
+  downloadBrewfile,
+  downloadCustomInstall,
+  downloadMacSnap,
+  downloadPostConfig,
+} from '@/lib/download';
 import {useSelectionStore} from '@/stores/selection';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 
 const SummaryPanel: React.FC = () => {
   const selected = useSelectionStore(s => s.selectedIds);
+  const [showDownloadOptions, setShowDownloadOptions] = useState(false);
   const total = useMemo(() => {
     const items = Object.values(selected);
     return items.length;
@@ -21,10 +27,53 @@ const SummaryPanel: React.FC = () => {
       toast('Nothing selected');
       return;
     }
-    const script = createBrewBundle(items);
-    await saveTextFile('mac-setup.sh', script);
-    toast('Setup script generated');
+    try {
+      await downloadAllAsZip(items);
+      toast('MacSnap setup ZIP downloaded');
+    } catch (error) {
+      toast('Error creating setup ZIP');
+    }
   }
+
+  // Funciones para las nuevas descargas
+  const handleDownloadBrewfile = () => {
+    const items = Object.values(selected);
+    if (items.length === 0) {
+      toast('Nothing selected');
+      return;
+    }
+    downloadBrewfile(items);
+    toast('Brewfile downloaded');
+  };
+
+  const handleDownloadPostConfig = () => {
+    const items = Object.values(selected);
+    if (items.length === 0) {
+      toast('Nothing selected');
+      return;
+    }
+    downloadPostConfig(items);
+    toast('postConfig.sh downloaded');
+  };
+
+  const handleDownloadCustomInstall = () => {
+    const items = Object.values(selected);
+    if (items.length === 0) {
+      toast('Nothing selected');
+      return;
+    }
+    downloadCustomInstall(items);
+    toast('customInstall.sh downloaded');
+  };
+
+  const handleDownloadMacSnap = async () => {
+    try {
+      await downloadMacSnap();
+      toast('macSnap.sh downloaded');
+    } catch (error) {
+      toast('Error downloading macSnap.sh');
+    }
+  };
 
   const selectedList = Object.values(selected);
   const byCategory = useMemo(() => {
@@ -51,12 +100,58 @@ const SummaryPanel: React.FC = () => {
             <div className="h-2 rounded bg-blue-600" style={{width: `${Math.min(100, total)}%`}} />
           </div>
         </div>
-        <button
-          onClick={handleCreateSetup}
-          className="w-full rounded-md bg-blue-600 py-3 font-semibold text-white hover:bg-blue-500"
-        >
-          create setup
-        </button>
+        <div className="space-y-2">
+          {/* Botón principal - mantener funcionalidad original */}
+          <button
+            onClick={handleCreateSetup}
+            className="w-full rounded-md bg-blue-600 py-3 font-semibold text-white hover:bg-blue-500"
+          >
+            📦 Download Setup ZIP
+          </button>
+
+          {/* Botón para mostrar opciones avanzadas */}
+          <button
+            onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+            className="w-full rounded-md border border-neutral-300 bg-white py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+          >
+            {showDownloadOptions ? '🔼 Hide' : '🔽 Show'} Advanced Options
+          </button>
+
+          {/* Opciones de descarga expandibles */}
+          {showDownloadOptions && (
+            <div className="space-y-2 rounded-md border border-neutral-200 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800">
+              <div className="text-xs font-semibold tracking-wide text-neutral-500 uppercase">
+                Individual Files
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleDownloadBrewfile}
+                  className="rounded bg-green-600 px-3 py-2 text-xs font-medium text-white hover:bg-green-500"
+                >
+                  Brewfile
+                </button>
+                <button
+                  onClick={handleDownloadPostConfig}
+                  className="rounded bg-orange-600 px-3 py-2 text-xs font-medium text-white hover:bg-orange-500"
+                >
+                  postConfig.sh
+                </button>
+                <button
+                  onClick={handleDownloadCustomInstall}
+                  className="rounded bg-purple-600 px-3 py-2 text-xs font-medium text-white hover:bg-purple-500"
+                >
+                  customInstall.sh
+                </button>
+                <button
+                  onClick={handleDownloadMacSnap}
+                  className="rounded bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-500"
+                >
+                  macSnap.sh (Main Script)
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="pt-2">
           <div className="mb-2 text-xs tracking-wide text-neutral-500 uppercase">By category</div>

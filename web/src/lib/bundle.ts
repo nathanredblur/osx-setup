@@ -1,4 +1,3 @@
-import scriptsConfigs from '@/data/configs.yml';
 import type {ProgramMeta} from '@/types/data.d.ts';
 
 const regex = /^(\w+)\s+"([^"]+)"(?:,\s+id:\s+(\d+))?/;
@@ -14,39 +13,73 @@ export const bundleToCommand = (bundle: string) => {
   return null;
 };
 
-console.log(scriptsConfigs);
+export function singleInstallCommand(p: ProgramMeta): string | null {
+  if (!p.bundle) return null;
+  return bundleToCommand(p.bundle);
+}
 
-export function createBrewBundle(programs: ProgramMeta[]): string {
-  const lines: string[] = [scriptsConfigs.start];
-
-  const brewFile: string[] = [];
-  const install: string[] = [];
-  const configure: string[] = [];
+export function createBrewfile(programs: ProgramMeta[]): string {
+  const lines: string[] = [];
   let hasMas = false;
 
   programs.forEach(p => {
     if (p.type === 'mas') hasMas = true;
-    if (p.bundle) brewFile.push(p.bundle);
-    if (p.install) install.push(p.install);
-    if (p.configure) configure.push(p.configure);
+    if (p.bundle) {
+      lines.push(p.bundle);
+    }
   });
 
-  if (hasMas) lines.push('brew install mas');
+  if (hasMas) {
+    lines.unshift('brew "mas"');
+  }
 
-  // if (brewFile) lines.push('brew bundle');
-  brewFile.forEach(bundle => {
-    const command = bundleToCommand(bundle);
-    if (command) lines.push(command);
-  });
-
-  if (install.length > 0) lines.push(install.join('\n'));
-  if (configure.length > 0) lines.push(configure.join('\n'));
-
-  lines.push(scriptsConfigs.end);
   return lines.join('\n') + '\n';
 }
 
-export function singleInstallCommand(p: ProgramMeta): string | null {
-  if (!p.bundle) return null;
-  return bundleToCommand(p.bundle);
+export function createPostConfig(programs: ProgramMeta[]): string {
+  const lines: string[] = ['#!/bin/bash'];
+  lines.push('');
+  lines.push('echo "🔧 Starting post-installation configuration..."');
+  lines.push('echo "=============================================="');
+  lines.push('');
+
+  const configCommands = programs
+    .filter(p => p.configure)
+    .map(p => p.configure)
+    .filter((cmd): cmd is string => Boolean(cmd));
+
+  if (configCommands.length > 0) {
+    lines.push(...configCommands);
+  } else {
+    lines.push('echo "No configuration scripts found."');
+  }
+
+  lines.push('');
+  lines.push('echo "✅ Post-configuration completed!"');
+
+  return lines.join('\n') + '\n';
+}
+
+export function createCustomInstall(programs: ProgramMeta[]): string {
+  const lines: string[] = ['#!/bin/bash'];
+  lines.push('');
+  lines.push('echo "📦 Starting custom installations..."');
+  lines.push('echo "===================================="');
+  lines.push('');
+
+  const installCommands = programs
+    .filter(p => p.install)
+    .map(p => p.install)
+    .filter((cmd): cmd is string => Boolean(cmd));
+
+  if (installCommands.length > 0) {
+    lines.push(...installCommands);
+  } else {
+    lines.push('echo "No custom installation scripts found."');
+  }
+
+  lines.push('');
+  lines.push('echo "✅ Custom installations completed!"');
+
+  return lines.join('\n') + '\n';
 }

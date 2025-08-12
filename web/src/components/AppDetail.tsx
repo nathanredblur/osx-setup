@@ -25,8 +25,9 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
   const toast = useToast();
   const [brewData, setBrewData] = useState<BrewApiData | null>(null);
   const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
+  const [svglIconUrl, setSvglIconUrl] = useState<string | null>(null);
   const [loadingBrew, setLoadingBrew] = useState(false);
-  const [loadingFavicon, setLoadingFavicon] = useState(false);
+  const [loadingIcon, setLoadingIcon] = useState(false);
 
   // Extract bundle name from bundle string (e.g., 'cask "google-chrome"' -> 'google-chrome')
   const extractBundleName = (bundle: string): string | null => {
@@ -58,9 +59,55 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
     }
   };
 
+  // Fetch icon from SVGL API
+  const fetchSvglIcon = async (appName: string) => {
+    setLoadingIcon(true);
+    try {
+      // Try different search terms for better matching
+      const searchTerms = [
+        appName.toLowerCase(),
+        appName.toLowerCase().replace(/-/g, ' '),
+        appName.toLowerCase().replace(/-/g, ''),
+        program?.name.toLowerCase() || '',
+      ];
+
+      for (const searchTerm of searchTerms) {
+        if (!searchTerm) continue;
+
+        try {
+          const response = await fetch(
+            `https://api.svgl.app?search=${encodeURIComponent(searchTerm)}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) {
+              // Find the best match (exact match preferred)
+              const exactMatch = data.find(
+                (item: any) =>
+                  item.title.toLowerCase() === searchTerm ||
+                  item.title.toLowerCase().replace(/\s+/g, '-') === searchTerm
+              );
+              const bestMatch = exactMatch || data[0];
+
+              if (bestMatch?.route) {
+                setSvglIconUrl(bestMatch.route);
+                return; // Exit early on success
+              }
+            }
+          }
+        } catch (searchError) {
+          console.warn(`Failed to search SVGL for "${searchTerm}":`, searchError);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to fetch SVGL icon:', error);
+    } finally {
+      setLoadingIcon(false);
+    }
+  };
+
   // Fetch favicon from homepage
   const fetchFavicon = async (homepage: string) => {
-    setLoadingFavicon(true);
     try {
       const url = new URL(homepage);
       const faviconUrl = `${url.protocol}//${url.host}/favicon.ico`;
@@ -72,8 +119,6 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
       }
     } catch (error) {
       console.warn('Failed to fetch favicon:', error);
-    } finally {
-      setLoadingFavicon(false);
     }
   };
 
@@ -82,11 +127,20 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
     if (program?.bundle && (program.type === 'cask' || program.type === 'brew')) {
       const bundleName = extractBundleName(program.bundle);
       if (bundleName) {
+        // Start with SVGL icon search
+        fetchSvglIcon(bundleName);
         fetchBrewData(bundleName, program.type);
       }
     } else {
+      // Reset all states for non-brew/cask apps
       setBrewData(null);
       setFaviconUrl(null);
+      setSvglIconUrl(null);
+
+      // For other types, still try SVGL with program name
+      if (program?.name) {
+        fetchSvglIcon(program.name);
+      }
     }
   }, [program]);
 
@@ -98,18 +152,20 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
         <div className="flex items-center gap-3">
           <div className="relative h-12 w-12">
             <img
-              src={faviconUrl || program.image || '/icons/default-app.svg'}
+              src={svglIconUrl || faviconUrl || program.image || '/icons/default-app.svg'}
               alt="icon"
               className="h-12 w-12 rounded"
               onError={e => {
-                // Fallback to program image or default if favicon fails
+                // Fallback chain: SVGL -> favicon -> program.image -> default
                 const target = e.target as HTMLImageElement;
-                if (target.src === faviconUrl) {
+                if (target.src === svglIconUrl) {
+                  target.src = faviconUrl || program.image || '/icons/default-app.svg';
+                } else if (target.src === faviconUrl) {
                   target.src = program.image || '/icons/default-app.svg';
                 }
               }}
             />
-            {loadingFavicon && (
+            {loadingIcon && (
               <div className="absolute inset-0 flex items-center justify-center rounded bg-neutral-100 dark:bg-neutral-800">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600"></div>
               </div>
@@ -126,6 +182,14 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
             <div className="flex items-center gap-2 text-neutral-500">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600"></div>
               <span>Loading Homebrew info...</span>
+            </div>
+          )}
+
+          {/* Loading state for icon */}
+          {loadingIcon && !loadingBrew && (
+            <div className="flex items-center gap-2 text-neutral-500">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600"></div>
+              <span>Loading icon...</span>
             </div>
           )}
 

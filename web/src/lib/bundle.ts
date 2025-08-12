@@ -1,3 +1,4 @@
+import scriptsConfigs from '@/data/configs.yml';
 import type {ProgramMeta} from '@/types/data.d.ts';
 
 const regex = /^(\w+)\s+"([^"]+)"(?:,\s+id:\s+(\d+))?/;
@@ -13,13 +14,10 @@ export const bundleToCommand = (bundle: string) => {
   return null;
 };
 
+console.log(scriptsConfigs);
+
 export function createBrewBundle(programs: ProgramMeta[]): string {
-  const lines: string[] = [
-    '#!/usr/bin/env bash',
-    'set -euo pipefail',
-    '',
-    'echo "Installing apps..."',
-  ];
+  const lines: string[] = [scriptsConfigs.start];
 
   const brewFile: string[] = [];
   const install: string[] = [];
@@ -44,6 +42,7 @@ export function createBrewBundle(programs: ProgramMeta[]): string {
   if (install.length > 0) lines.push(install.join('\n'));
   if (configure.length > 0) lines.push(configure.join('\n'));
 
+  lines.push(scriptsConfigs.end);
   return lines.join('\n') + '\n';
 }
 

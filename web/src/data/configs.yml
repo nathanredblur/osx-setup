@@ -1,0 +1,178 @@
+# MacSnap Special Configurations
+# This file contains special scripts that run automatically during installation
+# Structure: Each key (start, end) contains the script directly
+
+start: |
+  echo "🚀 MacSnap Setup - Initialization Started"
+  echo "=========================================="
+  echo ""
+  echo "📋 System Information:"
+  echo "  • macOS Version: $(sw_vers -productVersion)"
+  echo "  • Architecture: $(uname -m)"
+  echo "  • User: $(whoami)"
+  echo "  • Date: $(date)"
+  echo ""
+
+  echo "🔍 Environment Check:"
+
+  # Check essential tools
+  if command -v brew >/dev/null 2>&1; then
+    echo "  ✅ Homebrew: $(brew --version | head -1)"
+  else
+    echo "  ❌ Homebrew: Not found"
+    echo ""
+    echo "📦 Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+
+  if command -v git >/dev/null 2>&1; then
+    echo "  ✅ Git: $(git --version)"
+  else
+    echo "  ⚠️  Git: Not found (will be installed)"
+    echo ""
+    echo "📦 Installing Git..."
+    brew install git
+  fi
+
+  echo ""
+  echo "📁 Creating necessary directories..."
+
+  # Create logs directory
+  mkdir -p "$HOME/.macsnap/logs"
+  echo "  ✅ Created: ~/.macsnap/logs"
+
+  # Create downloads cache
+  mkdir -p "$HOME/.macsnap/cache"
+  echo "  ✅ Created: ~/.macsnap/cache"
+
+  echo ""
+  echo "⚙️ Initial system configuration..."
+
+  # Set some useful macOS defaults for installation process
+  # Show hidden files in Finder during setup
+  defaults write com.apple.finder AppleShowAllFiles -bool true
+
+  # Disable Gatekeeper temporarily for installations (user will be prompted)
+  echo "  ℹ️  Some installations may require administrator privileges"
+
+  echo ""
+  echo "✅ Initialization completed successfully!"
+  echo "🎯 Ready to begin software installations..."
+  echo ""
+
+  # Create session log
+  SESSION_LOG="$HOME/.macsnap/logs/session-$(date +%Y%m%d-%H%M%S).log"
+  echo "MacSnap Installation Session" > "$SESSION_LOG"
+  echo "Started: $(date)" >> "$SESSION_LOG"
+  echo "User: $(whoami)" >> "$SESSION_LOG"
+  echo "System: $(sw_vers -productVersion) ($(uname -m))" >> "$SESSION_LOG"
+  echo "Working Directory: $(pwd)" >> "$SESSION_LOG"
+  echo "----------------------------------------" >> "$SESSION_LOG"
+
+  export MACSNAP_SESSION_LOG="$SESSION_LOG"
+  echo "📄 Session log: $SESSION_LOG"
+
+end: |
+  echo ""
+  echo "🏁 MacSnap Setup - Finalization Started"
+  echo "========================================"
+  echo ""
+
+  echo "🧹 Performing final cleanup..."
+
+  # Cleanup Homebrew
+  if command -v brew >/dev/null 2>&1; then
+    echo "  🍺 Cleaning up Homebrew cache..."
+    brew cleanup --prune=7 2>/dev/null || true
+    brew doctor 2>/dev/null | head -10 || true
+  fi
+
+  # Reset Finder to normal (hide hidden files again)
+  defaults write com.apple.finder AppleShowAllFiles -bool false
+  killall Finder 2>/dev/null || true
+  echo "  👁️  Reset Finder view settings"
+
+  # Clear temporary files
+  echo "  🗑️  Clearing temporary files..."
+  rm -rf /tmp/macsnap-* 2>/dev/null || true
+  rm -rf "$HOME/.macsnap/cache/"*.tmp 2>/dev/null || true
+
+  echo ""
+  echo "📊 Installation Summary:"
+
+  # Count installed applications
+  APP_COUNT=$(find /Applications -maxdepth 1 -name "*.app" | wc -l | tr -d ' ')
+  echo "  📱 Applications in /Applications: $APP_COUNT"
+
+  # Check Homebrew packages
+  if command -v brew >/dev/null 2>&1; then
+    BREW_COUNT=$(brew list --formula 2>/dev/null | wc -l | tr -d ' ')
+    CASK_COUNT=$(brew list --cask 2>/dev/null | wc -l | tr -d ' ')
+    echo "  🍺 Homebrew formulas: $BREW_COUNT"
+    echo "  📦 Homebrew casks: $CASK_COUNT"
+  fi
+
+  echo ""
+  echo "⚙️ System Optimizations:"
+
+  # Update locate database
+  echo "  🔍 Updating locate database..."
+  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist 2>/dev/null || true
+
+  # Rebuild Launch Services database
+  echo "  🚀 Rebuilding Launch Services database..."
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user 2>/dev/null || true
+
+  echo ""
+  echo "💡 Post-Installation Recommendations:"
+  echo "  1. 🔄 Restart your Mac to ensure all changes take effect"
+  echo "  2. 🔐 Review System Preferences > Security & Privacy"
+  echo "  3. 📱 Launch newly installed applications to complete their setup"
+  echo "  4. ☁️  Sign in to cloud services (iCloud, Dropbox, etc.)"
+  echo "  5. 🔑 Configure SSH keys and development tools"
+  echo "  6. 🎨 Customize Dock, menu bar, and desktop settings"
+  echo "  7. 📋 Review installed browser extensions and plugins"
+  echo ""
+
+  echo "🎯 Quick Start Guide:"
+  echo "  • Spotlight Search (⌘+Space): Find and launch applications"
+  echo "  • System Preferences: Customize your Mac experience"
+  echo "  • Terminal/iTerm2: Access command-line tools"
+  echo "  • Homebrew: 'brew search <package>' to find more software"
+  echo ""
+
+  # Update session log if it exists
+  if [[ -n "$MACSNAP_SESSION_LOG" && -f "$MACSNAP_SESSION_LOG" ]]; then
+    echo "Completed: $(date)" >> "$MACSNAP_SESSION_LOG"
+    echo "Duration: $(($(date +%s) - $(stat -f %B "$MACSNAP_SESSION_LOG"))) seconds" >> "$MACSNAP_SESSION_LOG"
+    echo "----------------------------------------" >> "$MACSNAP_SESSION_LOG"
+    echo "Installation completed successfully" >> "$MACSNAP_SESSION_LOG"
+    echo "📄 Session log updated: $MACSNAP_SESSION_LOG"
+  fi
+
+  # Generate installation report
+  REPORT_FILE="$HOME/.macsnap/installation-report-$(date +%Y%m%d-%H%M%S).txt"
+  {
+    echo "MacSnap Installation Report"
+    echo "=========================="
+    echo "Date: $(date)"
+    echo "System: $(sw_vers -productVersion) ($(uname -m))"
+    echo ""
+    echo "Installed Applications:"
+    ls -1 /Applications | grep -E '\.app$' | sed 's/\.app$//' | sort
+    echo ""
+    if command -v brew >/dev/null 2>&1; then
+      echo "Homebrew Packages:"
+      brew list --formula 2>/dev/null | sort
+      echo ""
+      echo "Homebrew Casks:"
+      brew list --cask 2>/dev/null | sort
+    fi
+  } > "$REPORT_FILE"
+
+  echo "📊 Installation report: $REPORT_FILE"
+
+  echo ""
+  echo "✅ MacSnap Setup completed successfully!"
+  echo "🚀 Your Mac is now configured and ready to use!"
+  echo ""

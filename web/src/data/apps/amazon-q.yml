@@ -12,6 +12,7 @@ tags:
   - cloud
   - development
 url: 'https://aws.amazon.com/q/'
+image: 'https://svgl.app/library/amazon-q.svg'
 notes: |
   - AI-powered coding assistant by AWS
   - Code generation and explanation capabilities

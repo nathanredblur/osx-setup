@@ -12,6 +12,7 @@ tags:
   - team
   - productivity
 url: 'https://slack.com/'
+image: 'https://svgl.app/library/slack.svg'
 notes: |
   - Business messaging app for team collaboration with channels, DMs, and integrations
   - Supports voice and video calls, screen sharing

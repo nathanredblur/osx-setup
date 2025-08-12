@@ -1,8 +1,8 @@
-id: "adguard"
-name: "AdGuard"
-description: "Advanced ad blocker and privacy protection"
-type: "mas"
-category: "Security"
+id: 'adguard'
+name: 'AdGuard'
+description: 'Advanced ad blocker and privacy protection'
+type: 'mas'
+category: 'Security'
 selected_by_default: false
 requires_license: true
 tags:
@@ -11,7 +11,8 @@ tags:
   - security
   - tracking-protection
   - dns
-url: "https://adguard.com/"
+url: 'https://adguard.com/'
+image: 'https://st.adguardcdn.com/favicons/adguard/apple-touch-icon.png'
 notes: |
   - System-wide ad blocking and privacy protection
   - Blocks ads in all browsers and applications

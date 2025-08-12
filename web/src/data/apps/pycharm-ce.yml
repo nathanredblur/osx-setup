@@ -12,6 +12,7 @@ tags:
   - jetbrains
   - debugging
 url: 'https://www.jetbrains.com/pycharm/'
+image: 'https://svgl.app/library/pycharm.svg'
 notes: |
   - Full-featured Python IDE with debugging, testing, and version control
   - Intelligent code completion and error detection

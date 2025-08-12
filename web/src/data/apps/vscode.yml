@@ -12,6 +12,7 @@ tags:
   - free
   - extensions
 url: 'https://code.visualstudio.com/'
+image: 'https://svgl.app/library/vscode.svg'
 notes: |
   - Free and open-source code editor with extensive extension ecosystem
   - Built-in Git integration and debugging support

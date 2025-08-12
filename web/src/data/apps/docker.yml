@@ -11,6 +11,7 @@ tags:
   - devops
   - virtualization
 url: 'https://www.docker.com/products/docker-desktop/'
+image: 'https://svgl.app/library/docker.svg'
 notes: |
   - Containerization platform for building and sharing applications
   - Includes Docker Engine, CLI, and Kubernetes support

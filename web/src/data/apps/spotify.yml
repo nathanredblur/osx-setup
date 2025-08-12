@@ -12,6 +12,7 @@ tags:
   - entertainment
   - playlist
 url: 'https://www.spotify.com/'
+image: 'https://svgl.app/library/spotify.svg'
 notes: |
   - Popular music streaming platform with offline capabilities
   - Free tier with ads, premium subscription for ad-free experience

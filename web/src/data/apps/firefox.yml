@@ -12,6 +12,7 @@ tags:
   - open-source
   - extensions
 url: 'https://www.mozilla.org/firefox/'
+image: 'https://svgl.app/library/firefox.svg'
 notes: |
   - Open-source web browser by Mozilla Foundation
   - Strong privacy protections and tracking prevention

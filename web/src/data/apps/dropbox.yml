@@ -12,6 +12,7 @@ tags:
   - collaboration
   - file-sharing
 url: 'https://www.dropbox.com/'
+image: 'https://svgl.app/library/dropbox.svg'
 notes: |
   - Popular cloud storage and file synchronization service
   - Cross-platform file access and sharing

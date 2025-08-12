@@ -12,6 +12,7 @@ tags:
   - backup
   - collaboration
 url: 'https://www.google.com/drive/'
+image: 'https://svgl.app/library/drive.svg'
 notes: |
   - Google's cloud storage service with desktop sync
   - 15GB free storage shared across Google services

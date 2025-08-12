@@ -13,6 +13,7 @@ tags:
   - security
   - network
 url: 'https://1.1.1.1/'
+image: 'https://svgl.app/library/warp.svg'
 notes: |
   - Fast and secure VPN service by Cloudflare
   - Built on the 1.1.1.1 DNS resolver

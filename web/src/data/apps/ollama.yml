@@ -1,8 +1,8 @@
-id: "ollama"
-name: "Ollama"
-description: "Run large language models locally"
-type: "brew"
-category: "Development"
+id: 'ollama'
+name: 'Ollama'
+description: 'Run large language models locally'
+type: 'brew'
+category: 'Development'
 selected_by_default: false
 requires_license: false
 tags:
@@ -11,7 +11,8 @@ tags:
   - local
   - machine-learning
   - development
-url: "https://ollama.ai/"
+url: 'https://ollama.ai/'
+image: 'https://svgl.app/library/ollama_dark.svg'
 notes: |
   - Command-line tool for running LLMs locally
   - Supports popular models like Llama 2, Mistral, CodeLlama, and more

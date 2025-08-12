@@ -12,6 +12,7 @@ tags:
   - video
   - live
 url: 'https://obsproject.com/'
+image: 'https://svgl.app/library/obs.svg'
 notes: |
   - Professional live streaming and recording software
   - Multi-source video mixing and real-time effects

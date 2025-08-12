@@ -12,6 +12,7 @@ tags:
   - beautiful
   - customization
 url: 'https://www.zen-browser.app/'
+image: 'https://svgl.app/library/zen-browser-light.svg'
 notes: |
   - Firefox-based browser with focus on beauty and privacy
   - Highly customizable interface with themes

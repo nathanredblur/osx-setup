@@ -1,8 +1,8 @@
-id: "telegram"
-name: "Telegram"
-description: "Cloud-based instant messaging"
-type: "mas"
-category: "Communication"
+id: 'telegram'
+name: 'Telegram'
+description: 'Cloud-based instant messaging'
+type: 'mas'
+category: 'Communication'
 selected_by_default: false
 requires_license: false
 tags:
@@ -11,7 +11,8 @@ tags:
   - communication
   - cloud
   - security
-url: "https://telegram.org/"
+url: 'https://telegram.org/'
+image: 'https://svgl.app/library/telegram.svg'
 notes: |
   - Secure messaging with cloud sync and extensive features
   - End-to-end encrypted secret chats

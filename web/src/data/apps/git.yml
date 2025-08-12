@@ -1,8 +1,10 @@
-id: "git"
-name: "Git"
-description: "Distributed version control system for tracking changes in source code during software development"
-type: "brew"
-category: "Core Utilities"
+id: 'git'
+name: 'Git'
+description:
+  'Distributed version control system for tracking changes in source code during software
+  development'
+type: 'brew'
+category: 'Core Utilities'
 selected_by_default: true
 requires_license: false
 tags:
@@ -10,7 +12,8 @@ tags:
   - development
   - essential
   - collaboration
-url: "https://git-scm.com/"
+url: 'https://git-scm.com/'
+image: 'https://svgl.app/library/git.svg'
 notes: |
   - Distributed version control system
   - Essential for modern software development

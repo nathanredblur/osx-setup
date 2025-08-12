@@ -13,6 +13,7 @@ tags:
   - planning
   - integration
 url: 'https://www.notion.so/calendar'
+image: 'https://svgl.app/library/notion.svg'
 notes: |
   - Calendar application integrated with Notion workspace
   - Seamless connection between calendar events and Notion pages

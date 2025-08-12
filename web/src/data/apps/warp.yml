@@ -13,6 +13,7 @@ tags:
   - ai
   - development
 url: 'https://www.warp.dev/'
+image: 'https://svgl.app/library/warp.svg'
 notes: |
   - Modern terminal reimagined for the 21st century
   - AI-powered command generation and debugging

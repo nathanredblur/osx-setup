@@ -127,8 +127,10 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
     if (program?.bundle && (program.type === 'cask' || program.type === 'brew')) {
       const bundleName = extractBundleName(program.bundle);
       if (bundleName) {
-        // Start with SVGL icon search
-        fetchSvglIcon(bundleName);
+        // Only fetch SVGL icon if program doesn't already have an image
+        if (!program.image) {
+          fetchSvglIcon(bundleName);
+        }
         fetchBrewData(bundleName, program.type);
       }
     } else {
@@ -137,8 +139,8 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
       setFaviconUrl(null);
       setSvglIconUrl(null);
 
-      // For other types, still try SVGL with program name
-      if (program?.name) {
+      // For other types, only try SVGL with program name if no image exists
+      if (program?.name && !program.image) {
         fetchSvglIcon(program.name);
       }
     }

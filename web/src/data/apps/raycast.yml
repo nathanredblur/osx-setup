@@ -11,6 +11,7 @@ tags:
   - shortcuts
   - automation
 url: 'https://www.raycast.com/'
+image: 'https://svgl.app/library/raycast.svg'
 notes: |
   - Modern launcher with extensive extension ecosystem
   - Built-in features for clipboard history, window management, and calculations

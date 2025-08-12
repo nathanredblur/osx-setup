@@ -12,6 +12,7 @@ tags:
   - sidebar
   - spaces
 url: 'https://arc.net/'
+image: 'https://svgl.app/library/arc_browser.svg'
 notes: |
   - Modern browser with innovative sidebar design
   - Workspace organization with Spaces feature

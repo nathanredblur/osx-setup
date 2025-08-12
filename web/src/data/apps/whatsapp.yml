@@ -13,6 +13,7 @@ tags:
   - social
   - calls
 url: 'https://www.whatsapp.com/download'
+image: 'https://svgl.app/library/whatsapp.svg'
 notes: |
   - Requires WhatsApp to be set up on your mobile device first
   - Supports group calls with up to 8 people on video and 32 on audio

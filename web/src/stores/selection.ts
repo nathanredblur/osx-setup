@@ -3,7 +3,7 @@ import {create} from 'zustand';
 import {persist} from 'zustand/middleware';
 
 interface SelectionState {
-  selectedIds: Record<string, ProgramMeta>;
+  selectedIds: Record<string, boolean>;
   toggle: (program: ProgramMeta) => void;
   clear: () => void;
 }
@@ -17,7 +17,7 @@ export const useSelectionStore = create<SelectionState>()(
         if (current[program.id]) {
           delete current[program.id];
         } else {
-          current[program.id] = program;
+          current[program.id] = true;
         }
         set({selectedIds: current});
       },

@@ -11,24 +11,25 @@ import {useSelectionStore} from '@/stores/selection';
 import React, {useMemo, useState} from 'react';
 
 const SummaryPanel: React.FC = () => {
-  const selected = useSelectionStore(s => s.selectedIds);
+  const selectedIds = useSelectionStore(s => s.selectedIds);
   const [showDownloadOptions, setShowDownloadOptions] = useState(false);
-  const total = useMemo(() => {
-    const items = Object.values(selected);
-    return items.length;
-  }, [selected]);
+  const {programs, categories} = useCatalog();
 
+  const selectedPrograms = useMemo(() => {
+    const ids = Object.keys(selectedIds);
+    return programs.filter(program => ids.includes(program.id));
+  }, [selectedIds, programs]);
+
+  const total = selectedPrograms.length;
   const toast = useToast();
-  const {categories} = useCatalog();
 
   async function handleCreateSetup() {
-    const items = Object.values(selected);
-    if (items.length === 0) {
+    if (selectedPrograms.length === 0) {
       toast('Nothing selected');
       return;
     }
     try {
-      await downloadAllAsZip(items);
+      await downloadAllAsZip(selectedPrograms);
       toast('MacSnap setup ZIP downloaded');
     } catch (error) {
       toast('Error creating setup ZIP');
@@ -37,32 +38,29 @@ const SummaryPanel: React.FC = () => {
 
   // Funciones para las nuevas descargas
   const handleDownloadBrewfile = () => {
-    const items = Object.values(selected);
-    if (items.length === 0) {
+    if (selectedPrograms.length === 0) {
       toast('Nothing selected');
       return;
     }
-    downloadBrewfile(items);
+    downloadBrewfile(selectedPrograms);
     toast('Brewfile downloaded');
   };
 
   const handleDownloadPostConfig = () => {
-    const items = Object.values(selected);
-    if (items.length === 0) {
+    if (selectedPrograms.length === 0) {
       toast('Nothing selected');
       return;
     }
-    downloadPostConfig(items);
+    downloadPostConfig(selectedPrograms);
     toast('postConfig.sh downloaded');
   };
 
   const handleDownloadCustomInstall = () => {
-    const items = Object.values(selected);
-    if (items.length === 0) {
+    if (selectedPrograms.length === 0) {
       toast('Nothing selected');
       return;
     }
-    downloadCustomInstall(items);
+    downloadCustomInstall(selectedPrograms);
     toast('customInstall.sh downloaded');
   };
 
@@ -75,15 +73,14 @@ const SummaryPanel: React.FC = () => {
     }
   };
 
-  const selectedList = Object.values(selected);
   const byCategory = useMemo(() => {
     const map: Record<string, number> = {};
-    for (const p of selectedList) {
+    for (const p of selectedPrograms) {
       const key = p.category || 'Uncategorized';
       map[key] = (map[key] || 0) + 1;
     }
     return map;
-  }, [selectedList]);
+  }, [selectedPrograms]);
 
   return (
     <aside className="flex h-full w-96 shrink-0 flex-col border-l border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-[#0f131a]">
@@ -171,7 +168,7 @@ const SummaryPanel: React.FC = () => {
         <div className="pt-2">
           <div className="mb-2 text-xs tracking-wide text-neutral-500 uppercase">Selected apps</div>
           <div className="max-h-64 space-y-2 overflow-auto pr-2">
-            {selectedList.map(p => (
+            {selectedPrograms.map(p => (
               <div
                 key={p.id}
                 className="flex items-center justify-between rounded bg-neutral-900/40 px-2 py-1"
@@ -187,7 +184,7 @@ const SummaryPanel: React.FC = () => {
                 </button>
               </div>
             ))}
-            {selectedList.length === 0 && (
+            {selectedPrograms.length === 0 && (
               <div className="text-neutral-500">Nothing selected yet</div>
             )}
           </div>

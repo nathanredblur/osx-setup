@@ -12,7 +12,7 @@ tags:
   - tracking-protection
   - dns
 url: 'https://adguard.com/'
-image: 'https://st.adguardcdn.com/favicons/adguard/apple-touch-icon.png'
+image: '/icons/adguard.png'
 notes: |
   - System-wide ad blocking and privacy protection
   - Blocks ads in all browsers and applications
@@ -21,31 +21,7 @@ notes: |
   - Stealth mode for enhanced privacy
   - Free version available, premium for full features
 bundle: 'cask "adguard"'
-install:
-validate: |
-  mas list | grep -q "AdGuard" || ls /Applications/ | grep -q "AdGuard.app"
 configure: |
-  echo "AdGuard configuration complete"
-  echo "Launch AdGuard and configure protection settings"
-  echo ""
-  echo "Key features:"
-  echo "- System-wide ad blocking (not just browsers)"
-  echo "- Tracking and malware protection"
-  echo "- DNS filtering and custom filters"
-  echo "- Stealth mode for enhanced privacy"
-  echo "- Parental controls and safe browsing"
-  echo "- Statistics and detailed logging"
-  echo ""
-  echo "Setup steps:"
-  echo "1. Grant necessary permissions in System Preferences"
-  echo "2. Configure ad blocking filters"
-  echo "3. Set up DNS protection"
-  echo "4. Enable stealth mode if desired"
-  echo "5. Customize blocking rules"
-  echo ""
-  echo "Note: AdGuard offers a free version with basic features"
-  echo "Upgrade to premium for advanced protection and features"
-  echo "You may need to configure browser extensions for optimal protection"
-uninstall: |
-  echo "Uninstalling AdGuard..."
-  mas uninstall 1440147259
+  echo "AdGuard configuration link"
+  open https://agrd.io/vkmuNb
+  open "adguard:import_user_configuration?adblocking.enabled=true&browsing_security.enabled=true&browsing_security.statistics_enabled=false&custom_filters=&dns.custom_filters=oisd+big+%28url%3A+https%3A%2F%2Fbig.oisd.nl%2F%29&dns.enabled=true&dns.filters=1&dns.servers=https%3A%2F%2Fdns.cloudflare.com%2Fdns-query&extensions=AdGuard+Assistant+%28script%3B+url%3A+https%3A%2F%2Fuserscripts.adtidy.org%2Frelease%2Fassistant%2F4.3%2Fassistant.user.js%29%2CAdGuard+Extra+%28script%3B+url%3A+https%3A%2F%2Fuserscripts.adtidy.org%2Frelease%2Fadguard-extra%2F1.0%2Fadguard-extra.user.js%29&extensions.enabled=true&filters=1.2.4.6.7.9.16.109.207.224.249&scheme_version=3&stealth.DNT=true&stealth.block_third_party_auth=false&stealth.block_trackers=false&stealth.disable_third_party_cache=false&stealth.dpi=false&stealth.enabled=false&stealth.hide_search_queries=true&stealth.java=true&stealth.location=true&stealth.push=true&stealth.strip_url=false&stealth.third_party_cookies=180&stealth.webrtc=false&stealth.x_client=true"

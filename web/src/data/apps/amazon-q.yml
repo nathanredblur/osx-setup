@@ -12,7 +12,7 @@ tags:
   - cloud
   - development
 url: 'https://aws.amazon.com/q/'
-image: 'https://svgl.app/library/amazon-q.svg'
+image: '/icons/amazon-q.png'
 notes: |
   - AI-powered coding assistant by AWS
   - Code generation and explanation capabilities
@@ -22,24 +22,6 @@ notes: |
   - Free tier available with AWS account
 dependencies: []
 bundle: cask "amazon-q"
-install:
-validate: |
-  # Check if VS Code extension is installed
-  if command -v code &> /dev/null; then
-    if code --list-extensions | grep -q "amazonwebservices.amazon-q-vscode"; then
-      echo "Amazon Q VS Code extension is installed"
-      exit 0
-    fi
-  fi
-
-  # Check if user has AWS CLI configured (indicates potential Q usage)
-  if command -v aws &> /dev/null && aws configure list &> /dev/null; then
-    echo "AWS CLI configured - Amazon Q can be accessed via AWS Console"
-    exit 0
-  fi
-
-  # If neither found, consider not installed
-  exit 1
 configure: |
   if command -v code &> /dev/null; then
     echo "Installing Amazon Q extension for VS Code..."
@@ -49,11 +31,3 @@ configure: |
   fi
   echo ""
   echo "Amazon Q installation initiated"
-uninstall: |
-  echo "Uninstalling Amazon Q..."
-  if command -v code &> /dev/null; then
-    echo "Removing Amazon Q VS Code extension..."
-    code --uninstall-extension amazonwebservices.amazon-q-vscode
-  fi
-  echo "Amazon Q extensions removed"
-  echo "Note: AWS Console access remains available"

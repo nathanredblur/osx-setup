@@ -1,16 +1,25 @@
-id: "alterhq"
-name: "Alter"
-type: "shell_script"
-category: "Productivity"
-description: "Alter is a revolutionary tool that transforms your Mac into an intelligent assistant by understanding your digital activity and providing contextual suggestions and automation."
-url: "https://alterhq.com/"
-tags: ["productivity", "automation", "ai", "assistant", "beta"]
+id: 'alterhq'
+name: 'Alter'
+type: 'shell_script'
+category: 'Productivity'
+description:
+  'Alter is a revolutionary tool that transforms your Mac into an intelligent assistant by
+  understanding your digital activity and providing contextual suggestions and automation.'
+url: 'https://alterhq.com/'
+image: '/icons/alter.png'
+tags:
+  - productivity
+  - automation
+  - ai
+  - assistant
+  - beta
 notes: |
   Special installation process:
-  - Downloads from beta releases page
-  - Requires web scraping to find latest DMG URL
+  - Downloads latest beta version from appcast.xml
+  - Uses simple bash script with curl and regex
   - Beta software - may have bugs
   - Revolutionary AI-powered Mac assistant
+  - Automatically launches after installation
 requires_license: false
 selected_by_default: false
 install: |
@@ -19,93 +28,63 @@ install: |
 
   echo "🔍 Finding latest Alter beta download URL..."
 
-  # Use Python to scrape the beta page and find the DMG URL
-  DOWNLOAD_URL=$(python3 -c "
-  import requests
-  import re
-  from urllib.parse import urljoin
-
-  try:
-      response = requests.get('https://alterhq.com/beta', timeout=30)
-      response.raise_for_status()
-      
-      # Look for .dmg URLs in the HTML
-      dmg_pattern = r'https://[^\"\'>\s]*\.dmg[^\"\'>\s]*'
-      matches = re.findall(dmg_pattern, response.text, re.IGNORECASE)
-      
-      if matches:
-          # Get the first (presumably latest) DMG URL
-          print(matches[0])
-      else:
-          # Fallback: look for relative URLs and construct full URLs
-          relative_pattern = r'[\"\'](/[^\"\'>\s]*\.dmg[^\"\'>\s]*)[\"\'>\s]'
-          relative_matches = re.findall(relative_pattern, response.text, re.IGNORECASE)
-          if relative_matches:
-              full_url = urljoin('https://alterhq.com', relative_matches[0])
-              print(full_url)
-          else:
-              raise Exception('No DMG download URL found')
-  except Exception as e:
-      print(f'Error: {e}', file=sys.stderr)
-      exit(1)
-  ")
+  # Get the download URL from the appcast.xml file
+  DOWNLOAD_URL=$(curl -s "https://storage.googleapis.com/alter-releases/beta/appcast.xml" | grep -o '<enclosure url="[^"]*"' | sed 's/<enclosure url="//;s/"//' | head -1)
 
   if [ -z "$DOWNLOAD_URL" ]; then
-      echo "❌ Could not find Alter download URL"
+      echo "❌ Could not find Alter download URL in appcast.xml"
       exit 1
   fi
-
-  echo "📥 Downloading Alter from: $DOWNLOAD_URL"
+  echo "📥 Downloading from: $DOWNLOAD_URL"
 
   # Create temporary directory
   TEMP_DIR=$(mktemp -d)
-  DMG_FILE="$TEMP_DIR/alter.dmg"
+  ZIP_FILE="$TEMP_DIR/alter.zip"
 
-  # Download the DMG file
-  curl -L -o "$DMG_FILE" "$DOWNLOAD_URL"
+  # Download the ZIP file
+  curl -L -o "$ZIP_FILE" "$DOWNLOAD_URL"
 
-  if [ ! -f "$DMG_FILE" ]; then
-      echo "❌ Failed to download Alter DMG"
+  if [ ! -f "$ZIP_FILE" ]; then
+      echo "❌ Failed to download Alter ZIP"
       rm -rf "$TEMP_DIR"
       exit 1
   fi
 
-  echo "💿 Mounting DMG..."
+  echo "📦 Extracting Alter..."
 
-  # Mount the DMG
-  MOUNT_POINT=$(hdiutil attach "$DMG_FILE" | grep "/Volumes/" | awk '{print $3}')
+  # Extract ZIP to temporary directory
+  unzip -q "$ZIP_FILE" -d "$TEMP_DIR"
 
-  if [ -z "$MOUNT_POINT" ]; then
-      echo "❌ Failed to mount Alter DMG"
+  # Find the .app file in the extracted contents
+  APP_FILE=$(find "$TEMP_DIR" -name "*.app" -type d | head -1)
+
+  if [ -z "$APP_FILE" ]; then
+      echo "❌ Could not find Alter.app in extracted files"
       rm -rf "$TEMP_DIR"
       exit 1
   fi
 
   echo "📱 Installing Alter to /Applications..."
 
-  # Find the .app file in the mounted volume
-  APP_FILE=$(find "$MOUNT_POINT" -name "*.app" -type d | head -1)
-
-  if [ -z "$APP_FILE" ]; then
-      echo "❌ Could not find Alter.app in DMG"
-      hdiutil detach "$MOUNT_POINT"
-      rm -rf "$TEMP_DIR"
-      exit 1
+  # Remove existing installation if it exists
+  if [ -d "/Applications/Alter.app" ]; then
+      sudo rm -rf "/Applications/Alter.app"
   fi
 
   # Copy to Applications
   sudo cp -R "$APP_FILE" /Applications/
 
+  # Make executable
+  sudo chmod +x "/Applications/Alter.app/Contents/MacOS/"*
+
   echo "🧹 Cleaning up..."
-
-  # Unmount DMG
-  hdiutil detach "$MOUNT_POINT"
-
-  # Clean up temporary files
   rm -rf "$TEMP_DIR"
 
   echo "✅ Alter installed successfully to /Applications"
-  echo "🚀 You can now launch Alter from your Applications folder"
+  echo "🚀 Launching Alter..."
+
+  # Launch the application
+  open "/Applications/Alter.app"
 
 validate: |
   #!/bin/bash

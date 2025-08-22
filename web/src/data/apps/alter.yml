@@ -20,8 +20,7 @@ notes: |
   - Beta software - may have bugs
   - Revolutionary AI-powered Mac assistant
   - Automatically launches after installation
-requires_license: false
-selected_by_default: false
+requires_license: true
 install: |
   #!/bin/bash
   set -e
@@ -85,26 +84,3 @@ install: |
 
   # Launch the application
   open "/Applications/Alter.app"
-
-validate: |
-  #!/bin/bash
-  if [ -d "/Applications/Alter.app" ]; then
-      echo "✅ Alter is installed"
-      exit 0
-  else
-      echo "❌ Alter is not installed"
-      exit 1
-  fi
-
-uninstall: |
-  #!/bin/bash
-  set -e
-
-  echo "🗑️  Uninstalling Alter..."
-
-  if [ -d "/Applications/Alter.app" ]; then
-      sudo rm -rf "/Applications/Alter.app"
-      echo "✅ Alter uninstalled successfully"
-  else
-      echo "ℹ️  Alter is not installed"
-  fi

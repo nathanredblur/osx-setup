@@ -1,0 +1,24 @@
+id: 'podman-desktop'
+name: 'Podman Desktop'
+description: 'Free & open source tool for containers and Kubernetes'
+type: 'cask'
+bundle: cask "podman-desktop"
+category: 'Development'
+selected_by_default: false
+requires_license: false
+tags:
+  - containerization
+  - development
+  - devops
+  - kubernetes
+  - open-source
+url: 'https://podman-desktop.io/'
+image: 'https://podman-desktop.io/img/logo.svg'
+notes: |
+  - Free and open source container management tool
+  - Secure, daemonless, and rootless container runtime
+  - Built-in Kubernetes support with local cluster management
+  - Cross-platform support (Linux, macOS, Windows)
+  - CNCF sandbox project with vendor-neutral approach
+  - Supports Docker compatibility and migration tools
+  - GPU acceleration support for AI development workflows

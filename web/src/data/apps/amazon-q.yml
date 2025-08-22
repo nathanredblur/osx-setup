@@ -2,6 +2,7 @@ id: 'amazon-q'
 name: 'Amazon Q'
 description: 'AWS AI-powered coding assistant'
 type: 'cask'
+bundle: cask "amazon-q"
 category: 'Development'
 selected_by_default: false
 requires_license: false
@@ -20,8 +21,6 @@ notes: |
   - Real-time code suggestions and completions
   - Support for multiple programming languages
   - Free tier available with AWS account
-dependencies: []
-bundle: cask "amazon-q"
 configure: |
   if command -v code &> /dev/null; then
     echo "Installing Amazon Q extension for VS Code..."

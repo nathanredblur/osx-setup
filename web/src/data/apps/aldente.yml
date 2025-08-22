@@ -2,6 +2,7 @@ id: 'aldente'
 name: 'AlDente'
 description: 'macOS battery charge limiter for battery health'
 type: 'cask'
+bundle: cask "aldente"
 category: 'Utilities'
 selected_by_default: false
 requires_license: false
@@ -21,4 +22,3 @@ notes: |
   - Menu bar integration with battery status
   - Free version with optional Pro features
   - Essential tool for MacBook longevity
-bundle: cask "aldente"

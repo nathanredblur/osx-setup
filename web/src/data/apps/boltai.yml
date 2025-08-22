@@ -3,6 +3,7 @@ name: 'BoltAI'
 description:
   'Beautiful & powerful native ChatGPT app for Mac with AI commands and inline assistance'
 type: 'cask'
+bundle: cask "boltai"
 category: 'Development'
 selected_by_default: false
 requires_license: true
@@ -13,6 +14,7 @@ tags:
   - development
   - writing
 url: 'https://boltai.com/'
+image: '/icons/boltai.png'
 notes: |
   Native macOS AI client that integrates ChatGPT directly into your workflow:
 
@@ -37,26 +39,3 @@ notes: |
   - Team licenses available
 
   🔧 Perfect for developers, content creators, and professionals
-dependencies: []
-bundle: cask "boltai"
-install:
-validate: |
-  brew list --cask | grep -q "boltai" || ls /Applications/ | grep -q "BoltAI.app"
-configure: |
-  echo "BoltAI installation complete!"
-  echo ""
-  echo "🚀 Next steps:"
-  echo "1. Launch BoltAI from Applications"
-  echo "2. Set up your OpenAI API key (get it from https://platform.openai.com/api-keys)"
-  echo "3. Configure your preferences and shortcuts"
-  echo "4. Explore the built-in AI Commands and Prompt Library"
-  echo ""
-  echo "💡 Tips:"
-  echo "- Use AI Commands with keyboard shortcuts for quick access"
-  echo "- Create custom AI Assistants for specific tasks"
-  echo "- Enable AI Inline for seamless text generation"
-  echo "- Check the documentation at https://boltai.com/resources"
-uninstall: |
-  echo "Uninstalling BoltAI..."
-  brew uninstall --cask boltai
-  echo "Note: Your settings and API key will remain in macOS Keychain"

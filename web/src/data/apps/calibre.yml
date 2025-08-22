@@ -2,6 +2,7 @@ id: 'calibre'
 name: 'Calibre'
 description: 'Comprehensive e-book library management'
 type: 'cask'
+bundle: cask "calibre"
 category: 'Media'
 selected_by_default: false
 requires_license: false
@@ -13,6 +14,7 @@ tags:
   - conversion
   - reader
 url: 'https://calibre-ebook.com/'
+image: '/icons/calibre.png'
 notes: |
   - Comprehensive e-book library management and conversion tool
   - Support for virtually all e-book formats
@@ -20,59 +22,3 @@ notes: |
   - Sync with e-readers and mobile devices
   - Metadata management and book organization
   - Free and open source with extensive features
-dependencies: []
-bundle: cask "calibre"
-install:
-validate: |
-  brew list --cask | grep -q "calibre" || ls /Applications/ | grep -q "calibre.app"
-configure: |
-  echo "Calibre configuration complete"
-  echo "Launch Calibre to start managing your e-book library"
-  echo ""
-  echo "Key features:"
-  echo "- Support for 50+ e-book formats"
-  echo "- Library management with metadata and covers"
-  echo "- E-book conversion between formats"
-  echo "- Built-in e-book reader and editor"
-  echo "- Device sync with e-readers and tablets"
-  echo "- News downloading and RSS feed conversion"
-  echo ""
-  echo "Getting started:"
-  echo "1. Launch Calibre from Applications"
-  echo "2. Add books to your library (drag & drop or import)"
-  echo "3. Edit metadata, covers, and organize collections"
-  echo "4. Connect your e-reader for syncing"
-  echo "5. Explore reading and conversion features"
-  echo ""
-  echo "Supported formats:"
-  echo "INPUT: EPUB, MOBI, AZW, PDF, TXT, HTML, RTF, ODT, DOCX, and more"
-  echo "OUTPUT: EPUB, MOBI, AZW3, PDF, TXT, HTML, and others"
-  echo ""
-  echo "Library management:"
-  echo "- Automatic metadata fetching from online sources"
-  echo "- Custom columns and tags for organization"
-  echo "- Powerful search and filtering"
-  echo "- Series management and reading order"
-  echo "- Duplicate detection and management"
-  echo ""
-  echo "E-reader sync:"
-  echo "- Kindle, Kobo, Sony, and other devices"
-  echo "- Automatic format conversion for device compatibility"
-  echo "- Reading progress and bookmark sync"
-  echo "- Wireless sync over network"
-  echo ""
-  echo "Advanced features:"
-  echo "- E-book editor for EPUB and AZW3"
-  echo "- News and magazine downloading"
-  echo "- Custom book conversion recipes"
-  echo "- Plugin system for extending functionality"
-  echo "- Content server for remote library access"
-  echo ""
-  echo "Tips:"
-  echo "- Use 'Add Books' to import your existing e-book collection"
-  echo "- Right-click books for conversion and editing options"
-  echo "- Set up device sync for seamless e-reader integration"
-  echo "- Explore plugins for additional functionality"
-uninstall: |
-  echo "Uninstalling Calibre..."
-  brew uninstall --cask calibre

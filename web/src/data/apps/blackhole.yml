@@ -2,6 +2,7 @@ id: 'blackhole-2ch'
 name: 'BlackHole 2ch'
 description: 'Virtual Audio Driver for macOS'
 type: 'cask'
+bundle: cask "blackhole-2ch"
 category: 'Media'
 selected_by_default: false
 requires_license: false
@@ -12,6 +13,7 @@ tags:
   - recording
   - streaming
 url: 'https://github.com/ExistentialAudio/BlackHole'
+image: '/icons/blackhole-2ch.png'
 notes: |
   - Creates virtual audio devices for routing audio between applications
   - Allows recording computer audio without additional hardware
@@ -19,31 +21,3 @@ notes: |
   - Zero-latency audio routing
   - Supports multiple audio channels and formats
   - Open source and free
-dependencies: []
-bundle: cask "blackhole-2ch"
-install:
-validate: |
-  brew list --cask | grep -q "blackhole-2ch" || system_profiler SPAudioDataType | grep -q "BlackHole"
-configure: |
-  echo "BlackHole 2ch configuration complete"
-  echo ""
-  echo "BlackHole has been installed as a virtual audio device"
-  echo ""
-  echo "To use BlackHole:"
-  echo "1. Open Audio MIDI Setup (Applications > Utilities)"
-  echo "2. Create a Multi-Output Device"
-  echo "3. Select both your speakers and BlackHole 2ch"
-  echo "4. Set this Multi-Output as your default output"
-  echo "5. In recording apps, select BlackHole 2ch as input"
-  echo ""
-  echo "Common use cases:"
-  echo "- Record system audio for streaming"
-  echo "- Route audio between applications"
-  echo "- Create virtual mixing setups"
-  echo "- Podcast recording with multiple audio sources"
-  echo ""
-  echo "Note: You may need to restart applications to see BlackHole in audio settings"
-uninstall: |
-  echo "Uninstalling BlackHole 2ch..."
-  brew uninstall --cask blackhole-2ch
-  echo "Note: You may need to restart to fully remove the audio driver"

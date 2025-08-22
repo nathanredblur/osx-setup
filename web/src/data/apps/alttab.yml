@@ -2,6 +2,7 @@ id: 'alttab'
 name: 'AltTab'
 description: 'Windows-style Alt-Tab for macOS'
 type: 'cask'
+bundle: cask "alt-tab"
 category: 'Productivity'
 selected_by_default: false
 requires_license: false
@@ -20,4 +21,3 @@ notes: |
   - Supports keyboard shortcuts and mouse interaction
   - Open source and lightweight
   - Alternative to macOS default Cmd+Tab behavior
-bundle: cask "alt-tab"

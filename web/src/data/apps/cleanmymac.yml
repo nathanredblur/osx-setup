@@ -1,0 +1,23 @@
+id: 'cleanmymac'
+name: 'CleanMyMac'
+description: 'System cleaner and optimizer'
+type: 'cask'
+bundle: cask "cleanmymac"
+category: 'System Tweaks'
+selected_by_default: false
+requires_license: true
+tags:
+  - system-cleaner
+  - optimization
+  - maintenance
+  - storage
+  - performance
+url: 'https://cleanmymac.com/'
+image: '/icons/cleanmymac.webp'
+notes: |
+  - Comprehensive system cleaning and optimization suite
+  - Removes junk files, cache, and unnecessary data
+  - Malware detection and removal
+  - Application uninstaller and updater
+  - System performance optimization
+  - Requires subscription for full features

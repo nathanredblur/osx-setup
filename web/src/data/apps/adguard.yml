@@ -2,6 +2,7 @@ id: 'adguard'
 name: 'AdGuard'
 description: 'Advanced ad blocker and privacy protection'
 type: 'cask'
+bundle: 'cask "adguard"'
 category: 'Security'
 selected_by_default: false
 requires_license: true
@@ -20,7 +21,6 @@ notes: |
   - Custom DNS filtering and family protection
   - Stealth mode for enhanced privacy
   - Free version available, premium for full features
-bundle: 'cask "adguard"'
 configure: |
   echo "AdGuard configuration link"
   open https://agrd.io/vkmuNb

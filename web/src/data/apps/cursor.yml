@@ -4,6 +4,7 @@ description:
   'AI-powered code editor built for pair programming with AI, featuring advanced autocomplete, chat,
   and agent capabilities'
 type: 'cask'
+bundle: cask "cursor"
 category: 'Development'
 selected_by_default: false
 requires_license: true
@@ -14,7 +15,7 @@ tags:
   - programming
   - premium
 url: 'https://www.cursor.com/'
-image: 'https://svgl.app/library/cursor_light.svg'
+image: '/icons/cursor.svg'
 notes: |
   - AI-native code editor with advanced capabilities
   - Free hobby plan with 2000 completions and 50 premium requests
@@ -23,14 +24,3 @@ notes: |
   - Multi-file editing and context-aware suggestions
   - Background processing and intelligent code analysis
 dependencies: []
-bundle: cask "cursor"
-install:
-validate: |
-  brew list --cask | grep -q "cursor" || ls /Applications/ | grep -q "Cursor.app"
-configure: |
-  echo "Cursor configuration complete"
-  echo "Launch Cursor and sign up for an account to access AI features"
-  echo "Note: Free plan available with premium features requiring subscription"
-uninstall: |
-  echo "Uninstalling Cursor..."
-  brew uninstall --cask cursor

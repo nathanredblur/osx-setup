@@ -1,8 +1,11 @@
-id: "antidote"
-name: "Antidote"
-description: "Fast and modern Zsh plugin manager with lazy loading and improved performance over traditional managers"
-type: "brew"
-category: "Terminal"
+id: 'antidote'
+name: 'Antidote'
+description: |
+  'Fast and modern Zsh plugin manager with lazy loading and improved performance over traditional
+  managers'
+type: 'brew'
+bundle: brew "antidote"
+category: 'Terminal'
 selected_by_default: true
 requires_license: false
 tags:
@@ -11,7 +14,8 @@ tags:
   - shell
   - performance
   - terminal
-url: "https://getantidote.github.io/"
+url: 'https://getantidote.github.io/'
+image: '/icons/antidote.png'
 notes: |
   - Fast and modern Zsh plugin manager
   - Lazy loading and improved performance
@@ -25,15 +29,29 @@ notes: |
   - 3. Run: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh
   - 4. Source plugins in ~/.zshrc: source ~/.zsh_plugins.zsh
 dependencies: []
-bundle: brew "antidote"
-install:
-validate: |
-  type antidote &> /dev/null
 configure: |
-  echo "Antidote configuration complete"
-  echo "Initialize in ~/.zshrc: source \$(brew --prefix)/share/antidote/antidote.zsh"
-  echo "Create ~/.zsh_plugins.txt with your desired plugins"
-  echo "Generate bundles: antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh"
-uninstall: |
-  echo "Uninstalling Antidote..."
-  brew uninstall antidote
+  # Install fzf and eza
+  brew install fzf eza
+
+  # Create .zsh_plugins.txt from assets directory or create a basic one
+  ASSETS_DIR="$(dirname "$0")/assets"
+  PLUGINS_FILE="$HOME/.zsh_plugins.txt"
+
+  cp "$ASSETS_DIR/.zsh_plugins.txt" "$PLUGINS_FILE"
+  echo "✅ Configured .zsh_plugins.txt"
+
+  # Add antidote configuration to .zshrc (always add newline first)
+  ZSHRC_FILE="$HOME/.zshrc"
+  echo "" >> "$ZSHRC_FILE"
+  cat >> "$ZSHRC_FILE" << 'EOF'
+  # source antidote
+  source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+
+  # initialize plugins statically with ${ZDOTDIR:-~}/.zsh_plugins.txt
+  antidote load
+  EOF
+
+  echo "✅ Antidote configuration added to ~/.zshrc"
+  echo "🔄 Restart your terminal or run 'source ~/.zshrc' to apply changes"
+assets:
+  - .zsh_plugins.txt

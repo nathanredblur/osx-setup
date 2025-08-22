@@ -24,6 +24,7 @@ const apps = defineCollection({
       validate: z.string().nullable().optional().default(null),
       configure: z.string().nullable().optional().default(null),
       uninstall: z.string().nullable().optional().default(null),
+      assets: z.array(z.string()).optional().default([]),
     })
     .refine(
       data => {

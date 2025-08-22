@@ -103,6 +103,29 @@ export async function downloadAllAsZip(programs: ProgramMeta[]): Promise<void> {
     const readmeContent = await getReadmeContent();
     zip.file('README.md', readmeContent);
 
+    // Add assets from programs that have them
+    const assetsFolder = zip.folder('assets');
+    if (assetsFolder) {
+      for (const program of programs) {
+        if (program.assets && program.assets.length > 0) {
+          for (const assetName of program.assets) {
+            try {
+              const assetResponse = await fetch(`/assets/${assetName}`);
+              if (assetResponse.ok) {
+                const assetContent = await assetResponse.text();
+                assetsFolder.file(assetName, assetContent);
+                console.log(`✅ Added asset: ${assetName}`);
+              } else {
+                console.warn(`⚠️ Asset not found: ${assetName}`);
+              }
+            } catch (error) {
+              console.error(`❌ Error loading asset ${assetName}:`, error);
+            }
+          }
+        }
+      }
+    }
+
     // Generate the ZIP and download it
     const content = await zip.generateAsync({type: 'blob'});
     const url = URL.createObjectURL(content);

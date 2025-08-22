@@ -19,7 +19,7 @@ const AppCard: React.FC<Props> = ({program, onClick}) => {
       <img
         src={program.image || '/icons/default-app.svg'}
         alt="icon"
-        className="h-20 w-20 rounded-xl bg-neutral-100 object-cover dark:bg-neutral-800/50"
+        className="h-20 w-20 rounded-xl bg-neutral-100 object-contain dark:bg-neutral-800/50"
       />
       <div className="flex min-w-0 flex-col gap-2">
         <div className="flex items-start justify-between gap-2">

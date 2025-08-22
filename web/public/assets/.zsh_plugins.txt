@@ -1,0 +1,27 @@
+# Replace zsh's default completion selection menu with fzf!
+# require brew install fzf eza
+Aloxaf/fzf-tab
+
+# oh-my-zsh
+getantidote/use-omz        # handle OMZ dependencies
+ohmyzsh/ohmyzsh path:lib   # load OMZ's library
+ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/gitfast
+ohmyzsh/ohmyzsh path:plugins/aliases
+ohmyzsh/ohmyzsh path:plugins/yarn
+ohmyzsh/ohmyzsh path:plugins/npm
+ohmyzsh/ohmyzsh path:plugins/wd
+ohmyzsh/ohmyzsh path:plugins/common-aliases
+
+# better syntax highlighting than zsh-users/zsh-syntax-highlighting
+zdharma-continuum/fast-syntax-highlighting kind:defer
+
+# reminds you that you should use one of your existing aliases for a command you just typed
+MichaelAquilina/zsh-you-should-use
+
+# auto suggestions
+zsh-users/zsh-autosuggestions
+
+
+# More Ideas
+# https://github.com/search?q=.zsh_plugins.txt&type=code

@@ -22,6 +22,8 @@ const AppGrid: React.FC = () => {
       const fuse = createProgramsFuse(list);
       list = fuzzySearch(fuse, query);
     }
+    // Sort alphabetically by name
+    list = list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
   }, [programs, query, category, view, selectedIds]);
 

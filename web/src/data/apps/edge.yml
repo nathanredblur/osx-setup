@@ -2,6 +2,7 @@ id: 'edge'
 name: 'Microsoft Edge'
 description: "Microsoft's modern web browser"
 type: 'cask'
+bundle: cask "microsoft-edge"
 category: 'Browsers'
 selected_by_default: false
 requires_license: false
@@ -19,19 +20,3 @@ notes: |
   - Built-in tracking prevention and security features
   - Vertical tabs and productivity features
   - Enterprise-grade security and management capabilities
-dependencies: []
-bundle: cask "microsoft-edge"
-install:
-validate: |
-  brew list --cask | grep -q "microsoft-edge" || ls /Applications/ | grep -q "Microsoft Edge.app"
-configure: |
-  echo "Microsoft Edge configuration complete"
-  echo "Launch Edge and sign in with your Microsoft account for sync"
-  echo "Key features to explore:"
-  echo "- Vertical tabs for better organization"
-  echo "- Collections for research and planning"
-  echo "- Microsoft 365 integration"
-  echo "- Enterprise security features"
-uninstall: |
-  echo "Uninstalling Microsoft Edge..."
-  brew uninstall --cask microsoft-edge

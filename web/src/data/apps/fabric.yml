@@ -1,6 +1,7 @@
 id: 'fabric'
 name: 'Fabric'
-description: 'AI-powered productivity and automation framework'
+description:
+  'Your second brain - AI workspace and smart organizer for all your projects, ideas, notes & links'
 type: 'shell_script'
 category: 'Productivity'
 selected_by_default: false
@@ -8,95 +9,29 @@ requires_license: false
 tags:
   - ai
   - productivity
-  - automation
-  - framework
-  - workflow
-  - efficiency
-url: 'https://fabric.so/home'
+  - notes
+  - organizer
+  - workspace
+  - second-brain
+url: 'https://fabric.so/'
+image: '/icons/fabric.png'
 notes: |
-  - Open-source AI-powered productivity framework
-  - Modular system for AI-assisted workflows
-  - Pattern-based approach to productivity tasks
-  - Command-line and GUI integration
-  - Extensible with custom patterns and modules
-  - Free and open source with community support
+  - All-in-one AI workspace and smart organizer
+  - Never lose an idea or file again
+  - Automatic organization with AI understanding
+  - Voice notes, quick capture, and instant search
+  - Rich collaboration and annotation features
+  - Available on web, desktop, and mobile
 dependencies: []
 install: |
-  echo "Installing Fabric..."
-validate: |
-  # Check if Fabric is installed via pip
-  if command -v python3 >/dev/null 2>&1; then
-    if python3 -c "import fabric" 2>/dev/null; then
-      exit 0
-    fi
-  fi
-
-  # Check for Fabric command-line tool
-  if command -v fabric >/dev/null 2>&1; then
-    exit 0
-  fi
-
-  # Check for local installation
-  if [ -d "$HOME/.fabric" ] || [ -f "$HOME/.fabric/config" ]; then
-    exit 0
-  fi
-
-  echo "Fabric not detected"
-  exit 1
-configure: |
-  echo "Fabric configuration complete"
-  echo "Set up Fabric for AI-powered productivity workflows"
+  echo "Opening Fabric download page..."
+  echo "Fabric is available for macOS, Windows, and Linux"
   echo ""
-  echo "Key features:"
-  echo "- AI-powered productivity patterns and workflows"
-  echo "- Modular framework for custom automation"
-  echo "- Integration with various AI models and services"
-  echo "- Command-line and programmatic interfaces"
-  echo "- Extensible pattern system"
-  echo "- Community-driven pattern library"
+  echo "Opening download page in your browser..."
+  open "https://fabric.so/download/desktop"
   echo ""
-  echo "Getting started:"
-  echo "1. Configure API keys for AI services"
-  echo "2. Explore available productivity patterns"
-  echo "3. Create custom patterns for your workflows"
-  echo "4. Integrate with your existing tools"
-  echo "5. Automate repetitive tasks with AI assistance"
-  echo ""
-  echo "Core concepts:"
-  echo "- Patterns: Reusable AI-powered workflows"
-  echo "- Modules: Functional components for specific tasks"
-  echo "- Pipelines: Chained operations for complex workflows"
-  echo "- Templates: Pre-configured setups for common use cases"
-  echo "- Extensions: Custom integrations and functionality"
-  echo ""
-  echo "Common use cases:"
-  echo "- Content creation and editing assistance"
-  echo "- Data analysis and reporting automation"
-  echo "- Code generation and documentation"
-  echo "- Research and information synthesis"
-  echo "- Workflow optimization and automation"
-  echo ""
-  echo "AI integrations:"
-  echo "- OpenAI GPT models for text generation"
-  echo "- Local AI models for privacy-focused tasks"
-  echo "- Multiple AI service providers"
-  echo "- Custom model integration capabilities"
-  echo ""
-  echo "Setup requirements:"
-  echo "- Python 3.8+ environment"
-  echo "- API keys for desired AI services"
-  echo "- Configuration file setup"
-  echo "- Pattern library initialization"
-  echo ""
-  echo "Next steps:"
-  echo "1. Visit https://github.com/danielmiessler/fabric for documentation"
-  echo "2. Configure your preferred AI service API keys"
-  echo "3. Explore the pattern library for workflow ideas"
-  echo "4. Create your first custom productivity pattern"
-  echo "5. Join the community for support and pattern sharing"
-uninstall: |
-  echo "Uninstalling Fabric..."
-  if command -v pip3 >/dev/null 2>&1; then
-    pip3 uninstall fabric-ai -y
-  fi
-  echo "Note: Configuration files may remain in ~/.fabric"
+  echo "Download instructions:"
+  echo "1. Choose your platform (macOS, Windows, or Linux)"
+  echo "2. Download the desktop application"
+  echo "3. Install and create your Fabric account"
+  echo "4. Start organizing your digital life"

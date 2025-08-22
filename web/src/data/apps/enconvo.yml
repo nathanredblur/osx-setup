@@ -1,0 +1,60 @@
+id: 'enconvo'
+name: 'EnConvo'
+description: 'The AI Launcher - AI-powered productivity assistant with 150+ built-in tools'
+type: 'shell_script'
+category: 'Development'
+selected_by_default: false
+requires_license: false
+tags:
+  - ai
+  - launcher
+  - productivity
+  - automation
+  - assistant
+  - workflow
+url: 'https://www.enconvo.com/'
+image: 'https://www.enconvo.com/logo.svg'
+notes: |
+  - AI Launcher that revolutionizes productivity
+  - 150+ built-in tools and MCP support
+  - SmartBar for unified access across all applications
+  - Context awareness and workflow automation
+  - Voice input method and live screen sharing
+  - Knowledge base integration and AI web search
+install: |
+  echo "Installing EnConvo..."
+  echo "Downloading EnConvo from official source..."
+  echo ""
+
+  # Download EnConvo DMG
+  curl -L -o "/tmp/EnConvo.dmg" "https://api.enconvo.com/app/download"
+
+  if [ $? -eq 0 ]; then
+    echo "Download completed successfully"
+    echo "Mounting DMG file..."
+    hdiutil attach "/tmp/EnConvo.dmg" -quiet
+    
+    # Find the mounted volume
+    VOLUME=$(ls /Volumes/ | grep -i "enconvo" | head -1)
+    
+    if [ -n "$VOLUME" ]; then
+      echo "Copying EnConvo to Applications..."
+      cp -R "/Volumes/$VOLUME/EnConvo.app" "/Applications/"
+      
+      echo "Unmounting DMG..."
+      hdiutil detach "/Volumes/$VOLUME" -quiet
+      
+      echo "Cleaning up temporary files..."
+      rm -f "/tmp/EnConvo.dmg"
+      
+      echo "EnConvo installed successfully!"
+    else
+      echo "Error: Could not find EnConvo volume"
+      exit 1
+    fi
+  else
+    echo "Error: Failed to download EnConvo"
+    echo "Please visit https://www.enconvo.com/ to download manually"
+    exit 1
+  fi
+  echo ""

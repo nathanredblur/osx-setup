@@ -1,8 +1,9 @@
-id: "git-delta"
-name: "Git Delta"
-description: "A syntax-highlighting pager for git, diff, and grep output"
-type: "brew"
-category: "Core Utilities"
+id: 'git-delta'
+name: 'Git Delta'
+description: 'A syntax-highlighting pager for git, diff, and grep output'
+type: 'brew'
+bundle: brew "git-delta"
+category: 'Core Utilities'
 selected_by_default: true
 requires_license: false
 tags:
@@ -11,18 +12,14 @@ tags:
   - syntax-highlighting
   - pager
   - development
-url: "https://github.com/dandavison/delta"
+url: 'https://github.com/dandavison/delta'
 notes: |
   - Enhances git diff output with syntax highlighting and side-by-side view
   - Supports line-by-line and side-by-side diff formats
   - Customizable themes and color schemes
   - Integration with git and other diff tools
   - Written in Rust for high performance
-dependencies: ["git"]
-bundle: brew "git-delta"
-install:
-validate: |
-  command -v delta &> /dev/null
+dependencies: ['git']
 configure: |
   echo "Configuring git-delta..."
 

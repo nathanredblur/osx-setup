@@ -13,7 +13,7 @@ tags:
   - podcast
   - music
 url: 'https://www.audacityteam.org/'
-image: '/icons/audacity.svg'
+image: '/icons/audacity.png'
 notes: |
   - Multi-track audio editor with extensive plugin support
   - Free and open-source audio editing software

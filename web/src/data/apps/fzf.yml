@@ -1,8 +1,10 @@
-id: "fzf"
-name: "FZF"
-description: "Command-line fuzzy finder for interactive filtering of files, command history, and processes"
-type: "brew"
-category: "Terminal"
+id: 'fzf'
+name: 'FZF'
+description:
+  'Command-line fuzzy finder for interactive filtering of files, command history, and processes'
+type: 'brew'
+bundle: brew "fzf"
+category: 'Terminal'
 selected_by_default: true
 requires_license: false
 tags:
@@ -11,7 +13,7 @@ tags:
   - search
   - productivity
   - utilities
-url: "https://github.com/junegunn/fzf"
+url: 'https://github.com/junegunn/fzf'
 notes: |
   - Command-line fuzzy finder for interactive filtering
   - Integrates with shell history, file search, and processes
@@ -26,19 +28,3 @@ notes: |
   -    • Ctrl-R: Search command history
   -    • Alt-C: Change directory
   - 3. Restart terminal to use new key bindings
-dependencies: []
-bundle: brew "fzf"
-install:
-validate: |
-  command -v fzf &> /dev/null
-configure: |
-  echo "FZF configuration complete"
-  echo "Run: \$(brew --prefix)/opt/fzf/install"
-  echo "This enables key bindings:"
-  echo "  • Ctrl-T: Search files and directories"
-  echo "  • Ctrl-R: Search command history"
-  echo "  • Alt-C: Change directory"
-  echo "Restart terminal to use new key bindings"
-uninstall: |
-  echo "Uninstalling FZF..."
-  brew uninstall fzf

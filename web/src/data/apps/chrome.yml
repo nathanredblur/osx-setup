@@ -12,7 +12,7 @@ tags:
   - google
   - essential
 url: 'https://www.google.com/chrome/'
-image: '/icons/chrome.svg'
+image: '/icons/chrome.png'
 notes: |
   - Most popular web browser with extensive extension ecosystem
   - Syncs with Google account for bookmarks, history, and passwords

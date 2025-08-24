@@ -4,6 +4,7 @@ description:
   'Distributed version control system for tracking changes in source code during software
   development'
 type: 'brew'
+bundle: brew "git"
 category: 'Core Utilities'
 selected_by_default: true
 requires_license: false
@@ -27,17 +28,19 @@ notes: |
   - 3. Set pull behavior: git config --global pull.rebase true
   - 4. Enable auto-stash: git config --global rebase.autoStash true
 dependencies: []
-bundle: brew "git"
-install:
-validate: |
-  command -v git &> /dev/null
 configure: |
   echo "Git configuration complete"
   echo "Configure Git with your details:"
-  echo "  git config --global user.name \"Your Name\""
-  echo "  git config --global user.email \"your.email@example.com\""
-  echo "  git config --global pull.rebase true"
-  echo "  git config --global rebase.autoStash true"
-uninstall: |
-  echo "Uninstalling Git..."
-  brew uninstall git
+  git config --global user.name \"{{ user.name }}\""
+  git config --global user.email \"{{ user.email }}\""
+  git config --global pull.rebase true"
+  git config --global rebase.autoStash true"
+parameters:
+  - name: 'user.name'
+    description: 'Your name'
+    type: 'string'
+    required: true
+  - name: 'user.email'
+    description: 'Your email'
+    type: 'string'
+    required: true

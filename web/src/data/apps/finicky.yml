@@ -1,8 +1,9 @@
-id: "finicky"
-name: "Finicky"
-description: "Default browser manager"
-type: "brew"
-category: "Productivity"
+id: 'finicky'
+name: 'Finicky'
+description: 'Default browser manager'
+type: 'cask'
+bundle: cask "finicky"
+category: 'Productivity'
 selected_by_default: false
 requires_license: false
 tags:
@@ -11,51 +12,23 @@ tags:
   - automation
   - link-management
   - utilities
-url: "https://github.com/johnste/finicky"
+url: 'https://github.com/johnste/finicky'
+image: '/icons/finicky.png'
 notes: |
   - Automatically opens links in the appropriate browser
   - Configurable rules based on URL patterns, domains, and conditions
   - Supports multiple browsers and applications
   - JavaScript-based configuration for complex rules
   - Open source and highly customizable
-dependencies: []
-bundle: cask "finicky"
-install:
-validate: |
-  brew list --cask | grep -q "finicky" || ls /Applications/ | grep -q "Finicky.app"
 configure: |
   echo "Configuring Finicky..."
 
-  # Create basic configuration
+  # Create .finicky.js from assets directory
+  ASSETS_DIR="$(dirname "$0")/assets"
   CONFIG_FILE="$HOME/.finicky.js"
 
-  if [ ! -f "$CONFIG_FILE" ]; then
-      cat > "$CONFIG_FILE" << 'EOF'
-  module.exports = {
-    defaultBrowser: "Safari",
-    handlers: [
-    {
-      // Open Gmail in Chrome
-      match: /^https:\/\/mail\.google\.com/,
-      browser: "Google Chrome"
-    },
-    {
-      // Open GitHub in preferred browser
-      match: /github\.com/,
-      browser: "Google Chrome"
-    },
-    {
-      // Open work domains in specific browser
-      match: /company\.com/,
-      browser: "Microsoft Edge"
-    }
-    ]
-  };
-  EOF
-      echo "Created basic Finicky configuration at ~/.finicky.js"
-  else
-      echo "Finicky configuration already exists at ~/.finicky.js"
-  fi
+  cp "$ASSETS_DIR/.finicky.js" "$CONFIG_FILE"
+  echo "✅ Configured .finicky.js"
 
   echo "Finicky configuration complete"
   echo "Launch Finicky and set it as your default browser in System Preferences"
@@ -67,7 +40,5 @@ configure: |
   echo "- Gmail -> Chrome"
   echo "- GitHub -> Chrome" 
   echo "- Default -> Safari"
-uninstall: |
-  echo "Uninstalling Finicky..."
-  brew uninstall --cask finicky
-  echo "Note: Configuration file ~/.finicky.js will remain"
+assets:
+  - .finicky.js

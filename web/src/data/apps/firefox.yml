@@ -2,6 +2,7 @@ id: 'firefox'
 name: 'Firefox'
 description: 'Fast, private & safe web browser'
 type: 'cask'
+bundle: cask "firefox"
 category: 'Browsers'
 selected_by_default: false
 requires_license: false
@@ -20,49 +21,3 @@ notes: |
   - Cross-platform synchronization
   - Developer-friendly tools and features
   - Regular security updates and improvements
-dependencies: []
-bundle: cask "firefox"
-install:
-validate: |
-  brew list --cask | grep -q "firefox" || ls /Applications/ | grep -q "Firefox.app"
-configure: |
-  echo "Firefox configuration complete"
-  echo "Launch Firefox to complete setup and sign in"
-  echo ""
-  echo "Key features:"
-  echo "- Enhanced tracking protection"
-  echo "- Extensive add-on and extension support"
-  echo "- Firefox Sync for cross-device synchronization"
-  echo "- Private browsing mode"
-  echo "- Developer tools and Web Console"
-  echo "- Regular security and feature updates"
-  echo ""
-  echo "Getting started:"
-  echo "1. Launch Firefox from Applications"
-  echo "2. Create or sign in to Firefox Account for sync"
-  echo "3. Import bookmarks and settings from other browsers"
-  echo "4. Configure privacy and security preferences"
-  echo "5. Install essential add-ons from Firefox Add-ons store"
-  echo ""
-  echo "Recommended add-ons:"
-  echo "- uBlock Origin (ad blocker)"
-  echo "- Privacy Badger (tracking protection)"
-  echo "- LastPass/Bitwarden (password manager)"
-  echo "- Dark Reader (dark mode for websites)"
-  echo "- Grammarly (writing assistant)"
-  echo ""
-  echo "Privacy features:"
-  echo "- Enhanced Tracking Protection (enabled by default)"
-  echo "- DNS over HTTPS for secure browsing"
-  echo "- Strict privacy mode available"
-  echo "- Container tabs for site isolation"
-  echo "- Private browsing with Tor support"
-  echo ""
-  echo "Developer features:"
-  echo "- Web Developer Tools"
-  echo "- Responsive Design Mode"
-  echo "- Network Monitor and Performance Tools"
-  echo "- JavaScript Debugger and Console"
-uninstall: |
-  echo "Uninstalling Firefox..."
-  brew uninstall --cask firefox

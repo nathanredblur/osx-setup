@@ -13,7 +13,7 @@ tags:
   - community
   - streaming
 url: 'https://discord.com/'
-image: 'https://svgl.app/library/discord.svg'
+image: '/icons/discord.png'
 notes: |
   - Popular gaming and community chat platform with voice, video, and screen sharing
   - Supports text channels, voice channels, and direct messages

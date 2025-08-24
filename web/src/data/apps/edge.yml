@@ -13,7 +13,7 @@ tags:
   - chromium
   - enterprise
 url: 'https://www.microsoft.com/edge'
-image: 'https://svgl.app/library/edge.svg'
+image: '/icons/edge.png'
 notes: |
   - Microsoft's Chromium-based browser with enterprise features
   - Excellent integration with Microsoft 365 and Azure services

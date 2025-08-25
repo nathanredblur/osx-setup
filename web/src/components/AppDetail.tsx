@@ -1,152 +1,39 @@
+import ParameterForm from '@/components/ParameterForm';
 import {useToast} from '@/components/Toast';
 import {singleInstallCommand} from '@/lib/bundle';
+import {useFetchBrew} from '@/lib/useFetchBrew';
+import {extractBundleName} from '@/lib/utils';
+import {useParametersStore} from '@/stores/parameters';
+import {useSelectionStore} from '@/stores/selection';
 import type {ProgramMeta} from '@/types/data.d.ts';
-import React, {useEffect, useState} from 'react';
-
-interface BrewApiData {
-  name: string[];
-  desc: string;
-  homepage: string;
-  version: string;
-  url: string;
-  deprecated?: boolean;
-  deprecation_reason?: string;
-  caveats?: string;
-}
+import React, {useEffect} from 'react';
+import {Button} from './ui/button';
 
 type Props = {
-  program: ProgramMeta | null;
+  program: ProgramMeta;
   onClose: () => void;
-  onToggle: () => void;
-  selected: boolean;
 };
 
-const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
+const AppDetail: React.FC<Props> = ({program, onClose}) => {
   const toast = useToast();
-  const [brewData, setBrewData] = useState<BrewApiData | null>(null);
-  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
-  const [svglIconUrl, setSvglIconUrl] = useState<string | null>(null);
-  const [loadingBrew, setLoadingBrew] = useState(false);
-  const [loadingIcon, setLoadingIcon] = useState(false);
+  const {brewData, loadingBrew, fetchBrewData} = useFetchBrew();
 
-  // Extract bundle name from bundle string (e.g., 'cask "google-chrome"' -> 'google-chrome')
-  const extractBundleName = (bundle: string): string | null => {
-    const match = bundle.match(/^(brew|cask|mas)\s+"([^"]+)"/);
-    return match ? match[2] : null;
-  };
+  const toggle = useSelectionStore(s => s.toggle);
+  const selected = useSelectionStore(s => Boolean(s.selectedIds[program.id]));
 
-  // Fetch Homebrew API data
-  const fetchBrewData = async (bundleName: string, type: string) => {
-    if (type !== 'cask' && type !== 'brew') return;
-
-    setLoadingBrew(true);
-    try {
-      const endpoint = type === 'cask' ? 'cask' : 'formula';
-      const response = await fetch(`https://formulae.brew.sh/api/${endpoint}/${bundleName}.json`);
-      if (response.ok) {
-        const data = await response.json();
-        setBrewData(data);
-
-        // Try to get favicon from homepage
-        if (data.homepage) {
-          fetchFavicon(data.homepage);
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to fetch Homebrew data:', error);
-    } finally {
-      setLoadingBrew(false);
-    }
-  };
-
-  // Fetch icon from SVGL API
-  const fetchSvglIcon = async (appName: string) => {
-    setLoadingIcon(true);
-    try {
-      // Try different search terms for better matching
-      const searchTerms = [
-        appName.toLowerCase(),
-        appName.toLowerCase().replace(/-/g, ' '),
-        appName.toLowerCase().replace(/-/g, ''),
-        program?.name.toLowerCase() || '',
-      ];
-
-      for (const searchTerm of searchTerms) {
-        if (!searchTerm) continue;
-
-        try {
-          const response = await fetch(
-            `https://api.svgl.app?search=${encodeURIComponent(searchTerm)}`
-          );
-          if (response.ok) {
-            const data = await response.json();
-            if (data && data.length > 0) {
-              // Find the best match (exact match preferred)
-              const exactMatch = data.find(
-                (item: any) =>
-                  item.title.toLowerCase() === searchTerm ||
-                  item.title.toLowerCase().replace(/\s+/g, '-') === searchTerm
-              );
-              const bestMatch = exactMatch || data[0];
-
-              if (bestMatch?.route) {
-                setSvglIconUrl(bestMatch.route);
-                return; // Exit early on success
-              }
-            }
-          }
-        } catch (searchError) {
-          console.warn(`Failed to search SVGL for "${searchTerm}":`, searchError);
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to fetch SVGL icon:', error);
-    } finally {
-      setLoadingIcon(false);
-    }
-  };
-
-  // Fetch favicon from homepage
-  const fetchFavicon = async (homepage: string) => {
-    try {
-      const url = new URL(homepage);
-      const faviconUrl = `${url.protocol}//${url.host}/favicon.ico`;
-
-      // Test if favicon exists
-      const response = await fetch(faviconUrl, {method: 'HEAD'});
-      if (response.ok) {
-        setFaviconUrl(faviconUrl);
-      }
-    } catch (error) {
-      console.warn('Failed to fetch favicon:', error);
-    }
-  };
+  const {getValidationState} = useParametersStore();
 
   // Effect to fetch data when program changes
   useEffect(() => {
     if (program?.bundle && (program.type === 'cask' || program.type === 'brew')) {
       const bundleName = extractBundleName(program.bundle);
-      if (bundleName) {
-        // Only fetch SVGL icon if program doesn't already have an image
-        if (!program.image) {
-          fetchSvglIcon(bundleName);
-        }
-        fetchBrewData(bundleName, program.type);
-      }
-    } else {
-      // Reset all states for non-brew/cask apps
-      setBrewData(null);
-      setFaviconUrl(null);
-      setSvglIconUrl(null);
-
-      // For other types, only try SVGL with program name if no image exists
-      if (program?.name && !program.image) {
-        fetchSvglIcon(program.name);
-      }
+      if (bundleName) fetchBrewData(bundleName, program.type);
     }
   }, [program]);
 
-  if (!program) return null;
+  const isNotValid =
+    program.parameters && program.parameters.length > 0 && !getValidationState(program.id).isValid;
+
   return (
     <div className="fixed inset-0 z-50 flex">
       <div className="flex-1 bg-black/40" onClick={onClose} />
@@ -154,24 +41,14 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
         <div className="flex items-center gap-3">
           <div className="relative h-12 w-12">
             <img
-              src={svglIconUrl || faviconUrl || program.image || '/icons/default-app.svg'}
+              src={program.image || '/icons/default-app.svg'}
               alt="icon"
               className="h-12 w-12 rounded"
               onError={e => {
-                // Fallback chain: SVGL -> favicon -> program.image -> default
                 const target = e.target as HTMLImageElement;
-                if (target.src === svglIconUrl) {
-                  target.src = faviconUrl || program.image || '/icons/default-app.svg';
-                } else if (target.src === faviconUrl) {
-                  target.src = program.image || '/icons/default-app.svg';
-                }
+                target.src = '/icons/default-app.svg';
               }}
             />
-            {loadingIcon && (
-              <div className="absolute inset-0 flex items-center justify-center rounded bg-neutral-100 dark:bg-neutral-800">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600"></div>
-              </div>
-            )}
           </div>
           <div>
             <h2 className="text-xl font-semibold">{program.name}</h2>
@@ -184,14 +61,6 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
             <div className="flex items-center gap-2 text-neutral-500">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600"></div>
               <span>Loading Homebrew info...</span>
-            </div>
-          )}
-
-          {/* Loading state for icon */}
-          {loadingIcon && !loadingBrew && (
-            <div className="flex items-center gap-2 text-neutral-500">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600"></div>
-              <span>Loading icon...</span>
             </div>
           )}
 
@@ -271,6 +140,14 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
             </div>
           ) : null}
         </div>
+
+        {/* Parameters Form */}
+        {program.parameters && program.parameters.length > 0 && (
+          <div className="mt-6">
+            <ParameterForm appId={program.id} parameters={program.parameters} />
+          </div>
+        )}
+
         <div className="mt-6">
           <h3 className="mb-2 text-sm font-medium">Advanced install options</h3>
           <div className="rounded-md border border-neutral-200 p-3 text-sm text-neutral-600 dark:border-neutral-800 dark:text-neutral-300">
@@ -280,15 +157,16 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
                   <div className="font-mono text-xs break-all">
                     $ {singleInstallCommand(program)}
                   </div>
-                  <button
-                    className="rounded border px-2 py-1 text-xs"
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => {
                       navigator.clipboard.writeText(singleInstallCommand(program) || '');
                       toast('Command copied', 'success');
                     }}
                   >
                     Copy
-                  </button>
+                  </Button>
                 </div>
               )}
               {program.install && (
@@ -298,15 +176,16 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
                     <pre className="flex-1 rounded bg-neutral-100 p-2 text-xs whitespace-pre-wrap dark:bg-neutral-800">
                       {program.install}
                     </pre>
-                    <button
-                      className="h-fit rounded border px-2 py-1 text-xs"
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => {
                         navigator.clipboard.writeText(program.install || '');
                         toast('Install script copied', 'success');
                       }}
                     >
                       Copy
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -317,15 +196,16 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
                     <pre className="flex-1 rounded bg-neutral-100 p-2 text-xs whitespace-pre-wrap dark:bg-neutral-800">
                       {program.configure}
                     </pre>
-                    <button
-                      className="h-fit rounded border px-2 py-1 text-xs"
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => {
                         navigator.clipboard.writeText(program.configure || '');
                         toast('Configure script copied', 'success');
                       }}
                     >
                       Copy
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -336,28 +216,39 @@ const AppDetail: React.FC<Props> = ({program, onClose, onToggle, selected}) => {
                     <pre className="flex-1 rounded bg-neutral-100 p-2 text-xs whitespace-pre-wrap dark:bg-neutral-800">
                       {program.validate}
                     </pre>
-                    <button
-                      className="h-fit rounded border px-2 py-1 text-xs"
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => {
                         navigator.clipboard.writeText(program.validate || '');
                         toast('Validate script copied', 'success');
                       }}
                     >
                       Copy
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
             </div>
           </div>
         </div>
-        <div className="mt-6 flex gap-2">
-          <button className="rounded-md border px-3 py-2" onClick={onToggle}>
-            {selected ? 'Unselect' : 'Select'}
-          </button>
-          <button className="rounded-md px-3 py-2" onClick={onClose}>
-            Close
-          </button>
+        <div className="mt-6 flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Button
+              variant={selected ? 'outline' : 'default'}
+              onClick={e => {
+                e.stopPropagation();
+                toggle(program);
+              }}
+              disabled={isNotValid}
+              title={isNotValid ? 'Please fill in all required parameters first' : undefined}
+            >
+              {selected ? 'Unselect' : 'Select'}
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+          </div>
         </div>
       </div>
     </div>

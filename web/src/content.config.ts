@@ -25,6 +25,13 @@ const apps = defineCollection({
       configure: z.string().nullable().optional().default(null),
       uninstall: z.string().nullable().optional().default(null),
       assets: z.array(z.string()).optional().default([]),
+      parameters: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        type: z.enum(['string', 'number', 'boolean', 'email']),
+        required: z.boolean().default(false),
+        default: z.string().optional(),
+      })).optional().default([]),
     })
     .refine(
       data => {

@@ -1,4 +1,5 @@
-import type {ProgramMeta} from '@/types/data.d.ts';
+import type {ProgramMeta, ParameterValues} from '@/types/data.d.ts';
+import {useParametersStore} from '@/stores/parameters';
 
 const regex = /^(\w+)\s+"([^"]+)"(?:,\s+id:\s+(\d+))?/;
 
@@ -36,6 +37,20 @@ export function createBrewfile(programs: ProgramMeta[]): string {
   return lines.join('\n') + '\n';
 }
 
+// Function to replace parameters in a script
+function replaceParameters(script: string, parameters: ParameterValues): string {
+  let result = script;
+  
+  // Replace {{ parameter.name }} with actual values
+  for (const [paramName, paramValue] of Object.entries(parameters)) {
+    const placeholder = `{{ ${paramName} }}`;
+    const escapedValue = paramValue.replace(/"/g, '\\"'); // Escape quotes for shell safety
+    result = result.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), escapedValue);
+  }
+  
+  return result;
+}
+
 export function createPostConfig(programs: ProgramMeta[]): string {
   const lines: string[] = ['#!/bin/bash'];
   lines.push('');
@@ -43,9 +58,20 @@ export function createPostConfig(programs: ProgramMeta[]): string {
   lines.push('echo "=============================================="');
   lines.push('');
 
+  // Get parameters from store
+  const parametersStore = useParametersStore.getState();
+
   const configCommands = programs
     .filter(p => p.configure)
-    .map(p => p.configure)
+    .map(p => {
+      if (!p.configure) return null;
+      
+      // Get parameters for this program
+      const programParameters = parametersStore.getParameters(p.id);
+      
+      // Replace parameters in the configure script
+      return replaceParameters(p.configure, programParameters);
+    })
     .filter((cmd): cmd is string => Boolean(cmd));
 
   if (configCommands.length > 0) {

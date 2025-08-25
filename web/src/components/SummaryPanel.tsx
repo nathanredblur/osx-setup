@@ -7,18 +7,57 @@ import {
   downloadMacSnap,
   downloadPostConfig,
 } from '@/lib/download';
+import {useModalStore} from '@/stores/modal';
+import {useParametersStore} from '@/stores/parameters';
 import {useSelectionStore} from '@/stores/selection';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Button} from './ui/button';
+
+const isEqual = (a: any, b: any) => {
+  return JSON.stringify(a) === JSON.stringify(b);
+};
 
 const SummaryPanel: React.FC = () => {
   const selectedIds = useSelectionStore(s => s.selectedIds);
   const [showDownloadOptions, setShowDownloadOptions] = useState(false);
   const {programs, categories} = useCatalog();
+  const {validationState: initialValidationState} = useParametersStore();
+  const {openAppDetail} = useModalStore();
+  const [validationState, setValidationState] = useState<Record<
+    string,
+    {isValid: boolean; errors: string[]}
+  > | null>(null);
+
+  useEffect(() => {
+    setValidationState(initialValidationState);
+  }, [initialValidationState]);
+
+  useEffect(() => {
+    const unsubscribe = useParametersStore.subscribe(
+      state => state.validationState,
+      state => {
+        setValidationState(state);
+      },
+      {equalityFn: isEqual}
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const selectedPrograms = useMemo(() => {
     const ids = Object.keys(selectedIds);
     return programs.filter(program => ids.includes(program.id));
   }, [selectedIds, programs]);
+
+  // Check for apps with missing required parameters
+  const appsWithMissingParams = useMemo(() => {
+    return selectedPrograms.filter(program => {
+      if (!program.parameters || program.parameters.length === 0) return false;
+      return validationState?.[program.id]?.isValid === false;
+    });
+  }, [selectedPrograms, validationState]);
 
   const total = selectedPrograms.length;
   const toast = useToast();
@@ -28,6 +67,15 @@ const SummaryPanel: React.FC = () => {
       toast('Nothing selected');
       return;
     }
+
+    if (appsWithMissingParams.length > 0) {
+      toast(
+        `Please configure parameters for: ${appsWithMissingParams.map(p => p.name).join(', ')}`,
+        'error'
+      );
+      return;
+    }
+
     try {
       await downloadAllAsZip(selectedPrograms);
       toast('MacSnap setup ZIP downloaded');
@@ -51,6 +99,15 @@ const SummaryPanel: React.FC = () => {
       toast('Nothing selected');
       return;
     }
+
+    if (appsWithMissingParams.length > 0) {
+      toast(
+        `Please configure parameters for: ${appsWithMissingParams.map(p => p.name).join(', ')}`,
+        'error'
+      );
+      return;
+    }
+
     downloadPostConfig(selectedPrograms);
     toast('postConfig.sh downloaded');
   };
@@ -99,20 +156,22 @@ const SummaryPanel: React.FC = () => {
         </div>
         <div className="space-y-2">
           {/* Botón principal - mantener funcionalidad original */}
-          <button
+          <Button
+            variant="primary"
             onClick={handleCreateSetup}
-            className="w-full rounded-md bg-blue-600 py-3 font-semibold text-white hover:bg-blue-500"
+            className="w-full py-3 font-semibold"
           >
             📦 Download Setup ZIP
-          </button>
+          </Button>
 
           {/* Botón para mostrar opciones avanzadas */}
-          <button
+          <Button
+            variant="outline"
             onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-            className="w-full rounded-md border border-neutral-300 bg-white py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+            className="w-full"
           >
             {showDownloadOptions ? '🔼 Hide' : '🔽 Show'} Advanced Options
-          </button>
+          </Button>
 
           {/* Opciones de descarga expandibles */}
           {showDownloadOptions && (
@@ -121,30 +180,26 @@ const SummaryPanel: React.FC = () => {
                 Individual Files
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={handleDownloadBrewfile}
-                  className="rounded bg-green-600 px-3 py-2 text-xs font-medium text-white hover:bg-green-500"
-                >
+                <Button onClick={handleDownloadBrewfile} variant="success" size="sm">
                   Brewfile
-                </button>
-                <button
-                  onClick={handleDownloadPostConfig}
-                  className="rounded bg-orange-600 px-3 py-2 text-xs font-medium text-white hover:bg-orange-500"
-                >
-                  postConfig.sh
-                </button>
-                <button
+                </Button>
+                <Button onClick={handleDownloadPostConfig} variant="warning" size="sm">
+                  PostConfig
+                </Button>
+                <Button
                   onClick={handleDownloadCustomInstall}
-                  className="rounded bg-purple-600 px-3 py-2 text-xs font-medium text-white hover:bg-purple-500"
+                  className="bg-purple-600 text-white hover:bg-purple-500"
+                  size="sm"
                 >
-                  customInstall.sh
-                </button>
-                <button
+                  Custom Install
+                </Button>
+                <Button
                   onClick={handleDownloadMacSnap}
-                  className="rounded bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-500"
+                  className="bg-indigo-600 text-white hover:bg-indigo-500"
+                  size="sm"
                 >
-                  macSnap.sh (Main Script)
-                </button>
+                  MacSnap
+                </Button>
               </div>
             </div>
           )}
@@ -165,25 +220,67 @@ const SummaryPanel: React.FC = () => {
           </div>
         </div>
 
+        {/* Apps with missing parameters warning */}
+        {appsWithMissingParams.length > 0 && (
+          <div className="pt-2">
+            <div className="mb-2 rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
+              <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                <div className="flex items-center gap-1 font-medium">
+                  <span>⚠️</span>
+                  Configuration Required
+                </div>
+                <div className="mt-1 text-xs">
+                  {appsWithMissingParams.length} app{appsWithMissingParams.length > 1 ? 's' : ''}{' '}
+                  need{appsWithMissingParams.length === 1 ? 's' : ''} configuration before download
+                </div>
+                <div className="mt-2 space-y-1">
+                  {appsWithMissingParams.map(app => (
+                    <div key={app.id} className="text-xs">
+                      • {app.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="pt-2">
           <div className="mb-2 text-xs tracking-wide text-neutral-500 uppercase">Selected apps</div>
           <div className="max-h-64 space-y-2 overflow-auto pr-2">
-            {selectedPrograms.map(p => (
-              <div
-                key={p.id}
-                className="flex items-center justify-between rounded bg-neutral-900/40 px-2 py-1"
-              >
-                <div className="truncate text-sm" title={p.name}>
-                  {p.name}
-                </div>
-                <button
-                  className="rounded border border-neutral-700 px-2 py-0.5 text-xs hover:bg-neutral-800"
-                  onClick={() => useSelectionStore.getState().toggle(p)}
+            {selectedPrograms.map(p => {
+              const needsConfig = appsWithMissingParams.some(app => app.id === p.id);
+              return (
+                <div
+                  key={p.id}
+                  className={`flex items-center justify-between rounded px-2 py-1 ${
+                    needsConfig
+                      ? 'border border-yellow-200 bg-yellow-100 dark:border-yellow-800 dark:bg-yellow-900/20'
+                      : 'bg-neutral-900/40'
+                  }`}
                 >
-                  Remove
-                </button>
-              </div>
-            ))}
+                  <div
+                    className="flex cursor-pointer items-center gap-2 truncate text-sm hover:opacity-80"
+                    title={p.name}
+                    onClick={() => openAppDetail(p.id)}
+                  >
+                    {needsConfig && (
+                      <span className="text-yellow-600 dark:text-yellow-400">⚠️</span>
+                    )}
+                    <span className={needsConfig ? 'text-yellow-800 dark:text-yellow-200' : ''}>
+                      {p.name}
+                    </span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => useSelectionStore.getState().toggle(p)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              );
+            })}
             {selectedPrograms.length === 0 && (
               <div className="text-neutral-500">Nothing selected yet</div>
             )}

@@ -41,6 +41,11 @@ const AppCard: React.FC<Props> = ({program, onClick}) => {
               <Cog className="h-3 w-3" /> Settings
             </Badge>
           )}
+          {program.parameters && program.parameters.length > 0 && (
+            <Badge className="border-orange-300 bg-orange-500/10 text-orange-700 dark:border-orange-500/40 dark:text-orange-300">
+              <Cog className="h-3 w-3" /> Config
+            </Badge>
+          )}
         </div>
         <div className="flex items-center justify-between">
           {program.url && (

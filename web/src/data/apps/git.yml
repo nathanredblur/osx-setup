@@ -42,5 +42,5 @@ parameters:
     required: true
   - name: 'user.email'
     description: 'Your email'
-    type: 'string'
+    type: 'email'
     required: true

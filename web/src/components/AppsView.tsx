@@ -1,18 +1,18 @@
-import React from "react";
-import FiltersBar from "./FiltersBar";
-import SummaryPanel from "./SummaryPanel";
-import AppGrid from "@/components/AppGrid";
-import { DataProvider } from "@/context/DataContext";
-import { ToastProvider } from "@/components/Toast";
+import AppGrid from '@/components/AppGrid';
+import {ToastProvider} from '@/components/Toast';
+import {DataProvider} from '@/context/DataContext';
+import React from 'react';
+import FiltersBar from './FiltersBar';
+import SummaryPanel from './SummaryPanel';
 
 const AppsView: React.FC = () => {
   return (
     <DataProvider>
       <ToastProvider>
-        <div className="h-full flex">
-          <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex h-full">
+          <div className="flex flex-1 flex-col overflow-hidden">
             <FiltersBar />
-            <div className="flex-1 overflow-hidden flex">
+            <div className="flex flex-1 overflow-hidden">
               <div className="flex-1 overflow-auto">
                 <AppGrid />
               </div>
